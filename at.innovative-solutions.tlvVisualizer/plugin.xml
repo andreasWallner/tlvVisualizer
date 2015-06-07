@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="General"
+            id="at.innovative_solutions.tlvVisualizer">
+      </category>
+      <view
+            name="TLV Visualizer View"
+            icon="icons/sample.gif"
+            category="at.innovative_solutions.tlvVisualizer"
+            class="at.innovative_solutions.tlvvisualizer.views.MainView"
+            id="at.innovative_solutions.tlvvisualizer.views.MainView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="at.innovative_solutions.tlvvisualizer.views.MainView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+
+</plugin>
