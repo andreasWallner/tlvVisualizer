@@ -17,7 +17,7 @@ import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
-public class TLVTest {
+public class TLVTest {	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 	
@@ -219,14 +219,14 @@ public class TLVTest {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_findEnd_normal() throws Exception {
-		final ByteBuffer input = ByteBuffer.wrap(new byte[] {0x01, 0x01, 0x00, 0x00});
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {0x01, 0x00, 0x01, 0x00, 0x00});
 		final Class cls = TLV.class;
 		final Method method = cls.getDeclaredMethod("findEnd", new Class[]{ByteBuffer.class});
 		method.setAccessible(true);
 		
 		final int end = (int) method.invoke(null, input);
-		assertEquals("end", 2, end);
-		assertEquals("pos", 4, input.position());
+		assertEquals("end", 3, end);
+		assertEquals("pos", 5, input.position());
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
