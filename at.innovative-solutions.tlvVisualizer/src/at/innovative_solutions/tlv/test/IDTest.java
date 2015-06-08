@@ -97,7 +97,7 @@ public class IDTest extends TestCase {
 		assertEquals("class", ID.CLASS_CONTEXT, parsed.getTagClass());
 		assertEquals("primitive", true, parsed.isPrimitive());
 		assertEquals("tag number", 7, parsed.getTagNumber());
-		assertEquals("tag length", 2, parsed.getIDLength());
+		assertEquals("tag length", 1, parsed.getLongFormByteCnt());
 	}
 	
 	@Test

@@ -37,7 +37,7 @@ public class ID {
 		return _tagNumber;
 	}
 	
-	public int getIDLength() {
+	public int getLongFormByteCnt() {
 		return _longFormBytes;
 	}
 	
