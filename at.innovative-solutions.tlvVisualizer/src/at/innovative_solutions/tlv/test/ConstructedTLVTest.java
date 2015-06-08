@@ -94,40 +94,15 @@ public class ConstructedTLVTest {
 	@Test
 	public void test_accept_simple() {
 		String result = "asdf";
-		FormatterMock f = new FormatterMock(result);
+		@SuppressWarnings("unchecked")
+		Formatter<String> f = mock(Formatter.class);
 		ConstructedTLV ref = new ConstructedTLV(null, new LinkedList<TLV>());
+		when(f.format(ref)).thenReturn(result);
 		
 		String retVal = ref.accept(f);
 		
+		verify(f).format(ref);
 		assertTrue("retval correct", retVal == result);
-		assertTrue("formatter param", f._param == ref);
-	}
-	
-	class FormatterMock implements Formatter<String> {
-		String _retVal;
-		public TLV _param = null;
-		
-		public FormatterMock(String retVal) {
-			_retVal = retVal;
-		}
-		
-		@Override
-		public String format(TLV tlv) {
-			throw new RuntimeException("called invalid method");
-		}
-
-		@Override
-		public String format(PrimitiveTLV tlv) {
-			throw new RuntimeException("called invalid method");
-		}
-
-		@Override
-		public String format(ConstructedTLV tlv) {
-			if(_param != null)
-				throw new RuntimeException("second call to format is not allowed");
-			_param = tlv;
-			return _retVal;
-		}
 	}
 	
 	@Test

@@ -4,13 +4,10 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.mockito.Mock;
 
-import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.Formatter;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.PrimitiveTLV;
-import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
 public class PrimitiveTLVTest {
@@ -52,43 +49,17 @@ public class PrimitiveTLVTest {
 	@Test
 	public void test_accept_simple() {
 		String result = "asdf";
-		FormatterMock f = new FormatterMock(result);
+		@SuppressWarnings("unchecked")
+		Formatter<String> f = (Formatter<String>) mock(Formatter.class);
 		PrimitiveTLV ref = new PrimitiveTLV(null, null);
+		when(f.format(ref)).thenReturn(result);
 		
 		String retVal = ref.accept(f);
 		
+		verify(f).format(ref);
 		assertTrue("retval correct", retVal == result);
-		assertTrue("formatter param", f._param == ref);
 	}
-	
-	class FormatterMock implements Formatter<String> {
-		String _retVal;
-		public TLV _param = null;
-		
-		public FormatterMock(String retVal) {
-			_retVal = retVal;
-		}
-		
-		@Override
-		public String format(TLV tlv) {
-			throw new RuntimeException("called invalid method");
-		}
 
-		@Override
-		public String format(PrimitiveTLV tlv) {
-			if(_param != null)
-				throw new RuntimeException("second call to format is not allowed");
-			_param = tlv;
-			return _retVal;
-		}
-
-		@Override
-		public String format(ConstructedTLV tlv) {
-			throw new RuntimeException("called invalid method");
-		}
-		
-	}
-	
 	@Test
 	public void test_toString_simple() {
 		ID id = mock(ID.class);
