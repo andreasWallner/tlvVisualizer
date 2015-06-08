@@ -131,14 +131,4 @@ abstract public class TLV implements Formattable {
 	public TLV getParent() {
 		return _parent;
 	}
-	
-	public abstract String prettyPrint(String indentChars);
-	public abstract String prettyPrint(String indentChars, int indentLevel);
-	
-	public static String prettyPrint(final List<TLV> tlvs, final String indentChars) {
-		final StringBuilder sb = new StringBuilder();
-		for(final TLV t : tlvs)
-			sb.append(t.prettyPrint(indentChars, 1)).append("\n");
-		return sb.toString();
-	}
 }

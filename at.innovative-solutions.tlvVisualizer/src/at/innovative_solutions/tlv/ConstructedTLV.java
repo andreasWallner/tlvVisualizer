@@ -57,23 +57,6 @@ public class ConstructedTLV extends TLV {
 		return sb.toString();
 	}
 	
-	@Override
-	public String prettyPrint(final String indentChars) {
-		return prettyPrint(indentChars, 0);
-	}
-	
-	@Override
-	public String prettyPrint(final String indentChars, int indentLevel) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(Utils.printChars(indentChars, indentLevel));
-		sb.append(Utils.bytesToHexString(_id.toBytes()));
-		for(final TLV tlv : _tlvs) {
-			sb.append("\n");
-			sb.append(tlv.prettyPrint(indentChars, indentLevel + 1));
-		}
-		return sb.toString();
-	}
-	
 	public <T> T accept(final Formatter<T> formatter) {
 		return formatter.format(this);
 	}

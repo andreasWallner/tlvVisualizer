@@ -43,21 +43,6 @@ public class PrimitiveTLV extends TLV {
 		return sb.toString();
 	}
 	
-	@Override
-	public String prettyPrint(String indentChars) {
-		return prettyPrint(indentChars, 0);
-	}
-	
-	@Override
-	public String prettyPrint(final String indentChars, int indentLevel) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(Utils.printChars(indentChars, indentLevel));
-		sb.append(Utils.bytesToHexString(_id.toBytes()));
-		sb.append(" > ");
-		sb.append(Utils.bytesToHexString(_data));
-		return sb.toString();
-	}
-	
 	public <T> T accept(final Formatter<T> formatter) {
 		return formatter.format(this);
 	}
