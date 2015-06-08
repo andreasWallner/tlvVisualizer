@@ -87,8 +87,18 @@ public class IDTest extends TestCase {
 		assertEquals("primitive", false, parsed.isPrimitive());
 		assertEquals("tag number", 5024, parsed.getTagNumber());
 	}
-	// TODO over30 missing second block
-	// TODO over127 missing third block
+	
+	@Test
+	public void test_parseID_oversized() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { (byte) 0x9f, 0x07 });
+		final ID parsed = ID.parseID(input);
+		
+		assertEquals("position", 2, input.position());
+		assertEquals("class", ID.CLASS_CONTEXT, parsed.getTagClass());
+		assertEquals("primitive", true, parsed.isPrimitive());
+		assertEquals("tag number", 7, parsed.getTagNumber());
+		assertEquals("tag length", 2, parsed.getIDLength());
+	}
 	
 	@Test
 	public void test_toBytes_under30() {

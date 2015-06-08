@@ -12,17 +12,17 @@ public class ID {
 	final int _tagClass;
 	final boolean _isPrimitive;
 	final int _tagNumber;
-	final int _tagLength;
+	final int _longFormBytes;
 	
 	public ID(int tagClass, boolean isPrimitive, int tagNumber) {
 		this(tagClass, isPrimitive, tagNumber, 0);
 	}
 	
-	public ID(int tagClass, boolean isPrimitive, int tagNumber, int tagLength) {
+	public ID(int tagClass, boolean isPrimitive, int tagNumber, int longFormBytes) {
 		_tagClass = tagClass;
 		_isPrimitive = isPrimitive;
 		_tagNumber = tagNumber;
-		_tagLength = tagLength;
+		_longFormBytes = longFormBytes;
 	}
 	
 	public int getTagClass() {
@@ -37,14 +37,18 @@ public class ID {
 		return _tagNumber;
 	}
 	
+	public int getIDLength() {
+		return _longFormBytes;
+	}
+	
 	public byte[] toBytes() {
-		if(_tagNumber <= 30 && _tagLength == 0) {
+		if(_tagNumber <= 30 && _longFormBytes == 0) {
 			int b = _tagClass << 6 | (_isPrimitive ? 0 : 1 << 5) | _tagNumber;
 			return new byte[] { (byte) b };
 		} else {
 			final int nrOfBinDigits = (32 - Integer.numberOfLeadingZeros(_tagNumber));
 			int nrOfBlocks = nrOfBinDigits / 7 + (nrOfBinDigits % 7 != 0 ? 1 : 0);
-			nrOfBlocks = Integer.max(nrOfBlocks, _tagLength);
+			nrOfBlocks = Integer.max(nrOfBlocks, _longFormBytes);
 
 			byte[] result = new byte[nrOfBlocks + 1];
 			result[0] = (byte) (_tagClass << 6 | (_isPrimitive ? 0 : 1 << 5) | 0x1F);
@@ -76,16 +80,18 @@ public class ID {
 		final boolean isPrimitive = (first & (1 << 5)) == 0;
 		int tagNumber = first & 0x1F;
 		
+		int longFormBytes = 0;
 		if(tagNumber == 0x1F) {
 			tagNumber = 0;
 			byte piece;
 			do {
 				piece = octets.get();
 				tagNumber = (tagNumber << 7) + (piece & 0x7F);
+				longFormBytes++;
 			} while((piece & 0x80) != 0);
 		}
 		
-		return new ID(tagClass, isPrimitive, tagNumber);
+		return new ID(tagClass, isPrimitive, tagNumber, longFormBytes);
 	}
 	
 	public boolean equals(final Object other) {
@@ -95,7 +101,7 @@ public class ID {
 		return this._tagClass == ((ID)other)._tagClass
 				&& this._isPrimitive == ((ID)other)._isPrimitive
 				&& this._tagNumber == ((ID)other)._tagNumber
-				&& this._tagLength == ((ID)other)._tagLength;
+				&& this._longFormBytes == ((ID)other)._longFormBytes;
 	}
 	
 	public boolean equalContents(final Object other) {
