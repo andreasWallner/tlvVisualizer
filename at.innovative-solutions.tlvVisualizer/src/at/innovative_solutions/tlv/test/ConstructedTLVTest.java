@@ -1,5 +1,6 @@
 package at.innovative_solutions.tlv.test;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
@@ -127,5 +128,19 @@ public class ConstructedTLVTest {
 			_param = tlv;
 			return _retVal;
 		}
+	}
+	
+	@Test
+	public void test_toString_simple() {
+		ID id = mock(ID.class);
+		when(id.toString()).thenReturn("{id}");
+		PrimitiveTLV s1 = mock(PrimitiveTLV.class);
+		PrimitiveTLV s2 = mock(PrimitiveTLV.class);
+		when(s1.toString()).thenReturn("{s1}");
+		when(s2.toString()).thenReturn("{s2}");
+		
+		ConstructedTLV ref = new ConstructedTLV(id, Arrays.asList(s1, s2), false);
+		
+		assertEquals("ConstructedTLV({id}, <{s1}, {s2}, >, false)", ref.toString());
 	}
 }

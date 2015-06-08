@@ -1,8 +1,10 @@
 package at.innovative_solutions.tlv.test;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.mockito.Mock;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.Formatter;
@@ -85,5 +87,13 @@ public class PrimitiveTLVTest {
 			throw new RuntimeException("called invalid method");
 		}
 		
+	}
+	
+	@Test
+	public void test_toString_simple() {
+		ID id = mock(ID.class);
+		when(id.toString()).thenReturn("{id}");
+		PrimitiveTLV ref = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
+		assertEquals("PrimitiveTLV({id}, [0x11,0x22,], false)", ref.toString());
 	}
 }
