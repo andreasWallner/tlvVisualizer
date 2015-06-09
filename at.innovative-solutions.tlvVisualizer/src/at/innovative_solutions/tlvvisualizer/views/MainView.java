@@ -2,6 +2,7 @@ package at.innovative_solutions.tlvvisualizer.views;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -40,6 +41,7 @@ import org.xml.sax.SAXException;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.DecodingFormatter;
+import at.innovative_solutions.tlv.EMVValueDecoder;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
@@ -124,7 +126,8 @@ public class MainView extends ViewPart {
 				return null;
 			
 			TLV e = (TLV)element;
-			String ret = null;
+			Long tagNum = e.getID().toLong();
+			String ret = "";
 			switch(columnIndex) {
 			case 0:
 				ret = Utils.bytesToHexString(e.getID().toBytes());
@@ -133,11 +136,18 @@ public class MainView extends ViewPart {
 				ret = String.valueOf(e.getLength());
 				break;
 			case 2:
-				Long tagNum = e.getID().toLong();
 				if(_tagInfo.containsKey(tagNum)) 
-					ret = _tagInfo.get(tagNum)._name + ": ";
+					ret = _tagInfo.get(tagNum)._name;
+				break;
+			case 3:
+				if(e instanceof PrimitiveTLV && _tagInfo.containsKey(tagNum))
+					try {
+						ret = EMVValueDecoder.asString(((PrimitiveTLV) e).getData(), _tagInfo.get(tagNum)._format);
+					} catch(UnsupportedEncodingException ex) {}
+				break;
+			case 4:
 				if(element instanceof PrimitiveTLV)
-					ret += Utils.bytesToHexString(((PrimitiveTLV) element).getData());
+					ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
 				break;
 			}
 			return ret;
@@ -226,8 +236,16 @@ public class MainView extends ViewPart {
 		column2.setWidth(35);
 		TreeColumn column3 = new TreeColumn(tlvTree, SWT.RIGHT);
 		column3.setAlignment(SWT.LEFT);
-		column3.setText("Content");
-		column3.setWidth(500);
+		column3.setText("Name");
+		column3.setWidth(300);
+		TreeColumn column4 = new TreeColumn(tlvTree, SWT.RIGHT);
+		column4.setAlignment(SWT.LEFT);
+		column4.setText("Decoded");
+		column4.setWidth(150);
+		TreeColumn column5 = new TreeColumn(tlvTree, SWT.RIGHT);
+		column5.setAlignment(SWT.LEFT);
+		column5.setText("Encoded");
+		column5.setWidth(300);	
 		
 		viewer.setContentProvider(new TLVContentProvider());
 		viewer.setLabelProvider(new TLVLabelProvider());
