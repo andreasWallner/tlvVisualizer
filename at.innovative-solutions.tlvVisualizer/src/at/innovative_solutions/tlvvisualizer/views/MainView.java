@@ -21,6 +21,9 @@ import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -36,6 +39,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
+import at.innovative_solutions.tlv.DecodingFormatter;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
@@ -70,6 +74,7 @@ public class MainView extends ViewPart {
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
+	private Clipboard _clipboard;
 	
 	private HashMap<Long, TagInfo> _tagInfo;
 
@@ -181,6 +186,8 @@ public class MainView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		_clipboard = new Clipboard(parent.getDisplay());
+		
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
 		
@@ -197,6 +204,12 @@ public class MainView extends ViewPart {
 		GridData buttonLayoutData = new GridData();
 		button.setLayoutData(buttonLayoutData);
 		buttonLayoutData.horizontalAlignment = SWT.END;
+		
+		Button cbButton = new Button(parent, SWT.NONE);
+		cbButton.setText("parse to clipboard");
+		GridData cbButtonLayoutData = new GridData();
+		cbButton.setLayoutData(cbButtonLayoutData);
+		cbButtonLayoutData.horizontalAlignment = SWT.END;
 		
 		Tree tlvTree = new Tree(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tlvTree.setHeaderVisible(true);
@@ -242,6 +255,20 @@ public class MainView extends ViewPart {
 				
 				viewer.setInput(new TreeRootWrapper(tlvs));
 				viewer.refresh();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {	
+			}
+		});
+		cbButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
+				final List<TLV> tlvs = TLV.parseTLVs(input);
+				String formatted = new DecodingFormatter("  ", _tagInfo).format(tlvs);
+				
+				_clipboard.setContents(new Object[] {formatted}, new Transfer[]{TextTransfer.getInstance()});
 			}
 			
 			@Override
