@@ -1,5 +1,7 @@
 package at.innovative_solutions.tlv;
 
+import java.util.List;
+
 public class SimpleFormatter implements Formatter<String> {
 	final String _indentChars;
 	int _indentLevel;
@@ -7,6 +9,13 @@ public class SimpleFormatter implements Formatter<String> {
 	public SimpleFormatter(final String indentChars) {
 		_indentChars = indentChars;
 		_indentLevel = 0;
+	}
+	
+	public String format(final List<TLV> tlvs) {
+		final StringBuilder sb = new StringBuilder();
+		for(TLV t : tlvs)
+			sb.append(format(t));
+		return sb.toString();
 	}
 	
 	@Override
