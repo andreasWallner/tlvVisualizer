@@ -13,6 +13,7 @@ import org.junit.rules.ExpectedException;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.ID;
+import at.innovative_solutions.tlv.ParseError;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
@@ -191,6 +192,14 @@ public class TLVTest {
 	}
 	
 	@Test
+	public void test_parseLength_highBits() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x82, (byte) 0x80, (byte) 0x80});
+		final int parsed = TLV.parseLength(input);
+		assertEquals("length", 0x8080, parsed);
+		assertEquals("position", 3, input.position());
+	}
+	
+	@Test
 	public void test_parseLength_longForm4Bytes() {
 		// clause 8.1.3.5 Note 2
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x84, 0x0, 0x0, 0x0, 0x1});
@@ -205,6 +214,21 @@ public class TLVTest {
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte)0xff});
 	    thrown.expect(RuntimeException.class);
 	    TLV.parseLength(input);
+	}
+	
+	@Test
+	public void test_parseLength_manyBytes() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x89, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01});
+		final int ret = TLV.parseLength(input);
+		assertEquals(1, ret);
+	}
+	
+	@Test
+	public void test_parseLength_tooBigForSignedInt() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x88, (byte) 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
+		thrown.expect(ParseError.class);
+		thrown.expectMessage("length too big to fit into an integer");
+		TLV.parseLength(input);
 	}
 	
 	@Test

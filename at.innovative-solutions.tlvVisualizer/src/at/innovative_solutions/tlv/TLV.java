@@ -82,7 +82,6 @@ abstract public class TLV implements Formattable {
 		return tlvs;
 	}
 	
-	// TODO check for overflow
 	// TODO custom exception
 	public static Integer parseLength(ByteBuffer octets) {
 		byte first = octets.get();
@@ -101,9 +100,12 @@ abstract public class TLV implements Formattable {
 		
 		// long form
 		first = (byte) (first & 0x7f);
+		
 		int length = 0;
 		while(first-- != 0) {
 			byte piece = octets.get();
+			if((length & (0xff << 7*8)) != 0 || (length & (0x80 << 6*8)) != 0)
+				throw new ParseError("length", "length too big to fit into an integer");
 			length = (length << 8) + java.lang.Byte.toUnsignedInt(piece);
 		}
 		return length;
