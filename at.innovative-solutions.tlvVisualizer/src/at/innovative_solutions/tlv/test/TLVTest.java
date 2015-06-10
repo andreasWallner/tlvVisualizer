@@ -7,6 +7,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -89,8 +92,8 @@ public class TLVTest {
 	@Test
 	public void test_parseTLV_dataTooShort() {
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0xA0, 0x02, 0x00});
-		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("frame too short for expected data length (2 bytes)");
+		thrown.expect(ParseError.class);
+		thrown.expectMessage("Frame too short for expected data length (2 bytes)");
 		TLV.parseTLV(input);
 	}
 	
@@ -212,7 +215,7 @@ public class TLVTest {
 	public void test_parseLength_longFormInvalidLength() {
 		// clause 8.1.3.5 c)
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte)0xff});
-	    thrown.expect(RuntimeException.class);
+	    thrown.expect(ParseError.class);
 	    TLV.parseLength(input);
 	}
 	
@@ -276,7 +279,7 @@ public class TLVTest {
 		final Method method = cls.getDeclaredMethod("findEnd", new Class[]{ByteBuffer.class});
 		method.setAccessible(true);
 		
-		thrown.expect(java.lang.reflect.InvocationTargetException.class);
+		thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(ParseError.class));
 		method.invoke(null, input);
 	}
 }

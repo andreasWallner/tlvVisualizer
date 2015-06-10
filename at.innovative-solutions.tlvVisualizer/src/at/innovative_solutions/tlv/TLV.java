@@ -34,7 +34,6 @@ abstract public class TLV implements Formattable {
 	public abstract int getLength();
 		
 	// TODO check for leftover bytes at the end
-	// TODO custom exception
 	// error in case we are extracting too much
 	public static TLV parseTLV(ByteBuffer octets) {
 		TLV result;
@@ -51,7 +50,7 @@ abstract public class TLV implements Formattable {
 		}
 		
 		if(length > octets.remaining())
-			throw new RuntimeException("frame too short for expected data length (" + length + " bytes)");
+			throw new ParseError("tlv", "Frame too short for expected data length (" + length + " bytes)");
 		
 		if(id.isPrimitive()) {
 			byte[] data = new byte[length];
@@ -82,12 +81,11 @@ abstract public class TLV implements Formattable {
 		return tlvs;
 	}
 	
-	// TODO custom exception
 	public static Integer parseLength(ByteBuffer octets) {
 		byte first = octets.get();
 		
 		if(first == (byte) 0xff) {
-			throw new RuntimeException("invalid length byte (first byte 0xff)");
+			throw new ParseError("length", "Invalid length byte (first byte 0xff)");
 		}
 		
 		// short form
@@ -105,7 +103,7 @@ abstract public class TLV implements Formattable {
 		while(first-- != 0) {
 			byte piece = octets.get();
 			if((length & (0xff << 7*8)) != 0 || (length & (0x80 << 6*8)) != 0)
-				throw new ParseError("length", "length too big to fit into an integer");
+				throw new ParseError("internal", "length too big to fit into an integer");
 			length = (length << 8) + java.lang.Byte.toUnsignedInt(piece);
 		}
 		return length;
@@ -116,7 +114,7 @@ abstract public class TLV implements Formattable {
 		int startOffset = octets.position();
 		while(true) {
 			if(!octets.hasRemaining())
-				throw new RuntimeException("could not find end marker for TLV with indefinite length");
+				throw new ParseError("end", "could not find end marker for TLV with indefinite length");
 			
 			byte current = octets.get();
 			if(last == 0 && current == 0) {
