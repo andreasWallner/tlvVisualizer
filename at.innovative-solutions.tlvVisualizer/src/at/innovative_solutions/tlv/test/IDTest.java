@@ -6,11 +6,17 @@ import java.nio.ByteBuffer;
 
 import junit.framework.TestCase;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import at.innovative_solutions.tlv.ID;
+import at.innovative_solutions.tlv.ParseError;
 
-public class IDTest extends TestCase {
+public class IDTest {
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+		
 	@Test
 	public void test_ID_noLen() {
 		final ID ref1 = new ID(ID.CLASS_APPLICATION, true, 1);
@@ -98,6 +104,14 @@ public class IDTest extends TestCase {
 		assertEquals("primitive", true, parsed.isPrimitive());
 		assertEquals("tag number", 7, parsed.getTagNumber());
 		assertEquals("tag length", 1, parsed.getLongFormByteCnt());
+	}
+	
+	@Test
+	public void test_parseID_cutoffID() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { (byte) 0x9f });
+		thrown.expect(ParseError.class);
+		thrown.expectMessage("Not enough bytes to extract ID");
+		ID.parseID(input);
 	}
 	
 	@Test

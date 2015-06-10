@@ -1,5 +1,6 @@
 package at.innovative_solutions.tlv;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 // TODO implement equals, simplify test cases
@@ -74,24 +75,28 @@ public class ID {
 	
 	// TODO protect against overflow
 	public static ID parseID(ByteBuffer octets) {
-		byte first = (byte) octets.get();
-		
-		final int tagClass = (first >> 6) & 0x3;
-		final boolean isPrimitive = (first & (1 << 5)) == 0;
-		int tagNumber = first & 0x1F;
-		
-		int longFormBytes = 0;
-		if(tagNumber == 0x1F) {
-			tagNumber = 0;
-			byte piece;
-			do {
-				piece = octets.get();
-				tagNumber = (tagNumber << 7) + (piece & 0x7F);
-				longFormBytes++;
-			} while((piece & 0x80) != 0);
+		try {
+			byte first = (byte) octets.get();
+			
+			final int tagClass = (first >> 6) & 0x3;
+			final boolean isPrimitive = (first & (1 << 5)) == 0;
+			int tagNumber = first & 0x1F;
+			
+			int longFormBytes = 0;
+			if(tagNumber == 0x1F) {
+				tagNumber = 0;
+				byte piece;
+				do {
+					piece = octets.get();
+					tagNumber = (tagNumber << 7) + (piece & 0x7F);
+					longFormBytes++;
+				} while((piece & 0x80) != 0);
+			}
+			
+			return new ID(tagClass, isPrimitive, tagNumber, longFormBytes);
+		} catch(BufferUnderflowException e) {
+			throw new ParseError("id", "Not enough bytes to extract ID", e);
 		}
-		
-		return new ID(tagClass, isPrimitive, tagNumber, longFormBytes);
 	}
 	
 	public boolean equals(final Object other) {
