@@ -47,4 +47,30 @@ public class SimpleFormatter implements Formatter<String> {
 		_indentLevel -= 1;
 		return sb.toString();
 	}
+	
+	@Override
+	public String format(final ErrorTLV tlv) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(Utils.printChars(_indentChars, _indentLevel));
+		sb.append("ERR ! ");
+		sb.append(tlv.getError());
+
+		if(tlv.getStage().order() > ErrorTLV.ParseStage.ParsingID.order()) {
+			sb.append("\n");
+			sb.append(Utils.printChars(_indentChars, _indentLevel));
+			sb.append(Utils.printChars(_indentChars, 3));
+			sb.append(" ! ID: ").append(Utils.bytesToHexString(tlv.getID().toBytes()));
+		}
+		if(tlv.getStage().order() > ErrorTLV.ParseStage.ParsingLength.order())
+			sb.append(" LEN: ").append(tlv.getLength());
+		if(tlv.getStage().order() >= ErrorTLV.ParseStage.FindingEnd.order()) {
+			sb.append("\n");
+			sb.append(Utils.printChars(_indentChars, _indentLevel));
+			sb.append(Utils.printChars(_indentChars, 3));
+			sb.append(" ! DATA: ").append(Utils.bytesToHexString(((ErrorTLV) tlv).getRemainingData()));
+			sb.append(" (" + tlv.getRemainingData().length + " bytes)");
+		}
+		sb.append("\n");
+		return sb.toString();
+	}
 }

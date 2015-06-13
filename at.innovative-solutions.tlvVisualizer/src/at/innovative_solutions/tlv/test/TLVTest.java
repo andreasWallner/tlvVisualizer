@@ -6,18 +6,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
+import at.innovative_solutions.tlv.ErrorTLV;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.ParseError;
 import at.innovative_solutions.tlv.PrimitiveTLV;
+import at.innovative_solutions.tlv.SimpleFormatter;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
@@ -168,6 +169,144 @@ public class TLVTest {
 	}
 	
 	@Test
+	public void test_parseTLVWithErrors_invalidID() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { (byte) 0x9f });
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		assertThat(((ErrorTLV) parsed).getError(), is("Not enough bytes to extract ID"));
+	}
+
+	@Test
+	public void test_parseTLVWithErrors_cutoffData() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { 0x01, 0x03, 0x11, 0x22 });
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		final ErrorTLV errorTLV = (ErrorTLV) parsed;
+		assertThat(errorTLV.getError(), is("Frame too short for expected data length (3 bytes)"));
+		assertThat(errorTLV.getID(), is(new ID(ID.CLASS_UNIVERSAL, true, 1)));
+		assertThat(errorTLV.getLength(), is(3));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_cutoffLength() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { (byte) 0x82, (byte) 0x82, 0x11 });
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		final ErrorTLV errorTLV = (ErrorTLV) parsed;
+		assertThat(errorTLV.getError(), is("Not enough bytes to extract length"));
+		assertThat(errorTLV.getID(), is(new ID(ID.CLASS_CONTEXT, true, 2)));
+		assertThat(errorTLV.getLength(), is(0));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_invalidLength() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {0x08, (byte) 0xff});
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		final ErrorTLV errorTLV = (ErrorTLV) parsed;
+		assertThat(errorTLV.getError(), is("Invalid length byte (first byte 0xff)"));
+		assertThat(errorTLV.getID(), is(new ID(ID.CLASS_UNIVERSAL, true, 8)));
+		assertThat(errorTLV.getLength(), is(0));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_lengthMissing() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { 0x44 });
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		final ErrorTLV errorTLV = (ErrorTLV) parsed;
+		assertThat(errorTLV.getError(), is("Not enough bytes to extract length"));
+		assertThat(errorTLV.getID(), is(new ID(ID.CLASS_APPLICATION, true, 4)));
+		assertThat(errorTLV.getLength(), is(0));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_cutoffId() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] { (byte) 0x9F });
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ErrorTLV.class));
+		final ErrorTLV errorTLV = (ErrorTLV) parsed;
+		assertThat(errorTLV.getError(), is("Not enough bytes to extract ID"));
+		assertThat(errorTLV.getID(), is(nullValue()));
+		assertThat(errorTLV.getLength(), is(0));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_errorInHierarchy() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("210401060000"));
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ConstructedTLV.class));
+		assertThat(((ConstructedTLV) parsed).getTLVs().get(0), instanceOf(ErrorTLV.class));
+		
+		final ErrorTLV inside = (ErrorTLV) ((ConstructedTLV) parsed).getTLVs().get(0);
+		assertThat(inside.getError(), is("Frame too short for expected data length (6 bytes)"));
+		assertThat(inside.getID(), is(new ID(ID.CLASS_UNIVERSAL, true, 1)));
+		assertThat(inside.getLength(), is(6));
+	}
+	
+	@Test
+	public void test_parseTLVWithErrors_lengthErrorAtFirstChild() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("2108 08FF01 0603112233"));
+		final TLV parsed = TLV.parseTLVWithErrors(input);
+		
+		assertThat(parsed, instanceOf(ConstructedTLV.class));
+		assertThat(((ConstructedTLV) parsed).getTLVs().size(), is(1));
+		assertThat(((ConstructedTLV) parsed).getTLVs().get(0), instanceOf(ErrorTLV.class));
+		
+		final ErrorTLV inside = (ErrorTLV) ((ConstructedTLV) parsed).getTLVs().get(0);
+		assertThat(inside.getError(), is("Invalid length byte (first byte 0xff)"));
+		assertThat(inside.getID(), is(new ID(ID.CLASS_UNIVERSAL, true, 8)));
+		assertThat(inside.getLength(), is(0));
+	}
+	
+	@Test
+	public void test_parseTLVsWithError_twoErrors() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("6204 01ff1122  05053344"));
+		final List<TLV> parsed = TLV.parseTLVsWithErrors(input);
+		
+		assertThat(parsed.size(), is(2));
+		assertThat(parsed.get(0), instanceOf(ConstructedTLV.class));
+		assertThat(parsed.get(1), instanceOf(ErrorTLV.class));
+		
+		final ConstructedTLV first = (ConstructedTLV) parsed.get(0);
+
+		assertThat(first.getID(), is(new ID(ID.CLASS_APPLICATION, false, 2)));
+		assertThat(first.getTLVs().size(), is(1));
+		assertThat(first.getTLVs().get(0), instanceOf(ErrorTLV.class));
+		
+		final ErrorTLV child = (ErrorTLV) first.getTLVs().get(0);
+		
+		assertThat(
+				child,
+				is(new ErrorTLV(
+						ErrorTLV.ParseStage.ParsingLength,
+						new ID(ID.CLASS_UNIVERSAL, true, 1),
+						"ff stuff",
+						0,
+						false,
+						Utils.hexStringToBytes("1122"))));
+		
+		final ErrorTLV second = (ErrorTLV) parsed.get(1);
+		
+		assertThat(
+				second,
+				is(new ErrorTLV(
+						ErrorTLV.ParseStage.GettingData,
+						new ID(ID.CLASS_UNIVERSAL, true, 5),
+						"end stuff",
+						5,
+						false,
+						Utils.hexStringToBytes("3344"))));
+	}
+	
+	@Test
 	public void test_parseLength_shortForm() {
 		// clause 8.1.3.4
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {0x26});
@@ -231,6 +370,14 @@ public class TLVTest {
 		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x88, (byte) 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
 		thrown.expect(ParseError.class);
 		thrown.expectMessage("length too big to fit into an integer");
+		TLV.parseLength(input);
+	}
+	
+	@Test
+	public void test_parseLength_cutoffLength() {
+		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x83, 0x00, 0x00});
+		thrown.expect(ParseError.class);
+		thrown.expectMessage("Not enough bytes to extract length");
 		TLV.parseLength(input);
 	}
 	

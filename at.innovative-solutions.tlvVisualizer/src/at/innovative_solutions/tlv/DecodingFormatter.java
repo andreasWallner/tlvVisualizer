@@ -83,4 +83,13 @@ public class DecodingFormatter implements Formatter<String> {
 		_indentLevel -= 1;
 		return sb.toString();
 	}
+	
+	// TODO implement
+	@Override
+	public String format(final ErrorTLV tlv) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(Utils.printChars(_indentChars, _indentLevel));
+		sb.append("ERROR");
+		return sb.toString();
+	}
 }
