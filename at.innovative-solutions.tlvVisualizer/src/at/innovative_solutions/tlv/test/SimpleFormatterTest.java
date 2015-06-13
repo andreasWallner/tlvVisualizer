@@ -27,7 +27,6 @@ public class SimpleFormatterTest {
 				        + "      ! ID: 01 LEN: 8\n"
 				        + "      ! DATA: 01 (1 bytes)\n";
 		final String got = formatter.format(parsed);
-		System.out.println(got);
 		assertThat(got, is(expected));
 	}
 }
