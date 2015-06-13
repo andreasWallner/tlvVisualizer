@@ -2,6 +2,7 @@ package at.innovative_solutions.tlv.test;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -28,10 +29,10 @@ public class ConstructedTLVTest {
 		final ConstructedTLV ref = new ConstructedTLV(id, Arrays.asList(s1, s2));
 		
 		assertEquals("id", id, ref.getID());
-		assertTrue("s1", s1 == ref.getTLVs().get(0));
-		assertTrue("s2", s2 == ref.getTLVs().get(1));
-		assertTrue("s1 parent", ref == ref.getTLVs().get(0).getParent());
-		assertTrue("s2 parent", ref == ref.getTLVs().get(1).getParent());
+		assertThat("s1", ref.getTLVs().get(0), sameInstance(s1));
+		assertThat("s2", ref.getTLVs().get(1), sameInstance(s2));
+		assertThat("s1 parent", ref.getTLVs().get(0).getParent(), sameInstance(ref));
+		assertThat("s2 parent", ref.getTLVs().get(1).getParent(), sameInstance(ref));
 	}
 	
 	@Test
@@ -41,6 +42,8 @@ public class ConstructedTLVTest {
 				Arrays.asList(
 						new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 2), new byte[] { 0x11, 0x22 }),
 						new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] { 0x33, 0x44 })));
+		
+		assertThat(ref, not(new String()));
 		
 		assertEquals("same",
 			ref,

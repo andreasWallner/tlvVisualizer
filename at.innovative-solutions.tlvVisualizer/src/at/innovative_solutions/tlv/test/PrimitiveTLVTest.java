@@ -32,6 +32,7 @@ public class PrimitiveTLVTest {
 		assertEquals(new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 20), Utils.hexStringToBytes("1122")), ref);
 		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 20), Utils.hexStringToBytes("1122")), ref);
 		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 20), Utils.hexStringToBytes("1121")), ref);
+		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 20), Utils.hexStringToBytes("1121"), true), ref);
 	}
 	
 	@Test

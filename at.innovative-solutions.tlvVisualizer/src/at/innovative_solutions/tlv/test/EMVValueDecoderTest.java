@@ -17,7 +17,9 @@ public class EMVValueDecoderTest {
 		assertEquals("ans", "egg", EMVValueDecoder.asString(Utils.hexStringToBytes("656767"), "ans"));
 		assertEquals("b 2", "19", EMVValueDecoder.asString(Utils.hexStringToBytes("0013"), "b"));
 		assertEquals("cn", "1234567890123", EMVValueDecoder.asString(Utils.hexStringToBytes("1234567890123FFF"), "cn"));
+		assertEquals("cn empty", "", EMVValueDecoder.asString(Utils.hexStringToBytes(""), "cn"));
 		assertEquals("n", "12345", EMVValueDecoder.asString(Utils.hexStringToBytes("000000012345"), "n"));
-		assertEquals("n", "10000", EMVValueDecoder.asString(Utils.hexStringToBytes("000000010000"), "n"));	
+		assertEquals("n", "10000", EMVValueDecoder.asString(Utils.hexStringToBytes("000000010000"), "n"));
+		assertEquals("invalid", "", EMVValueDecoder.asString(Utils.hexStringToBytes("001100"), "foo"));
 	}
 }
