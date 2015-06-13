@@ -138,7 +138,7 @@ abstract public class TLV implements Formattable {
 			int length = 0;
 			while(first-- != 0) {
 				byte piece = octets.get();
-				if((length & (0xff << 7*8)) != 0 || (length & (0x80 << 6*8)) != 0)
+				if((length & 0xff000000) != 0 || (length & 0x800000) != 0)
 					throw new ParseError("internal", "length too big to fit into an integer");
 				length = (length << 8) + java.lang.Byte.toUnsignedInt(piece);
 			}

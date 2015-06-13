@@ -366,8 +366,23 @@ public class TLVTest {
 	}
 	
 	@Test
+	public void test_parseLength_maxInt() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("84 7fff ffff"));
+		final int ret = TLV.parseLength(input);
+		assertThat(ret, is(0x7fffffff));
+	}
+	
+	@Test
+	public void test_parseLength_intSignBitSet() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("84 8000 0000"));
+		thrown.expect(ParseError.class);
+		thrown.expectMessage("length too big to fit into an integer");
+		TLV.parseLength(input);
+	}
+	
+	@Test
 	public void test_parseLength_tooBigForSignedInt() {
-		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x88, (byte) 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00});
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("85 01 0000 0000"));
 		thrown.expect(ParseError.class);
 		thrown.expectMessage("length too big to fit into an integer");
 		TLV.parseLength(input);
