@@ -111,7 +111,7 @@ public class TLVTest {
 	@Test
 	public void test_parseTLV_multipleHierarchies() {
 		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("A10C8202AFFEA3068401DE8501AD"));
-		final ConstructedTLV parsed = (ConstructedTLV)TLV.parseTLV(input);
+		final ConstructedTLV parsed = (ConstructedTLV) TLV.parseTLV(input);
 		
 		assertEquals("root id", new ID(ID.CLASS_CONTEXT, false, 1), parsed.getID());
 		
@@ -130,6 +130,16 @@ public class TLVTest {
 		final PrimitiveTLV c11 = (PrimitiveTLV)c1.getTLVs().get(1);
 		assertArrayEquals("child 1.0 data", new byte[] {(byte) 0xde}, c10.getData());
 		assertArrayEquals("child 1.1 data", new byte[] {(byte) 0xad}, c11.getData());	
+	}
+	
+	@Test
+	public void test_parseTLV_length0() {
+		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes("0600"));
+		final PrimitiveTLV parsed = (PrimitiveTLV) TLV.parseTLV(input);
+		
+		assertThat("id", parsed.getID(), is(new ID(ID.CLASS_UNIVERSAL, true, 6)));
+		assertThat("length", parsed.getLength(), is(0));
+		assertThat("data", parsed.getData(), is(new byte[] {}));
 	}
 
 	@Test
