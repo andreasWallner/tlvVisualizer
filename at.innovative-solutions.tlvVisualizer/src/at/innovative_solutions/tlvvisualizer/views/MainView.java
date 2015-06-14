@@ -42,6 +42,7 @@ import org.xml.sax.SAXException;
 import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.DecodingFormatter;
 import at.innovative_solutions.tlv.EMVValueDecoder;
+import at.innovative_solutions.tlv.ErrorTLV;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
@@ -126,18 +127,23 @@ public class MainView extends ViewPart {
 				return null;
 			
 			TLV e = (TLV)element;
-			Long tagNum = e.getID().toLong();
+			Long tagNum = e.getID() != null ? e.getID().toLong() : 0;
 			String ret = "";
 			switch(columnIndex) {
 			case 0:
-				ret = Utils.bytesToHexString(e.getID().toBytes());
+				if(e.getID() != null)
+					ret = Utils.bytesToHexString(e.getID().toBytes());
 				break;
 			case 1:
 				ret = String.valueOf(e.getLength());
 				break;
 			case 2:
-				if(_tagInfo.containsKey(tagNum)) 
-					ret = _tagInfo.get(tagNum)._name;
+				if(element instanceof ErrorTLV) {
+					ret = "ERROR: " + ((ErrorTLV) element).getError();
+				} else {
+					if(_tagInfo.containsKey(tagNum)) 
+						ret = _tagInfo.get(tagNum)._name;
+				}
 				break;
 			case 3:
 				if(e instanceof PrimitiveTLV && _tagInfo.containsKey(tagNum))
@@ -148,6 +154,8 @@ public class MainView extends ViewPart {
 			case 4:
 				if(element instanceof PrimitiveTLV)
 					ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
+				else if(element instanceof ErrorTLV)
+					ret += Utils.bytesToHexString(((ErrorTLV) e).getRemainingData());
 				break;
 			}
 			return ret;
@@ -269,7 +277,7 @@ public class MainView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
-				final List<TLV> tlvs = TLV.parseTLVs(input);
+				final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
 				
 				viewer.setInput(new TreeRootWrapper(tlvs));
 				viewer.refresh();
