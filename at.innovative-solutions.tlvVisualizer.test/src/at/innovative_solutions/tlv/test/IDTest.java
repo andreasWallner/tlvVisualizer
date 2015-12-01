@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 
-import junit.framework.TestCase;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
