@@ -95,6 +95,26 @@ public class ConstructedTLVTest {
 	}
 	
 	@Test
+	public void test_getLength_simple() {
+		ConstructedTLV tlv = new ConstructedTLV(
+				new ID(ID.CLASS_APPLICATION, false, 1),
+				Arrays.asList(
+					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] { 0x33, 0x44 }),
+					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 2), new byte[] { 0x11, 0x22 })));
+		assertThat(tlv.getLength(), is(8));
+	}
+	
+	@Test
+	public void test_getSerializedLength_simple() {
+		ConstructedTLV tlv = new ConstructedTLV(
+				new ID(ID.CLASS_APPLICATION, false, 1),
+				Arrays.asList(
+					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] { 0x33, 0x44 }),
+					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 2), new byte[] { 0x11, 0x22 })));
+		assertThat(tlv.getSerializedLength(), is(10));
+	}
+	
+	@Test
 	public void test_accept_simple() {
 		String result = "asdf";
 		@SuppressWarnings("unchecked")
@@ -109,6 +129,31 @@ public class ConstructedTLVTest {
 	}
 	
 	@Test
+	public void test_toBytes_someTLV() {
+		ConstructedTLV tlv = new ConstructedTLV(
+				new ID(ID.CLASS_APPLICATION, false, 1),
+				Arrays.asList(
+						new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] {0x11}),
+						new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 4), new byte[] {0x22})));
+		byte[] expected = Utils.hexStringToBytes("6106 830111 840122");
+		assertThat(tlv.toBytes(), is(expected));
+	}
+	
+	@Test
+	public void test_toBytes_constructedInConstructed() {
+		ConstructedTLV tlv = new ConstructedTLV(
+				new ID(ID.CLASS_APPLICATION, false, 1),
+				Arrays.asList(
+						new ConstructedTLV(
+								new ID(ID.CLASS_APPLICATION, false, 1),
+								Arrays.asList(
+										new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] {0x11}),
+										new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 4), new byte[] {0x22})))));
+		byte[] expected = Utils.hexStringToBytes("6108 6106 830111 840122");
+		assertThat(tlv.toBytes(), is(expected));
+	}
+	
+	@Test
 	public void test_toString_simple() {
 		ID id = mock(ID.class);
 		when(id.toString()).thenReturn("{id}");
@@ -119,6 +164,6 @@ public class ConstructedTLVTest {
 		
 		ConstructedTLV ref = new ConstructedTLV(id, Arrays.asList(s1, s2), false);
 		
-		assertEquals("ConstructedTLV({id}, <{s1}, {s2}, >, false)", ref.toString());
+		assertEquals("ConstructedTLV({id}, [{s1}, {s2}, ], false)", ref.toString());
 	}
 }

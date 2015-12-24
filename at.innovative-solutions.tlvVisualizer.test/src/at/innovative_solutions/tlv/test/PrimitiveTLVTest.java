@@ -2,15 +2,23 @@ package at.innovative_solutions.tlv.test;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import at.innovative_solutions.tlv.ChangeEvent;
+import at.innovative_solutions.tlv.ChangeListener;
 import at.innovative_solutions.tlv.Formatter;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.Utils;
 
 public class PrimitiveTLVTest {
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
+	
 	@Test
 	public void test_PrimitiveTLV_simple() {
 		final ID id = new ID(ID.CLASS_APPLICATION, true, 1);
@@ -43,8 +51,22 @@ public class PrimitiveTLVTest {
 	
 	@Test
 	public void test_getLength_simple() {
-		PrimitiveTLV ref = new PrimitiveTLV(null, Utils.hexStringToBytes("112233"));
+		PrimitiveTLV ref = new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 1), Utils.hexStringToBytes("112233"));
 		assertEquals(3, ref.getLength());
+	}
+	
+	@Test
+	public void test_getSerializedLength_simple() {
+		PrimitiveTLV ref = new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 1), Utils.hexStringToBytes("112233"));
+		assertThat(ref.getSerializedLength(), is(5));
+	}
+	
+	@Test
+	public void test_setData_simple() {
+		PrimitiveTLV ref = new PrimitiveTLV(null, Utils.hexStringToBytes("112233"));
+		byte[] newData = Utils.hexStringToBytes("1234567890"); 
+		ref.setData(newData);
+		assertEquals(newData, ref.getData());
 	}
 	
 	@Test
@@ -60,6 +82,15 @@ public class PrimitiveTLVTest {
 		verify(f).format(ref);
 		assertTrue("retval correct", retVal == result);
 	}
+	
+	@Test
+	public void test_toBytes_someTLV() {
+		PrimitiveTLV tlv = new PrimitiveTLV(
+				new ID(ID.CLASS_UNIVERSAL, true, 7),
+				Utils.hexStringToBytes("112233"));
+		byte[] expected = Utils.hexStringToBytes("0703112233");
+		assertThat(tlv.toBytes(), is(expected));
+	}
 
 	@Test
 	public void test_toString_simple() {
@@ -67,5 +98,45 @@ public class PrimitiveTLVTest {
 		when(id.toString()).thenReturn("{id}");
 		PrimitiveTLV ref = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
 		assertEquals("PrimitiveTLV({id}, [0x11,0x22,], false)", ref.toString());
+	}
+	
+	@Test
+	public void test_changeEvent_getsRaised() {
+		final ID id = new ID(ID.CLASS_APPLICATION, true, 1);
+		PrimitiveTLV tlv = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
+		ChangeListener cl = mock(ChangeListener.class);
+		
+		tlv.addChangeListener(cl);
+		tlv.setData(new byte[] {0x12, 0x34});
+		
+		ChangeEvent expected = new ChangeEvent(tlv);
+		verify(cl, times(1)).changed(eq(expected));
+	}
+	
+	@Test
+	public void test_changeEvent_addIsUnique() {
+		final ID id = new ID(ID.CLASS_APPLICATION, true, 1);
+		PrimitiveTLV tlv = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
+		ChangeListener cl = mock(ChangeListener.class);
+		
+		tlv.addChangeListener(cl);
+		tlv.addChangeListener(cl);
+		tlv.setData(new byte[] {0x12, 0x34});
+		
+		ChangeEvent expected = new ChangeEvent(tlv);
+		verify(cl, times(1)).changed(eq(expected));		
+	}
+	
+	@Test
+	public void test_changeEvent_notRaisedAfterRemove() {
+		final ID id = new ID(ID.CLASS_APPLICATION, true, 1);
+		PrimitiveTLV tlv = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
+		ChangeListener cl = mock(ChangeListener.class);
+		
+		tlv.addChangeListener(cl);
+		tlv.removeChangeListener(cl);
+		tlv.setData(new byte[] {0x12, 0x34});
+		
+		verifyZeroInteractions(cl);
 	}
 }

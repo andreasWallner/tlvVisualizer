@@ -1,5 +1,6 @@
 package at.innovative_solutions.tlv;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 public class PrimitiveTLV extends TLV {
@@ -29,6 +30,29 @@ public class PrimitiveTLV extends TLV {
 	@Override
 	public int getLength() {
 		return _data.length;
+	}
+	
+	// TODO provide more efficient implementation
+	@Override
+	public int getSerializedLength() {
+		ByteArrayOutputStream serializedLength = new ByteArrayOutputStream();
+		serializeLength(serializedLength, _data.length);
+		return _data.length + _id.toBytes().length + serializedLength.size();
+	}
+
+	public void setData(byte[] data) {
+		_data = data;
+		fireChangeEvent(new ChangeEvent(this));
+	}
+	
+	public byte[] toBytes() {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] serializedID = _id.toBytes();
+		result.write(serializedID, 0, serializedID.length);
+		TLV.serializeLength(result, _data.length);
+		result.write(_data, 0, _data.length);
+		
+		return result.toByteArray();
 	}
 	
 	public String toString() {

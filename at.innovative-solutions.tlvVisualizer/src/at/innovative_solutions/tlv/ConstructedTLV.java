@@ -1,5 +1,6 @@
 package at.innovative_solutions.tlv;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class ConstructedTLV extends TLV {
@@ -41,18 +42,42 @@ public class ConstructedTLV extends TLV {
 	public int getLength() {
 		int len = 0;
 		for(final TLV t : _tlvs)
-			len += t.getLength();
+			len += t.getSerializedLength();
 		return len;
+	}
+	
+	@Override
+	public int getSerializedLength() {
+		int length = getLength();
+		ByteArrayOutputStream serializedLength = new ByteArrayOutputStream();
+		serializeLength(serializedLength, length);
+		return _id.toBytes().length + serializedLength.size() + length;
+	}
+	
+	// TODO improve by using ByteArrayOutputStream throughout
+	public byte[] toBytes() {
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] serializedID = _id.toBytes();
+		result.write(serializedID, 0, serializedID.length);
+				
+		serializeLength(result, getLength());
+		
+		for(TLV t : _tlvs) {
+			byte[] serialized = t.toBytes();
+			result.write(serialized, 0, serialized.length);
+		}
+		
+		return result.toByteArray();
 	}
 	
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("ConstructedTLV(");
 		sb.append(_id.toString()).append(", ");
-		sb.append("<");
+		sb.append("[");
 		for(final TLV t : _tlvs)
 			sb.append(t.toString()).append(", ");
-		sb.append(">, ");
+		sb.append("], ");
 		sb.append(_lengthIndefinite).append(")");
 		return sb.toString();
 	}

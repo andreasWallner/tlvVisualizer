@@ -2,6 +2,8 @@ package at.innovative_solutions.tlv;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
+import java.io.ByteArrayOutputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
@@ -30,12 +32,21 @@ abstract public class TLV implements Formattable {
 		return _id;
 	}
 	
+	public void setID(ID id) {
+		if(id.isPrimitive() != _id.isPrimitive())
+			throw new RuntimeException("may not change primitive flag when changing ID");
+		_id = id;
+	}
+	
 	public boolean isIndefiniteLength() {
 		return _lengthIndefinite;
 	}
 	
 	public abstract int getLength();
 	
+	public abstract int getSerializedLength();
+	
+	public abstract byte[] toBytes();
 	
 	public static TLV parseTLV(ByteBuffer octets) {
 		return realParseTLV(octets, true);
@@ -148,6 +159,26 @@ abstract public class TLV implements Formattable {
 		}
 	}
 	
+	// TODO indefiniteLength
+	public static void serializeLength(ByteArrayOutputStream serialized, int length) {
+		if(length < 0x80) {
+			serialized.write(length);
+			return;
+		}
+		byte[] data = new byte[8];
+		int cnt = 0;
+		
+		while(length != 0) {
+			data[cnt] = (byte)length;
+			length >>= 8;
+			cnt += 1;
+		}
+		
+		serialized.write(0x80 + cnt);
+		while(cnt > 0)
+			serialized.write(data[--cnt]);
+	}
+	
 	static int findEnd(final ByteBuffer octets) {
 		byte last = 0x01;
 		int startOffset = octets.position();
@@ -170,4 +201,18 @@ abstract public class TLV implements Formattable {
 	public TLV getParent() {
 		return _parent;
 	}
+	
+	private Vector<ChangeListener> _changeListeners = new Vector<ChangeListener>();
+	public void addChangeListener(ChangeListener l) {
+		if(!_changeListeners.contains(l))
+			_changeListeners.addElement(l);
+	}
+	public void removeChangeListener(ChangeListener l) {
+		_changeListeners.remove(l);
+	}
+	protected void fireChangeEvent(ChangeEvent event) {
+		for(ChangeListener listener : _changeListeners)
+			listener.changed(event);
+	}
+	
 }

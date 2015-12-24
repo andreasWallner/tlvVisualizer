@@ -1,5 +1,6 @@
 package at.innovative_solutions.tlv.test;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -18,7 +19,6 @@ import at.innovative_solutions.tlv.ErrorTLV;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.ParseError;
 import at.innovative_solutions.tlv.PrimitiveTLV;
-import at.innovative_solutions.tlv.SimpleFormatter;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
@@ -35,17 +35,6 @@ public class TLVTest {
 		assertTrue("id", new ID(ID.CLASS_CONTEXT, true, 6).equalContents(parsed.getID()));
 		assertEquals("length", 2, parsed.getLength());
 		assertTrue("data", Arrays.equals(new byte[] {0x12, 0x34}, ((PrimitiveTLV)parsed).getData()));
-	}
-	
-	@Test
-	public void test_parseTLV_emptyPrimitive() {
-		final ByteBuffer input = ByteBuffer.wrap(new byte[] {(byte) 0x80, 0x00});
-		final TLV parsed = TLV.parseTLV(input);
-		
-		assertTrue("is primitive", parsed instanceof PrimitiveTLV);
-		assertTrue("id", new ID(ID.CLASS_CONTEXT, true, 0).equalContents(parsed.getID()));
-		assertEquals("length", 0, parsed.getLength());
-		assertTrue("data", Arrays.equals(new byte[] {}, ((PrimitiveTLV)parsed).getData()));
 	}
 	
 	@Test
@@ -72,7 +61,7 @@ public class TLVTest {
 		
 		assertTrue("is constructed", parsed instanceof ConstructedTLV);
 		assertEquals("id", new ID(ID.CLASS_CONTEXT, false, 7), parsed.getID());
-		//assertEquals("length", 1, parsed.getLength)
+		assertEquals("length", 7, parsed.getLength());
 		
 		final ConstructedTLV cp = (ConstructedTLV)parsed;
 		assertEquals("2 inner tlvs", 2, cp.getTLVs().size());
@@ -415,6 +404,27 @@ public class TLVTest {
 		assertEquals("position", 1, input.position());
 	}
 	
+	@Test
+	public void test_serializeLength_shortForm() {
+		final ByteArrayOutputStream serialized = new ByteArrayOutputStream();
+		TLV.serializeLength(serialized, 7);
+		assertThat(serialized.toByteArray(), is(new byte[] { 0x07 }));
+	}
+	
+	@Test
+	public void test_serializeLength_singleByte() {
+		final ByteArrayOutputStream serialized = new ByteArrayOutputStream();
+		TLV.serializeLength(serialized, 200);
+		assertThat(serialized.toByteArray(), is(new byte[] {(byte)0x81, (byte)200}));
+	}
+	
+	@Test
+	public void test_serializeLength_multiByte() {
+		final ByteArrayOutputStream serialized = new ByteArrayOutputStream();
+		TLV.serializeLength(serialized, 0x112233);
+		assertThat(serialized.toByteArray(), is(Utils.hexStringToBytes("83 112233")));
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_findEnd_normal() throws Exception {
@@ -453,5 +463,23 @@ public class TLVTest {
 		
 		thrown.expectCause(IsInstanceOf.<Throwable>instanceOf(ParseError.class));
 		method.invoke(null, input);
+	}
+	
+	@Test
+	public void test_setID_simple() {
+		PrimitiveTLV tlv = new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 22), new byte[] {});
+		ID newID = new ID(ID.CLASS_PRIVATE, true, 24);
+		tlv.setID(newID);
+		
+		assertEquals(newID, tlv.getID());
+	}
+	
+	@Test
+	public void test_setID_mayNotChangePrimitiveFlag() {
+		PrimitiveTLV tlv = new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 22), new byte[] {});
+		ID newID = new ID(ID.CLASS_APPLICATION, false, 22);
+		
+		thrown.expect(RuntimeException.class);
+		tlv.setID(newID);
 	}
 }

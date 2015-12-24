@@ -14,6 +14,15 @@ public class ErrorTLV extends TLV {
 		public int order() {
 			return _order;
 		}
+		public String toString() {
+			switch(_order) {
+				case 0: return "ParsingID";
+				case 1: return "ParsingLength";
+				case 2: return "FindingEnd";
+				case 3: return "GettingData";
+			}
+			throw new RuntimeException("Invalid enum");
+		}
 	};
 	
 	final ParseStage _stage; 
@@ -50,6 +59,45 @@ public class ErrorTLV extends TLV {
 	@Override
 	public int getLength() {
 		return _length != null ? _length : 0;
+	}
+	
+	@Override
+	public int getSerializedLength() {
+		return 0; // TODO fix what to do here
+	}
+	
+	@Override
+	public byte[] toBytes() { return new byte[0]; }
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("ErrorTLV(");
+		sb.append(_stage.toString()).append(", ");
+		
+		if(_id != null)
+			sb.append(_id.toString()).append(", ");
+		else
+			sb.append("null, ");
+		
+		if(_msg != null)
+			sb.append(_msg).append(", ");
+		else
+			sb.append("null, ");
+		
+		if(_length != null)
+			sb.append(_length).append(", ");
+		else
+			sb.append("null, ");
+		
+		sb.append(_lengthIndefinite).append(", ");
+	
+		if(_data != null)
+			sb.append(_data).append(", ");
+		else
+			sb.append("null");
+		sb.append(")");
+		return sb.toString();
 	}
 
 	@Override
