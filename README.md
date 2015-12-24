@@ -2,6 +2,8 @@
 
 # tlvVisualizer
 
+[![Build Status](https://travis-ci.org/andreasWallner/tlvVisualizer.svg)](https://travis-ci.org/andreasWallner/tlvVisualizer)
+
 A simple simple Eclipse plugin developed more to get into Eclipse stuff than anything else.
 
 Currently allows one to parse TLV (tag-length-value) data, and displays some additional information
