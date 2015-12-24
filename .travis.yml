@@ -1,5 +1,4 @@
 language: java
 sudo: false
 script:
-	pushd at.innovative-solutions.tlvVisualizer && mvn install -X && popd
-	pushd at.innovative-solutions.tlvVisualizer.test && mvn install test -X && popd
+	mvn clean verify

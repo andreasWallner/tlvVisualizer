@@ -2,9 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TLVVisualizer
 Bundle-SymbolicName: at.innovative-solutions.tlvVisualizer;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: me
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
- org.junit
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
