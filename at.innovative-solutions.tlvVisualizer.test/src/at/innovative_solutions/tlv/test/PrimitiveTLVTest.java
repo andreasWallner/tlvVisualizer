@@ -3,6 +3,7 @@ package at.innovative_solutions.tlv.test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +42,7 @@ public class PrimitiveTLVTest {
 		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 20), Utils.hexStringToBytes("1122")), ref);
 		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 20), Utils.hexStringToBytes("1121")), ref);
 		assertNotEquals(new PrimitiveTLV(new ID(ID.CLASS_APPLICATION, true, 20), Utils.hexStringToBytes("1121"), true), ref);
+		assertThat(ref, is(not("PrimitiveTLV(ID(1, true, 20), [0x11,0x22,], false)")));
 	}
 	
 	@Test
@@ -80,7 +82,7 @@ public class PrimitiveTLVTest {
 		String retVal = ref.accept(f);
 		
 		verify(f).format(ref);
-		assertTrue("retval correct", retVal == result);
+		assertThat(retVal, is(result));
 	}
 	
 	@Test

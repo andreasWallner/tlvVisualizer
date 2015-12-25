@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,6 +29,10 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SegmentEvent;
+import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -62,6 +68,7 @@ public class MainView extends ViewPart {
 	private Action action2;
 	private Action doubleClickAction;
 	private Clipboard _clipboard;
+	Timer timer;
 	
 	private HashMap<Long, TagInfo> _tagInfo;
 
@@ -271,19 +278,13 @@ public class MainView extends ViewPart {
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
 		
-		Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
+		final Text text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
 		//text.setText("6F1A840E315041592E5359532E4444463031A5088801025F2D02656E");
 		text.setText("8407A0000000041010A50F500A4D617374657243617264870101");
 		GridData labelLayoutData = new GridData();
 		text.setLayoutData(labelLayoutData);
 		labelLayoutData.horizontalAlignment = SWT.FILL;
 		labelLayoutData.grabExcessHorizontalSpace = true;
-		
-		Button button = new Button(parent, SWT.NONE);
-		button.setText("parse");
-		GridData buttonLayoutData = new GridData();
-		button.setLayoutData(buttonLayoutData);
-		buttonLayoutData.horizontalAlignment = SWT.END;
 		
 		Button cbButton = new Button(parent, SWT.NONE);
 		cbButton.setText("parse to clipboard");
@@ -345,19 +346,40 @@ public class MainView extends ViewPart {
 		//hookDoubleClickAction();
 		//contributeToActionBars();
 		
-		button.addSelectionListener(new SelectionListener() {
+		timer = new Timer();
+		text.addKeyListener(new KeyListener() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
-				final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
-				
-				viewer.setInput(new TreeRootWrapper(tlvs));
-				viewer.refresh();
+			public void keyPressed(KeyEvent arg0) {
+				if(arg0.character == '\r') {
+					final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
+					final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
+					
+					viewer.setInput(new TreeRootWrapper(tlvs));
+					viewer.refresh();					
+				} else if(arg0.character != 0) {
+					timer.cancel();
+					timer = new Timer();
+					timer.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							System.out.println("called");
+							parent.getDisplay().asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
+									final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
+									
+									viewer.setInput(new TreeRootWrapper(tlvs));
+									viewer.refresh();					
+								}
+							});
+						}
+					}, 500);
+				}
 			}
-			
+
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {	
-			}
+			public void keyReleased(KeyEvent arg0) {}
 		});
 		cbButton.addSelectionListener(new SelectionListener() {
 			@Override

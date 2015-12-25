@@ -92,6 +92,8 @@ public class ConstructedTLVTest {
 				Arrays.asList(
 					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] { 0x33, 0x44 }),
 					new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 2), new byte[] { 0x11, 0x22 }))));
+		
+		assertThat(ref, is(not("ConstructedTLV(ID(1, false, 1), [PrimitiveTLV(ID(2, true, 2), [0x11,0x22,], false), PrimitiveTLV(ID(2, true, 3), [0x33,0x44,], false), ], false)")));
 	}
 	
 	@Test
