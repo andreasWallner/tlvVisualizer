@@ -16,38 +16,65 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SegmentEvent;
-import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import at.innovative_solutions.tlv.*;
+import at.innovative_solutions.tlv.ConstructedTLV;
+import at.innovative_solutions.tlv.DecodingFormatter;
+import at.innovative_solutions.tlv.EMVValueDecoder;
+import at.innovative_solutions.tlv.ErrorTLV;
+import at.innovative_solutions.tlv.PrimitiveTLV;
+import at.innovative_solutions.tlv.TLV;
+import at.innovative_solutions.tlv.Utils;
 
 public class MainView extends ViewPart {
 
@@ -62,13 +89,16 @@ public class MainView extends ViewPart {
 	public static final String PROP_DECODED = "DECODED";
 	public static final String PROP_ENCODED = "ENCODED";
 	public static final String[] PROPS = { PROP_ID, PROP_SIZE, PROP_NAME, PROP_DECODED, PROP_ENCODED };
+	
+	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
+	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
 
 	private TreeViewer viewer;
 	private Action action1;
 	private Action action2;
 	private Action doubleClickAction;
-	private Clipboard _clipboard;
-	Timer timer;
+	private Timer timer;
+	private final IEclipsePreferences _preferences;
 	
 	private HashMap<Long, TagInfo> _tagInfo;
 
@@ -241,6 +271,7 @@ public class MainView extends ViewPart {
 	 * The constructor.
 	 */
 	public MainView() {
+		_preferences = InstanceScope.INSTANCE.getNode(PREFERENCE_NODE);
 		Bundle bundle = Platform.getBundle("at.innovative-solutions.tlvVisualizer");
 		URL fileURL = bundle.getEntry("resources/EMV.xml");
 		try {
@@ -273,7 +304,7 @@ public class MainView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		_clipboard = new Clipboard(parent.getDisplay());
+		final Clipboard clipboard = new Clipboard(parent.getDisplay());
 		
 		GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
@@ -344,7 +375,7 @@ public class MainView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		//hookDoubleClickAction();
-		//contributeToActionBars();
+		contributeToActionBars();
 		
 		timer = new Timer();
 		text.addKeyListener(new KeyListener() {
@@ -357,24 +388,26 @@ public class MainView extends ViewPart {
 					viewer.setInput(new TreeRootWrapper(tlvs));
 					viewer.refresh();					
 				} else if(arg0.character != 0) {
-					timer.cancel();
-					timer = new Timer();
-					timer.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							System.out.println("called");
-							parent.getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
-									final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
-									
-									viewer.setInput(new TreeRootWrapper(tlvs));
-									viewer.refresh();					
-								}
-							});
-						}
-					}, 500);
+					if(_preferences.getBoolean("auto-update", false)) {
+						timer.cancel();
+						timer = new Timer();
+						timer.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								System.out.println("called");
+								parent.getDisplay().asyncExec(new Runnable() {
+									@Override
+									public void run() {
+										final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(text.getText()));
+										final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
+										
+										viewer.setInput(new TreeRootWrapper(tlvs));
+										viewer.refresh();					
+									}
+								});
+							}
+						}, 500);
+					}
 				}
 			}
 
@@ -388,7 +421,7 @@ public class MainView extends ViewPart {
 				final List<TLV> tlvs = TLV.parseTLVs(input);
 				String formatted = new DecodingFormatter("  ", _tagInfo).format(tlvs);
 				
-				_clipboard.setContents(new Object[] {formatted}, new Transfer[]{TextTransfer.getInstance()});
+				clipboard.setContents(new Object[] {formatted}, new Transfer[]{TextTransfer.getInstance()});
 			}
 			
 			@Override
@@ -418,9 +451,7 @@ public class MainView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
+		manager.add(new BooleanPreferenceAction("Auto update", _preferences, PREFERENCE_AUTO_UPDATE));
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -485,5 +516,14 @@ public class MainView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	@Override
+	public void dispose() {
+		try {
+			_preferences.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
 	}
 }
