@@ -24,26 +24,39 @@ public class Utils {
 	    }
 	    return new String(hexChars);
 	}
-	
+
 	// TODO implement checks for characters
 	public static byte[] hexStringToBytes(String s) {
 		s = s.replaceAll(" ", "");
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
+		boolean odd = s.length() % 2 != 0;
+
+	    int byteLen = s.length() / 2 + (odd ? 1 : 0);
+	    byte[] data = new byte[byteLen];
+
+	    int charIdx = 0;
+	    int byteIdx = 0;
+	    if(odd) {
+			data[0] = (byte) Character.digit(s.charAt(0), 16);
+			charIdx = 1;
+			byteIdx = 1;
+	    }
+
+	    while(byteIdx < byteLen) {
+			data[byteIdx] = (byte) ((Character.digit(s.charAt(charIdx), 16) << 4)
+			                       + Character.digit(s.charAt(charIdx + 1), 16));
+			byteIdx += 1;
+			charIdx += 2;
 	    }
 	    return data;
 	}
-	
+
 	public static String printChars(String chars, int count) {
 		StringBuilder b = new StringBuilder();
 		for(int i = 0; i < count; i++)
 			b.append(chars);
 		return b.toString();
 	}
-	
+
 	public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
 	    TransformerFactory tf = TransformerFactory.newInstance();
 	    Transformer transformer = tf.newTransformer();
@@ -53,7 +66,7 @@ public class Utils {
 	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
-	    transformer.transform(new DOMSource(doc), 
+	    transformer.transform(new DOMSource(doc),
 	         new StreamResult(new OutputStreamWriter(out, "UTF-8")));
 	}
 }
