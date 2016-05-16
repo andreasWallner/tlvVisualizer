@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -26,7 +25,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -47,21 +45,18 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
@@ -73,6 +68,7 @@ import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.DecodingFormatter;
 import at.innovative_solutions.tlv.EMVValueDecoder;
 import at.innovative_solutions.tlv.ErrorTLV;
+import at.innovative_solutions.tlv.InvalidEncodedValueException;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
@@ -90,7 +86,7 @@ public class MainView extends ViewPart {
 	public static final String PROP_DECODED = "DECODED";
 	public static final String PROP_ENCODED = "ENCODED";
 	public static final String[] PROPS = { PROP_ID, PROP_SIZE, PROP_NAME,
-			PROP_DECODED, PROP_ENCODED };
+		PROP_DECODED, PROP_ENCODED };
 
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
 	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
@@ -123,40 +119,48 @@ public class MainView extends ViewPart {
 	}
 
 	class TLVContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ConstructedTLV)
 				return ((ConstructedTLV) parentElement).getTLVs().toArray();
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return ((TLV) element).getParent();
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof ConstructedTLV)
 				return ((ConstructedTLV) element).getTLVs().size() > 0;
-			return false;
+				return false;
 		}
 
+		@Override
 		public Object[] getElements(Object element) {
 			if (element instanceof TreeRootWrapper)
 				return ((TreeRootWrapper) element).getWrapped();
 			return getChildren(element);
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
 	class TLVLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (!(element instanceof TLV))
 				return null;
@@ -200,16 +204,20 @@ public class MainView extends ViewPart {
 			return ret;
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 	}
@@ -223,14 +231,17 @@ public class MainView extends ViewPart {
 			_serialized = serialized;
 		}
 
+		@Override
 		public boolean canModify(Object element, String property) {
 			if (property == PROP_ID)
 				return true;
-			if (property == PROP_ENCODED && element instanceof PrimitiveTLV)
+			if ((property == PROP_ENCODED || property == PROP_DECODED)
+					&& element instanceof PrimitiveTLV)
 				return true;
 			return false;
 		}
 
+		@Override
 		public Object getValue(Object element, String property) {
 			TLV e = (TLV) element;
 			Long tagNum = e.getID() != null ? e.getID().toLong() : 0;
@@ -271,6 +282,7 @@ public class MainView extends ViewPart {
 			return ret;
 		}
 
+		@Override
 		public void modify(Object element, String property, Object value) {
 			if (element instanceof Item)
 				element = ((Item) element).getData();
@@ -280,6 +292,20 @@ public class MainView extends ViewPart {
 				byte[] idBytes = Utils.hexStringToBytes(value.toString());
 				ByteBuffer buffer = ByteBuffer.wrap(idBytes);
 				tlv.setID(at.innovative_solutions.tlv.ID.parseID(buffer));
+			} else if (property == PROP_DECODED) {
+				PrimitiveTLV tlv = (PrimitiveTLV) element;
+				Long tagNum = tlv.getID() != null ? tlv.getID().toLong() : 0;
+				byte[] encoded = null;
+				try {
+					encoded = EMVValueDecoder.toValue(value.toString(), _tagInfo.get(tagNum)._format);
+					tlv.setData(encoded);
+				} catch(InvalidEncodedValueException ex)
+				{
+					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+					box.setText("Invalid input");
+					box.setMessage("Invalid input for element of type " + _tagInfo.get(tagNum)._format + "\n" + ex.getMessage());
+					box.open();
+				}
 			} else if (property == PROP_ENCODED) {
 				PrimitiveTLV tlv = (PrimitiveTLV) element;
 				tlv.setData(Utils.hexStringToBytes(value.toString()));
@@ -335,6 +361,7 @@ public class MainView extends ViewPart {
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		_clipboard = new Clipboard(parent.getDisplay());
 
@@ -344,7 +371,7 @@ public class MainView extends ViewPart {
 		_textField = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
 		// text.setText("6F1A840E315041592E5359532E4444463031A5088801025F2D02656E");
 		_textField
-				.setText("8407A0000000041010A50F500A4D617374657243617264870101");
+		.setText("8407A0000000041010A50F500A4D617374657243617264870101");
 		final GridData labelLayoutData = new GridData();
 		_textField.setLayoutData(labelLayoutData);
 		labelLayoutData.horizontalAlignment = SWT.FILL;
@@ -400,10 +427,10 @@ public class MainView extends ViewPart {
 
 		// Create the help context id for the viewer's control
 		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(_viewer.getControl(),
-						"at.innovative-solutions.tlvVisualizer.viewer");
+		.getWorkbench()
+		.getHelpSystem()
+		.setHelp(_viewer.getControl(),
+				"at.innovative-solutions.tlvVisualizer.viewer");
 		makeActions();
 		hookContextMenu();
 		// hookDoubleClickAction();
@@ -416,13 +443,12 @@ public class MainView extends ViewPart {
 				if (arg0.character == '\r') {
 					_parseTextFieldAction.run();
 				} else if (arg0.character != 0) {
-					if (_preferences.getBoolean("auto-update", false)) {
+					if (_preferences.getBoolean(PREFERENCE_AUTO_UPDATE, false)) {
 						timer.cancel();
 						timer = new Timer();
 						timer.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								System.out.println("called");
 								parent.getDisplay().asyncExec(new Runnable() {
 									@Override
 									public void run() {
@@ -454,6 +480,7 @@ public class MainView extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				MainView.this.fillContextMenu(manager);
 			}
@@ -495,7 +522,7 @@ public class MainView extends ViewPart {
 						.hexStringToBytes(_textField.getText()));
 				final List<TLV> tlvs = TLV.parseTLVs(input);
 				String formatted = new DecodingFormatter("  ", _tagInfo)
-						.format(tlvs);
+				.format(tlvs);
 
 				_clipboard.setContents(new Object[] { formatted },
 						new Transfer[] { TextTransfer.getInstance() });
@@ -503,7 +530,7 @@ public class MainView extends ViewPart {
 		};
 		_copyParsedAction.setText("Copy parsed");
 		_copyParsedAction
-				.setToolTipText("Copies parsed and formatted text to clipboard");
+		.setToolTipText("Copies parsed and formatted text to clipboard");
 		_copyParsedAction.setImageDescriptor(sharedImages
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
@@ -525,6 +552,7 @@ public class MainView extends ViewPart {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
 		doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = _viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
@@ -536,6 +564,7 @@ public class MainView extends ViewPart {
 
 	private void hookDoubleClickAction() {
 		_viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
@@ -550,6 +579,7 @@ public class MainView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		_viewer.getControl().setFocus();
 	}
