@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>at.innovative-solutions.tlvVisualizer</groupId>
+	<artifactId>at.innovative-solutions.tlvVisualizer.releng</artifactId>
+	<version>0.0.1</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tycho-version>0.23.0</tycho-version>
+		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>luna</id>
+			<url>${luna-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>../at.innovative-solutions.tlvVisualizer</module>
+		<module>../at.innovative-solutions.tlvVisualizer.feature</module>
+		<module>../at.innovative-solutions.tlvVisualizer.test</module>
+		<module>../at.innovative-solutions.tlvVisualizer.releng.p2</module>
+	</modules>
+</project>

@@ -6,12 +6,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>  
-	</properties>
-	
 	<modules>
-		<module>at.innovative-solutions.tlvVisualizer</module>
-		<module>at.innovative-solutions.tlvVisualizer.test</module>
+		<module>at.innovative-solutions.tlvVisualizer.releng</module>
 	</modules>
 </project>

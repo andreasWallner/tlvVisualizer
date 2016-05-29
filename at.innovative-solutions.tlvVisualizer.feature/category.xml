@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="at.innovative-solutions.tlvVisualizer" version="1.0.0.qualifier">
+      <category name="TLV"/>
+   </bundle>
+   <category-def name="TLV" label="TLV"/>
+</site>
