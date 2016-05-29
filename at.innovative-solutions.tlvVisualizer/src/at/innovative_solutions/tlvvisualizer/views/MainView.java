@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,10 +33,12 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -68,6 +71,7 @@ import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.DecodingFormatter;
 import at.innovative_solutions.tlv.EMVValueDecoder;
 import at.innovative_solutions.tlv.ErrorTLV;
+import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.InvalidEncodedValueException;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
@@ -94,6 +98,9 @@ public class MainView extends ViewPart {
 	private TreeViewer _viewer;
 	private Text _textField;
 	private Action _copyParsedAction;
+	private Action _deleteAction;
+	private Action _addPrimitiveAction;
+	private Action _addConstructedAction;
 	private Action _parseTextFieldAction;
 	private Action doubleClickAction;
 	private Timer timer;
@@ -425,6 +432,27 @@ public class MainView extends ViewPart {
 		_viewer.setCellModifier(new TLVCellModifier(_viewer, _textField));
 		_viewer.setCellEditors(editors);
 
+		_viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				_deleteAction.setEnabled(false);
+				_addPrimitiveAction.setEnabled(false);
+				_addConstructedAction.setEnabled(false);
+
+				if(!event.getSelection().isEmpty())
+					_deleteAction.setEnabled(true);
+				else
+					return;
+
+				IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+				TLV tlv = (TLV)sel.getFirstElement();
+				if(tlv instanceof ConstructedTLV) {
+					_addPrimitiveAction.setEnabled(true);
+					_addConstructedAction.setEnabled(true);
+				}
+			}
+		});
+
 		// Create the help context id for the viewer's control
 		PlatformUI
 		.getWorkbench()
@@ -503,6 +531,9 @@ public class MainView extends ViewPart {
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(_copyParsedAction);
+		manager.add(_deleteAction);
+		manager.add(_addPrimitiveAction);
+		manager.add(_addConstructedAction);
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
@@ -518,21 +549,76 @@ public class MainView extends ViewPart {
 		_copyParsedAction = new Action() {
 			@Override
 			public void run() {
-				final ByteBuffer input = ByteBuffer.wrap(Utils
-						.hexStringToBytes(_textField.getText()));
+				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(_textField.getText()));
 				final List<TLV> tlvs = TLV.parseTLVs(input);
-				String formatted = new DecodingFormatter("  ", _tagInfo)
-				.format(tlvs);
+				String formatted = new DecodingFormatter("  ", _tagInfo).format(tlvs);
 
 				_clipboard.setContents(new Object[] { formatted },
 						new Transfer[] { TextTransfer.getInstance() });
 			}
 		};
 		_copyParsedAction.setText("Copy parsed");
-		_copyParsedAction
-		.setToolTipText("Copies parsed and formatted text to clipboard");
+		_copyParsedAction.setToolTipText("Copies parsed and formatted text to clipboard");
 		_copyParsedAction.setImageDescriptor(sharedImages
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+
+		_deleteAction = new Action() {
+			@Override
+			public void run() {
+				if(_viewer.getSelection().isEmpty())
+					return;
+				if(!(_viewer.getSelection() instanceof IStructuredSelection))
+					return;
+
+				IStructuredSelection sel = (IStructuredSelection)_viewer.getSelection();
+				TLV tlv = (TLV)sel.getFirstElement();
+				ConstructedTLV parent = (ConstructedTLV)tlv.getParent();
+				if(parent != null) {
+					parent.removeChild(tlv);
+				} else {
+					List<TLV> newTlvs = new LinkedList<TLV>();
+					Object[] oldTlvs = ((TreeRootWrapper)_viewer.getInput()).getWrapped();
+					for(Object o : oldTlvs)
+						if(o != tlv)
+							newTlvs.add((TLV)o);
+					_viewer.setInput(new TreeRootWrapper(newTlvs));
+				}
+
+				_viewer.refresh();
+				Object[] input = ((TreeRootWrapper) _viewer.getInput())
+						.getWrapped();
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				for (Object o : input) {
+					TLV t = (TLV) o;
+					byte[] serialized = t.toBytes();
+					stream.write(serialized, 0, serialized.length);
+				}
+				_textField.setText(Utils.bytesToHexString(stream.toByteArray()));
+			}
+		};
+		_deleteAction.setText("Delete");
+		_deleteAction.setToolTipText("Removes selected TLV and sub-TLVs");
+		_deleteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+
+		_addPrimitiveAction = new Action() {
+			@Override
+			public void run() {
+				addTlvToSelected(new PrimitiveTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, false, 0), new byte[] { }));
+			}
+		};
+		_addPrimitiveAction.setText("Add primitive TLV");
+		_addPrimitiveAction.setToolTipText("Adds new primitive TLV");
+		_addPrimitiveAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+
+		_addConstructedAction = new Action() {
+			@Override
+			public void run() {
+				addTlvToSelected(new ConstructedTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, true, 0), new LinkedList<TLV>()));
+			}
+		};
+		_addConstructedAction.setText("Add constructed TLV");
+		_addConstructedAction.setToolTipText("Adds new constructed TLV");
+		_addConstructedAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
 		_parseTextFieldAction = new Action() {
 			@Override
@@ -560,6 +646,34 @@ public class MainView extends ViewPart {
 				showMessage("Double-click detected on " + obj.toString());
 			}
 		};
+	}
+
+	private void addTlvToSelected(TLV tlv) {
+		if(_viewer.getSelection().isEmpty())
+			throw new RuntimeException("can't add without selected item");
+		if(!(_viewer.getSelection() instanceof IStructuredSelection))
+			return;
+
+		IStructuredSelection sel = (IStructuredSelection)_viewer.getSelection();
+		if(!(sel.getFirstElement() instanceof ConstructedTLV))
+			return;
+
+		ConstructedTLV selected = (ConstructedTLV)sel.getFirstElement();
+		selected.appendChild(tlv);
+		refreshViewer();
+	}
+
+	private void refreshViewer() {
+		_viewer.refresh();
+		Object[] input = ((TreeRootWrapper) _viewer.getInput())
+				.getWrapped();
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		for (Object o : input) {
+			TLV t = (TLV) o;
+			byte[] serialized = t.toBytes();
+			stream.write(serialized, 0, serialized.length);
+		}
+		_textField.setText(Utils.bytesToHexString(stream.toByteArray()));
 	}
 
 	private void hookDoubleClickAction() {
