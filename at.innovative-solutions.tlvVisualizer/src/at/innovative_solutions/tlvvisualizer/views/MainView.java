@@ -96,33 +96,33 @@ public class MainView extends ViewPart {
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
 	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
 
-	private TreeViewer _viewer;
-	private Text _textField;
-	private Action _copyParsedAction;
-	private Action _deleteAction;
-	private Action _addPrimitiveAction;
-	private Action _addConstructedAction;
-	private Action _parseTextFieldAction;
-	private Action doubleClickAction;
-	private Timer timer;
-	private final IEclipsePreferences _preferences;
-	Clipboard _clipboard;
+	private TreeViewer fViewer;
+	private Text fTextField;
+	private Action fCopyParsedAction;
+	private Action fDeleteAction;
+	private Action fAddPrimitiveAction;
+	private Action fAddConstructedAction;
+	private Action fParseTextFieldAction;
+	private Action fDoubleClickAction;
+	private Timer fTimer;
+	private final IEclipsePreferences fPreferences;
+	Clipboard fClipboard;
 
-	private HashMap<Long, TagInfo> _tagInfo;
+	private HashMap<Long, TagInfo> fTagInfo;
 
 	class TreeRootWrapper {
-		Object[] _wrapped;
+		Object[] fWrapped;
 
 		@SuppressWarnings("rawtypes")
 		TreeRootWrapper(Object toWrap) {
 			if (toWrap instanceof List)
-				_wrapped = ((List) toWrap).toArray();
+				fWrapped = ((List) toWrap).toArray();
 			else
-				_wrapped = new Object[] { toWrap };
+				fWrapped = new Object[] { toWrap };
 		}
 
 		Object[] getWrapped() {
-			return _wrapped;
+			return fWrapped;
 		}
 	}
 
@@ -191,16 +191,16 @@ public class MainView extends ViewPart {
 				if (element instanceof ErrorTLV) {
 					ret = "ERROR: " + ((ErrorTLV) element).getError();
 				} else {
-					if (_tagInfo.containsKey(tagNum))
-						ret = _tagInfo.get(tagNum)._name;
+					if (fTagInfo.containsKey(tagNum))
+						ret = fTagInfo.get(tagNum)._name;
 				}
 				break;
 			case 4:
-				if (e instanceof PrimitiveTLV && _tagInfo.containsKey(tagNum))
+				if (e instanceof PrimitiveTLV && fTagInfo.containsKey(tagNum))
 					try {
 						ret = EMVValueDecoder.asString(
 								((PrimitiveTLV) e).getData(),
-								_tagInfo.get(tagNum)._format);
+								fTagInfo.get(tagNum)._format);
 					} catch (UnsupportedEncodingException ex) {
 					}
 				break;
@@ -234,12 +234,12 @@ public class MainView extends ViewPart {
 	}
 
 	class TLVCellModifier implements ICellModifier {
-		private Viewer _viewer;
-		private Text _serialized;
+		private Viewer fViewer;
+		private Text fSerialized;
 
 		public TLVCellModifier(Viewer viewer, Text serialized) {
-			_viewer = viewer;
-			_serialized = serialized;
+			fViewer = viewer;
+			fSerialized = serialized;
 		}
 
 		@Override
@@ -272,16 +272,16 @@ public class MainView extends ViewPart {
 				if (element instanceof ErrorTLV) {
 					ret = "ERROR: " + ((ErrorTLV) element).getError();
 				} else {
-					if (_tagInfo.containsKey(tagNum))
-						ret = _tagInfo.get(tagNum)._name;
+					if (fTagInfo.containsKey(tagNum))
+						ret = fTagInfo.get(tagNum)._name;
 				}
 				break;
 			case PROP_DECODED:
-				if (e instanceof PrimitiveTLV && _tagInfo.containsKey(tagNum))
+				if (e instanceof PrimitiveTLV && fTagInfo.containsKey(tagNum))
 					try {
 						ret = EMVValueDecoder.asString(
 								((PrimitiveTLV) e).getData(),
-								_tagInfo.get(tagNum)._format);
+								fTagInfo.get(tagNum)._format);
 					} catch (UnsupportedEncodingException ex) {
 					}
 				break;
@@ -311,21 +311,21 @@ public class MainView extends ViewPart {
 				Long tagNum = tlv.getID() != null ? tlv.getID().toLong() : 0;
 				byte[] encoded = null;
 				try {
-					encoded = EMVValueDecoder.toValue(value.toString(), _tagInfo.get(tagNum)._format);
+					encoded = EMVValueDecoder.toValue(value.toString(), fTagInfo.get(tagNum)._format);
 					tlv.setData(encoded);
 				} catch(InvalidEncodedValueException ex)
 				{
 					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 					box.setText("Invalid input");
-					box.setMessage("Invalid input for element of type " + _tagInfo.get(tagNum)._format + "\n" + ex.getMessage());
+					box.setMessage("Invalid input for element of type " + fTagInfo.get(tagNum)._format + "\n" + ex.getMessage());
 					box.open();
 				}
 			} else if (property == PROP_ENCODED) {
 				PrimitiveTLV tlv = (PrimitiveTLV) element;
 				tlv.setData(Utils.hexStringToBytes(value.toString()));
 			}
-			_viewer.refresh();
-			Object[] input = ((TreeRootWrapper) _viewer.getInput())
+			fViewer.refresh();
+			Object[] input = ((TreeRootWrapper) fViewer.getInput())
 					.getWrapped();
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			for (Object o : input) {
@@ -333,7 +333,7 @@ public class MainView extends ViewPart {
 				byte[] serialized = t.toBytes();
 				stream.write(serialized, 0, serialized.length);
 			}
-			_serialized.setText(Utils.bytesToHexString(stream.toByteArray()));
+			fSerialized.setText(Utils.bytesToHexString(stream.toByteArray()));
 		}
 	}
 
@@ -341,7 +341,7 @@ public class MainView extends ViewPart {
 	 * The constructor.
 	 */
 	public MainView() {
-		_preferences = InstanceScope.INSTANCE.getNode(PREFERENCE_NODE);
+		fPreferences = InstanceScope.INSTANCE.getNode(PREFERENCE_NODE);
 		Bundle bundle = Platform
 				.getBundle("at.innovative-solutions.tlvVisualizer");
 		URL fileURL = bundle.getEntry("resources/EMV.xml");
@@ -353,9 +353,9 @@ public class MainView extends ViewPart {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(file);
 
-			_tagInfo = TagInfo.loadXML(doc);
+			fTagInfo = TagInfo.loadXML(doc);
 
-			System.out.println(_tagInfo.get(0x9F01));
+			System.out.println(fTagInfo.get(0x9F01));
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -377,17 +377,17 @@ public class MainView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		_clipboard = new Clipboard(parent.getDisplay());
+		fClipboard = new Clipboard(parent.getDisplay());
 
 		final GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
 
-		_textField = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
+		fTextField = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
 		// text.setText("6F1A840E315041592E5359532E4444463031A5088801025F2D02656E");
-		_textField
+		fTextField
 		.setText("8407A0000000041010A50F500A4D617374657243617264870101");
 		final GridData labelLayoutData = new GridData();
-		_textField.setLayoutData(labelLayoutData);
+		fTextField.setLayoutData(labelLayoutData);
 		labelLayoutData.horizontalAlignment = SWT.FILL;
 		labelLayoutData.grabExcessHorizontalSpace = true;
 
@@ -395,7 +395,7 @@ public class MainView extends ViewPart {
 				| SWT.V_SCROLL);
 		tlvTree.setHeaderVisible(true);
 		tlvTree.setLinesVisible(true);
-		_viewer = new TreeViewer(tlvTree);
+		fViewer = new TreeViewer(tlvTree);
 
 		final TreeColumn column1 = new TreeColumn(tlvTree, SWT.LEFT);
 		column1.setAlignment(SWT.LEFT);
@@ -422,9 +422,9 @@ public class MainView extends ViewPart {
 		column6.setText("Encoded");
 		column6.setWidth(300);
 
-		_viewer.setContentProvider(new TLVContentProvider());
-		_viewer.setLabelProvider(new TLVLabelProvider());
-		_viewer.setInput(null);
+		fViewer.setContentProvider(new TLVContentProvider());
+		fViewer.setLabelProvider(new TLVLabelProvider());
+		fViewer.setInput(null);
 		final GridData viewerLayoutData = new GridData();
 		viewerLayoutData.horizontalAlignment = GridData.FILL;
 		viewerLayoutData.verticalAlignment = GridData.FILL;
@@ -436,27 +436,27 @@ public class MainView extends ViewPart {
 		for(int i = 0; i < PROPS.length; i++)
 			editors[i] = new TextCellEditor(tlvTree);
 
-		_viewer.setColumnProperties(PROPS);
-		_viewer.setCellModifier(new TLVCellModifier(_viewer, _textField));
-		_viewer.setCellEditors(editors);
+		fViewer.setColumnProperties(PROPS);
+		fViewer.setCellModifier(new TLVCellModifier(fViewer, fTextField));
+		fViewer.setCellEditors(editors);
 
-		_viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				_deleteAction.setEnabled(false);
-				_addPrimitiveAction.setEnabled(false);
-				_addConstructedAction.setEnabled(false);
+				fDeleteAction.setEnabled(false);
+				fAddPrimitiveAction.setEnabled(false);
+				fAddConstructedAction.setEnabled(false);
 
 				if(!event.getSelection().isEmpty())
-					_deleteAction.setEnabled(true);
+					fDeleteAction.setEnabled(true);
 				else
 					return;
 
 				IStructuredSelection sel = (IStructuredSelection)event.getSelection();
 				TLV tlv = (TLV)sel.getFirstElement();
 				if(tlv instanceof ConstructedTLV) {
-					_addPrimitiveAction.setEnabled(true);
-					_addConstructedAction.setEnabled(true);
+					fAddPrimitiveAction.setEnabled(true);
+					fAddConstructedAction.setEnabled(true);
 				}
 			}
 		});
@@ -465,38 +465,38 @@ public class MainView extends ViewPart {
 		PlatformUI
 		.getWorkbench()
 		.getHelpSystem()
-		.setHelp(_viewer.getControl(),
+		.setHelp(fViewer.getControl(),
 				"at.innovative-solutions.tlvVisualizer.viewer");
 		makeActions();
 		hookContextMenu();
 		// hookDoubleClickAction();
 		contributeToActionBars();
 
-		timer = new Timer();
-		_textField.addKeyListener(new KeyListener() {
+		fTimer = new Timer();
+		fTextField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				if (arg0.character == '\r') {
-					_parseTextFieldAction.run();
+					fParseTextFieldAction.run();
 				} else if (arg0.character != 0) {
-					if (_preferences.getBoolean(PREFERENCE_AUTO_UPDATE, false)) {
-						timer.cancel();
-						timer = new Timer();
-						timer.schedule(new TimerTask() {
+					if (fPreferences.getBoolean(PREFERENCE_AUTO_UPDATE, false)) {
+						fTimer.cancel();
+						fTimer = new Timer();
+						fTimer.schedule(new TimerTask() {
 							@Override
 							public void run() {
 								parent.getDisplay().asyncExec(new Runnable() {
 									@Override
 									public void run() {
 										final ByteBuffer input = ByteBuffer.wrap(Utils
-												.hexStringToBytes(_textField
+												.hexStringToBytes(fTextField
 														.getText()));
 										final List<TLV> tlvs = TLV
 												.parseTLVsWithErrors(input);
 
-										_viewer.setInput(new TreeRootWrapper(
+										fViewer.setInput(new TreeRootWrapper(
 												tlvs));
-										_viewer.refresh();
+										fViewer.refresh();
 									}
 								});
 							}
@@ -521,9 +521,9 @@ public class MainView extends ViewPart {
 				MainView.this.fillContextMenu(manager);
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(_viewer.getControl());
-		_viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, _viewer);
+		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
+		fViewer.getControl().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, fViewer);
 	}
 
 	private void contributeToActionBars() {
@@ -533,67 +533,67 @@ public class MainView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(new BooleanPreferenceAction("Auto update", _preferences,
+		manager.add(new BooleanPreferenceAction("Auto update", fPreferences,
 				PREFERENCE_AUTO_UPDATE));
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(_copyParsedAction);
-		manager.add(_deleteAction);
-		manager.add(_addPrimitiveAction);
-		manager.add(_addConstructedAction);
+		manager.add(fCopyParsedAction);
+		manager.add(fDeleteAction);
+		manager.add(fAddPrimitiveAction);
+		manager.add(fAddConstructedAction);
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(_parseTextFieldAction);
-		manager.add(_copyParsedAction);
+		manager.add(fParseTextFieldAction);
+		manager.add(fCopyParsedAction);
 	}
 
 	private void makeActions() {
 		final ISharedImages sharedImages = PlatformUI.getWorkbench()
 				.getSharedImages();
 
-		_copyParsedAction = new Action() {
+		fCopyParsedAction = new Action() {
 			@Override
 			public void run() {
-				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(_textField.getText()));
+				final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(fTextField.getText()));
 				final List<TLV> tlvs = TLV.parseTLVs(input);
-				String formatted = new DecodingFormatter("  ", _tagInfo).format(tlvs);
+				String formatted = new DecodingFormatter("  ", fTagInfo).format(tlvs);
 
-				_clipboard.setContents(new Object[] { formatted },
+				fClipboard.setContents(new Object[] { formatted },
 						new Transfer[] { TextTransfer.getInstance() });
 			}
 		};
-		_copyParsedAction.setText("Copy parsed");
-		_copyParsedAction.setToolTipText("Copies parsed and formatted text to clipboard");
-		_copyParsedAction.setImageDescriptor(sharedImages
+		fCopyParsedAction.setText("Copy parsed");
+		fCopyParsedAction.setToolTipText("Copies parsed and formatted text to clipboard");
+		fCopyParsedAction.setImageDescriptor(sharedImages
 				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
-		_deleteAction = new Action() {
+		fDeleteAction = new Action() {
 			@Override
 			public void run() {
-				if(_viewer.getSelection().isEmpty())
+				if(fViewer.getSelection().isEmpty())
 					return;
-				if(!(_viewer.getSelection() instanceof IStructuredSelection))
+				if(!(fViewer.getSelection() instanceof IStructuredSelection))
 					return;
 
-				IStructuredSelection sel = (IStructuredSelection)_viewer.getSelection();
+				IStructuredSelection sel = (IStructuredSelection)fViewer.getSelection();
 				TLV tlv = (TLV)sel.getFirstElement();
 				ConstructedTLV parent = (ConstructedTLV)tlv.getParent();
 				if(parent != null) {
 					parent.removeChild(tlv);
 				} else {
 					List<TLV> newTlvs = new LinkedList<TLV>();
-					Object[] oldTlvs = ((TreeRootWrapper)_viewer.getInput()).getWrapped();
+					Object[] oldTlvs = ((TreeRootWrapper)fViewer.getInput()).getWrapped();
 					for(Object o : oldTlvs)
 						if(o != tlv)
 							newTlvs.add((TLV)o);
-					_viewer.setInput(new TreeRootWrapper(newTlvs));
+					fViewer.setInput(new TreeRootWrapper(newTlvs));
 				}
 
-				_viewer.refresh();
-				Object[] input = ((TreeRootWrapper) _viewer.getInput())
+				fViewer.refresh();
+				Object[] input = ((TreeRootWrapper) fViewer.getInput())
 						.getWrapped();
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				for (Object o : input) {
@@ -601,54 +601,54 @@ public class MainView extends ViewPart {
 					byte[] serialized = t.toBytes();
 					stream.write(serialized, 0, serialized.length);
 				}
-				_textField.setText(Utils.bytesToHexString(stream.toByteArray()));
+				fTextField.setText(Utils.bytesToHexString(stream.toByteArray()));
 			}
 		};
-		_deleteAction.setText("Delete");
-		_deleteAction.setToolTipText("Removes selected TLV and sub-TLVs");
-		_deleteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		fDeleteAction.setText("Delete");
+		fDeleteAction.setToolTipText("Removes selected TLV and sub-TLVs");
+		fDeleteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 
-		_addPrimitiveAction = new Action() {
+		fAddPrimitiveAction = new Action() {
 			@Override
 			public void run() {
 				addTlvToSelected(new PrimitiveTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, false, 0), new byte[] { }));
 			}
 		};
-		_addPrimitiveAction.setText("Add primitive TLV");
-		_addPrimitiveAction.setToolTipText("Adds new primitive TLV");
-		_addPrimitiveAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		fAddPrimitiveAction.setText("Add primitive TLV");
+		fAddPrimitiveAction.setToolTipText("Adds new primitive TLV");
+		fAddPrimitiveAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		_addConstructedAction = new Action() {
+		fAddConstructedAction = new Action() {
 			@Override
 			public void run() {
 				addTlvToSelected(new ConstructedTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, true, 0), new LinkedList<TLV>()));
 			}
 		};
-		_addConstructedAction.setText("Add constructed TLV");
-		_addConstructedAction.setToolTipText("Adds new constructed TLV");
-		_addConstructedAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		fAddConstructedAction.setText("Add constructed TLV");
+		fAddConstructedAction.setToolTipText("Adds new constructed TLV");
+		fAddConstructedAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 
-		_parseTextFieldAction = new Action() {
+		fParseTextFieldAction = new Action() {
 			@Override
 			public void run() {
 				List<TLV> tlvs = null;
-				byte[] data = Utils.hexStringToBytes(_textField.getText());
+				byte[] data = Utils.hexStringToBytes(fTextField.getText());
 				final ByteBuffer input = ByteBuffer.wrap(data);
 				tlvs = TLV.parseTLVsWithErrors(input);
 
-				_viewer.setInput(new TreeRootWrapper(tlvs));
-				_viewer.refresh();
+				fViewer.setInput(new TreeRootWrapper(tlvs));
+				fViewer.refresh();
 			}
 		};
-		_parseTextFieldAction.setText("Parse");
-		_parseTextFieldAction.setToolTipText("Parse text given");
-		_parseTextFieldAction.setImageDescriptor(sharedImages
+		fParseTextFieldAction.setText("Parse");
+		fParseTextFieldAction.setToolTipText("Parse text given");
+		fParseTextFieldAction.setImageDescriptor(sharedImages
 				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 
-		doubleClickAction = new Action() {
+		fDoubleClickAction = new Action() {
 			@Override
 			public void run() {
-				ISelection selection = _viewer.getSelection();
+				ISelection selection = fViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection)
 						.getFirstElement();
 				showMessage("Double-click detected on " + obj.toString());
@@ -657,12 +657,12 @@ public class MainView extends ViewPart {
 	}
 
 	private void addTlvToSelected(TLV tlv) {
-		if(_viewer.getSelection().isEmpty())
+		if(fViewer.getSelection().isEmpty())
 			throw new RuntimeException("can't add without selected item");
-		if(!(_viewer.getSelection() instanceof IStructuredSelection))
+		if(!(fViewer.getSelection() instanceof IStructuredSelection))
 			return;
 
-		IStructuredSelection sel = (IStructuredSelection)_viewer.getSelection();
+		IStructuredSelection sel = (IStructuredSelection)fViewer.getSelection();
 		if(!(sel.getFirstElement() instanceof ConstructedTLV))
 			return;
 
@@ -672,8 +672,8 @@ public class MainView extends ViewPart {
 	}
 
 	private void refreshViewer() {
-		_viewer.refresh();
-		Object[] input = ((TreeRootWrapper) _viewer.getInput())
+		fViewer.refresh();
+		Object[] input = ((TreeRootWrapper) fViewer.getInput())
 				.getWrapped();
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		for (Object o : input) {
@@ -681,20 +681,20 @@ public class MainView extends ViewPart {
 			byte[] serialized = t.toBytes();
 			stream.write(serialized, 0, serialized.length);
 		}
-		_textField.setText(Utils.bytesToHexString(stream.toByteArray()));
+		fTextField.setText(Utils.bytesToHexString(stream.toByteArray()));
 	}
 
 	private void hookDoubleClickAction() {
-		_viewer.addDoubleClickListener(new IDoubleClickListener() {
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
+				fDoubleClickAction.run();
 			}
 		});
 	}
 
 	private void showMessage(String message) {
-		MessageDialog.openInformation(_viewer.getControl().getShell(),
+		MessageDialog.openInformation(fViewer.getControl().getShell(),
 				"TLV Visualizer View", message);
 	}
 
@@ -703,13 +703,13 @@ public class MainView extends ViewPart {
 	 */
 	@Override
 	public void setFocus() {
-		_viewer.getControl().setFocus();
+		fViewer.getControl().setFocus();
 	}
 
 	@Override
 	public void dispose() {
 		try {
-			_preferences.flush();
+			fPreferences.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
