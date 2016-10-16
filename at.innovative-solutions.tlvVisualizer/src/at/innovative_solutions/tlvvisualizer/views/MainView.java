@@ -85,11 +85,12 @@ public class MainView extends ViewPart {
 	public static final String ID = "at.innovativesolutions.tlvvisualizer.views.MainView";
 
 	public static final String PROP_ID = "ID";
+	public static final String PROP_TYPE = "TYPE";
 	public static final String PROP_SIZE = "SIZE";
 	public static final String PROP_NAME = "NAME";
 	public static final String PROP_DECODED = "DECODED";
 	public static final String PROP_ENCODED = "ENCODED";
-	public static final String[] PROPS = { PROP_ID, PROP_SIZE, PROP_NAME,
+	public static final String[] PROPS = { PROP_ID, PROP_TYPE, PROP_SIZE, PROP_NAME,
 		PROP_DECODED, PROP_ENCODED };
 
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
@@ -181,9 +182,12 @@ public class MainView extends ViewPart {
 					ret = Utils.bytesToHexString(e.getID().toBytes());
 				break;
 			case 1:
-				ret = String.valueOf(e.getLength());
+				ret = e instanceof ConstructedTLV ? "C" : "P";
 				break;
 			case 2:
+				ret = String.valueOf(e.getLength());
+				break;
+			case 3:
 				if (element instanceof ErrorTLV) {
 					ret = "ERROR: " + ((ErrorTLV) element).getError();
 				} else {
@@ -191,7 +195,7 @@ public class MainView extends ViewPart {
 						ret = _tagInfo.get(tagNum)._name;
 				}
 				break;
-			case 3:
+			case 4:
 				if (e instanceof PrimitiveTLV && _tagInfo.containsKey(tagNum))
 					try {
 						ret = EMVValueDecoder.asString(
@@ -200,7 +204,7 @@ public class MainView extends ViewPart {
 					} catch (UnsupportedEncodingException ex) {
 					}
 				break;
-			case 4:
+			case 5:
 				if (element instanceof PrimitiveTLV)
 					ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
 				else if (element instanceof ErrorTLV)
@@ -257,6 +261,9 @@ public class MainView extends ViewPart {
 			case PROP_ID:
 				if (e.getID() != null)
 					ret = Utils.bytesToHexString(e.getID().toBytes());
+				break;
+			case PROP_TYPE:
+				ret = e instanceof ConstructedTLV ? "C" : "P";
 				break;
 			case PROP_SIZE:
 				ret = String.valueOf(e.getLength());
@@ -394,22 +401,26 @@ public class MainView extends ViewPart {
 		column1.setAlignment(SWT.LEFT);
 		column1.setText("ID");
 		column1.setWidth(100);
-		final TreeColumn column2 = new TreeColumn(tlvTree, SWT.RIGHT);
+		final TreeColumn column2 = new TreeColumn(tlvTree, SWT.CENTER);
 		column2.setAlignment(SWT.CENTER);
-		column2.setText("Size");
+		column2.setText("Type");
 		column2.setWidth(35);
 		final TreeColumn column3 = new TreeColumn(tlvTree, SWT.RIGHT);
-		column3.setAlignment(SWT.LEFT);
-		column3.setText("Name");
-		column3.setWidth(300);
+		column3.setAlignment(SWT.CENTER);
+		column3.setText("Size");
+		column3.setWidth(35);
 		final TreeColumn column4 = new TreeColumn(tlvTree, SWT.RIGHT);
 		column4.setAlignment(SWT.LEFT);
-		column4.setText("Decoded");
-		column4.setWidth(150);
+		column4.setText("Name");
+		column4.setWidth(300);
 		final TreeColumn column5 = new TreeColumn(tlvTree, SWT.RIGHT);
 		column5.setAlignment(SWT.LEFT);
-		column5.setText("Encoded");
-		column5.setWidth(300);
+		column5.setText("Decoded");
+		column5.setWidth(150);
+		final TreeColumn column6 = new TreeColumn(tlvTree, SWT.RIGHT);
+		column6.setAlignment(SWT.LEFT);
+		column6.setText("Encoded");
+		column6.setWidth(300);
 
 		_viewer.setContentProvider(new TLVContentProvider());
 		_viewer.setLabelProvider(new TLVLabelProvider());
@@ -421,12 +432,9 @@ public class MainView extends ViewPart {
 		viewerLayoutData.grabExcessVerticalSpace = true;
 		tlvTree.setLayoutData(viewerLayoutData);
 
-		final CellEditor[] editors = new CellEditor[5];
-		editors[0] = new TextCellEditor(tlvTree);
-		editors[1] = new TextCellEditor(tlvTree);
-		editors[2] = new TextCellEditor(tlvTree);
-		editors[3] = new TextCellEditor(tlvTree);
-		editors[4] = new TextCellEditor(tlvTree);
+		final CellEditor[] editors = new CellEditor[PROPS.length];
+		for(int i = 0; i < PROPS.length; i++)
+			editors[i] = new TextCellEditor(tlvTree);
 
 		_viewer.setColumnProperties(PROPS);
 		_viewer.setCellModifier(new TLVCellModifier(_viewer, _textField));

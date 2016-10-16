@@ -8,14 +8,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>0.23.0</tycho-version>
-		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+		<tycho-version>0.26.0</tycho-version>
+		<neon-repo.url>http://download.eclipse.org/releases/neon</neon-repo.url>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>luna</id>
-			<url>${luna-repo.url}</url>
+			<id>neon</id>
+			<url>${neon-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
