@@ -203,6 +203,22 @@ public class ConstructedTLVTest {
 						new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] {0x11})));
 		assertThat(tlv, is(expected));
 	}
+	
+	@Test
+	public void test_replaceChild_simple() {
+		ConstructedTLV tlv = new ConstructedTLV(new ID(ID.CLASS_APPLICATION, false, 1));
+		tlv.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 1), new byte[] {} ));
+		tlv.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 2), new byte[] {} ));
+		tlv.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] {} ));
+		
+		TLV toReplace = (TLV) tlv.getTLVs().toArray()[1];
+		tlv.replaceChild(toReplace, new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 99), new byte[] {} ));
+		
+		ConstructedTLV expected = new ConstructedTLV(new ID(ID.CLASS_APPLICATION, false, 1));
+		expected.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 1), new byte[] {} ));
+		expected.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 99), new byte[] {} ));
+		expected.appendChild(new PrimitiveTLV(new ID(ID.CLASS_CONTEXT, true, 3), new byte[] {} ));
+	}
 
 	@Test
 	public void test_toString_simple() {

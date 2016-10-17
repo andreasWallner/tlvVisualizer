@@ -1,6 +1,7 @@
 package at.innovative_solutions.tlv.test;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 import java.nio.ByteBuffer;
 
@@ -140,5 +141,17 @@ public class IDTest {
 	public void test_toLong_over127() {
 		final ID id = new ID(ID.CLASS_PRIVATE, true, 128);
 		assertEquals("id long", 0xDF8100L, id.toLong());
+	}
+	
+	@Test
+	public void test_withChangedPC_short() {
+		final ID id = new ID(ID.CLASS_PRIVATE, true, 5);
+		assertThat(id.withChangedPC(), equalTo(new ID(ID.CLASS_PRIVATE, false, 5)));
+	}
+	
+	@Test
+	public void test_withChangedPC_long() {
+		final ID id = new ID(ID.CLASS_CONTEXT, false, 12345678);
+		assertThat(id.withChangedPC(), equalTo(new ID(ID.CLASS_CONTEXT, true, 12345678)));
 	}
 }

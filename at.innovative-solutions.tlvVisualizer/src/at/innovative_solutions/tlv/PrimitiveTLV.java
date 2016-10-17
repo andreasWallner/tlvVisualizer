@@ -6,6 +6,10 @@ import java.util.Arrays;
 public class PrimitiveTLV extends TLV {
 	private byte[] _data;
 	
+	public PrimitiveTLV(final ID id) {
+		this(id, new byte[] {}, false);
+	}
+	
 	public PrimitiveTLV(final ID id, final byte[] data) {
 		this(id, data, false);
 	}

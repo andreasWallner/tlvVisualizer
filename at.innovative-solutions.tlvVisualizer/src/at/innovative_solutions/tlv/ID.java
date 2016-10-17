@@ -71,6 +71,10 @@ public class ID {
 			result = result << 8 | (bytes[n] & 0xff);
 		return result;
 	}
+	
+	public ID withChangedPC() {
+		return new ID(_tagClass, !_isPrimitive, _tagNumber, _longFormBytes);
+	}
 
 	// TODO protect against overflow
 	public static ID parseID(ByteBuffer octets) {
@@ -108,6 +112,7 @@ public class ID {
 				&& this._longFormBytes == ((ID)other)._longFormBytes;
 	}
 
+	//TODO wouldn't it be better to provide a normalized form and compare these?
 	public boolean equalContents(final Object other) {
 		if(!(other instanceof ID))
 			return false;

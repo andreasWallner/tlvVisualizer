@@ -9,6 +9,10 @@ import java.util.ListIterator;
 public class ConstructedTLV extends TLV {
 	LinkedList<TLV> _tlvs;
 
+	public ConstructedTLV(final ID id) {
+		this(id, new LinkedList<TLV>(), false);
+	}
+	
 	public ConstructedTLV(final ID id, final List<TLV> tlvs) {
 		this(id, tlvs, false);
 	}
@@ -85,6 +89,13 @@ public class ConstructedTLV extends TLV {
 				t.setParent(null);
 			}
 		}
+	}
+	
+	public void replaceChild(TLV toReplace, TLV newTlv) throws RuntimeException {
+		int idx = _tlvs.indexOf(toReplace);
+		if(idx < 0)
+			throw new RuntimeException("can't replace tlv that is not contained");
+		_tlvs.set(_tlvs.indexOf(toReplace), newTlv);
 	}
 
 	public void appendChild(TLV tlv) {

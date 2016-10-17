@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -182,7 +183,7 @@ public class MainView extends ViewPart {
 					ret = Utils.bytesToHexString(e.getID().toBytes());
 				break;
 			case 1:
-				ret = e instanceof ConstructedTLV ? "C" : "P";
+				ret = e.getID().isPrimitive() ? "P" : "C"; // TODO error tlv
 				break;
 			case 2:
 				ret = String.valueOf(e.getLength());
@@ -263,7 +264,7 @@ public class MainView extends ViewPart {
 					ret = Utils.bytesToHexString(e.getID().toBytes());
 				break;
 			case PROP_TYPE:
-				ret = e instanceof ConstructedTLV ? "C" : "P";
+				ret = e.getID().isPrimitive() ? "P" : "C";
 				break;
 			case PROP_SIZE:
 				ret = String.valueOf(e.getLength());
@@ -305,7 +306,49 @@ public class MainView extends ViewPart {
 				TLV tlv = (TLV) element;
 				byte[] idBytes = Utils.hexStringToBytes(value.toString());
 				ByteBuffer buffer = ByteBuffer.wrap(idBytes);
-				tlv.setID(at.innovative_solutions.tlv.ID.parseID(buffer));
+				ID newID = at.innovative_solutions.tlv.ID.parseID(buffer);
+				if(newID.isPrimitive() == tlv.getID().isPrimitive()) {
+					tlv.setID(newID);
+				} else {
+					String message;
+					if(tlv.getID().isPrimitive())
+						message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a primitive TLV\n"
+						        + "Should the tag be converted to a constructed TLV (loosing the current TLV content), the ID\n"
+								+ "be adapted for a primitive TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
+					else
+						message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a constructed TLV\n"
+						        + "Should the tag be converted to a primitive TLV (loosing all subtags), the ID\n"
+								+ "be adapted for a constructed TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
+					
+					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					MessageDialog dialog = new MessageDialog(shell, "Invalid ID", null, message, MessageDialog.QUESTION, new String[] {"Convert", "Adopt", "Cancel"}, 0);
+					int result = dialog.open();
+					
+					switch(result) {
+					case 0:
+						TLV newTlv = newID.isPrimitive() ? new PrimitiveTLV(newID) : new ConstructedTLV(newID);
+						ConstructedTLV parent = (ConstructedTLV)tlv.getParent();
+						if(parent != null) {
+							parent.replaceChild(tlv, newTlv);
+						} else {
+							List<TLV> newTlvs = new LinkedList<TLV>();
+							Object[] oldTlvs = ((TreeRootWrapper)fViewer.getInput()).getWrapped();
+							for(Object o : oldTlvs) {
+								if(o != tlv)
+									newTlvs.add((TLV)o);
+								else
+									newTlvs.add(newTlv);
+							}
+							fViewer.setInput(new TreeRootWrapper(newTlvs));
+						}
+						break;
+					case 1:
+						tlv.setID(newID.withChangedPC());
+						break;
+					case 2:
+						return;
+					}
+				}
 			} else if (property == PROP_DECODED) {
 				PrimitiveTLV tlv = (PrimitiveTLV) element;
 				Long tagNum = tlv.getID() != null ? tlv.getID().toLong() : 0;
@@ -611,7 +654,7 @@ public class MainView extends ViewPart {
 		fAddPrimitiveAction = new Action() {
 			@Override
 			public void run() {
-				addTlvToSelected(new PrimitiveTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, false, 0), new byte[] { }));
+				addTlvToSelected(new PrimitiveTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, true, 0), new byte[] { }));
 			}
 		};
 		fAddPrimitiveAction.setText("Add primitive TLV");
@@ -621,7 +664,7 @@ public class MainView extends ViewPart {
 		fAddConstructedAction = new Action() {
 			@Override
 			public void run() {
-				addTlvToSelected(new ConstructedTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, true, 0), new LinkedList<TLV>()));
+				addTlvToSelected(new ConstructedTLV(new at.innovative_solutions.tlv.ID(at.innovative_solutions.tlv.ID.CLASS_APPLICATION, false, 0), new LinkedList<TLV>()));
 			}
 		};
 		fAddConstructedAction.setText("Add constructed TLV");
