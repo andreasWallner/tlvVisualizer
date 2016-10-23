@@ -1,16 +1,110 @@
 package at.innovative_solutions.tlv;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+import org.w3c.dom.Document;
+
+import at.innovative_solutions.tlvvisualizer.views.TagInfo;
 
 // TODO character set checks
 // TODO trailing character check on cn
-public class EMVValueDecoder {
+public class EMVValueDecoder implements ValueDecoder {
+	final private HashMap<Long, TagInfo> fTagInfo;
+	
+	public EMVValueDecoder() {
+		Bundle bundle = Platform
+				.getBundle("at.innovative-solutions.tlvVisualizer");
+		URL fileURL = bundle.getEntry("resources/EMV.xml");
+		try {
+			File file = new File(FileLocator.resolve(fileURL).toURI());
+
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+
+			fTagInfo = TagInfo.loadXML(doc);
+		} catch (Exception e) {
+			throw new RuntimeException("could not load resources", e);
+		}
+	}
+	
+	public String getName(final TLV tlv) {
+		final ID id = tlv.getID();
+		if(id == null)
+			return null;
+		long tagNum = id.toLong();
+		if (fTagInfo.containsKey(tagNum))
+			return fTagInfo.get(tagNum)._name;
+		return null;
+	}
+	
+	public String toString(TLV tlv) {
+		final ID id = tlv.getID();
+		if(id == null)
+			return null;
+		
+		if(!id.isPrimitive())
+			return null;
+
+		long tagNum = id.toLong();
+		if(!fTagInfo.containsKey(tagNum))
+			return null;
+		
+		try {
+			return EMVValueDecoder.asString(
+					((PrimitiveTLV) tlv).getData(),
+					fTagInfo.get(tagNum)._format);
+		} catch(Exception e) {
+			throw new RuntimeException("could not convert bytes to string", e);
+		}
+	}
+	
+	public byte[] toValue(final String str, final TLV tlv) {
+		final ID id = tlv.getID();
+		if(id == null)
+			return null;
+		
+		if(!id.isPrimitive())
+			return null;
+
+		long tagNum = id.toLong();
+		if(!fTagInfo.containsKey(tagNum))
+			return null;
+		
+		return EMVValueDecoder.asValue(str, fTagInfo.get(tagNum)._format);
+	}
+	
+	public String getFormat(final TLV tlv) {
+		final ID id = tlv.getID();
+		if(id == null)
+			return null;
+		
+		if(!id.isPrimitive())
+			return null;
+
+		long tagNum = id.toLong();
+		if(!fTagInfo.containsKey(tagNum))
+			return null;
+		
+		return fTagInfo.get(tagNum)._format;
+	}
+	
 	public static String asString(final byte[] data, final String format) throws UnsupportedEncodingException {
 		String formatType = format.split(" ")[0];
 
@@ -36,10 +130,10 @@ public class EMVValueDecoder {
 			boolean leadingZeros = true;
 			for(int n = 0; n < data.length * 2; ++n) {
 				int nibble = n % 2 == 0 ? (data[n/2] & 0xff) >>> 4 : data[n/2] & 0xf;
-			if(nibble == 0 && leadingZeros)
-				continue;
-			leadingZeros = false;
-			sb.append(nibble);
+				if(nibble == 0 && leadingZeros)
+					continue;
+				leadingZeros = false;
+				sb.append(nibble);
 			}
 			return sb.toString();
 		default:
@@ -47,7 +141,7 @@ public class EMVValueDecoder {
 		}
 	}
 
-	public static byte[] toValue(final String str, final String format) throws InvalidEncodedValueException {
+	public static byte[] asValue(final String str, final String format) throws InvalidEncodedValueException {
 		String formatType = format.split(" ")[0];
 		CharsetEncoder encoder = StandardCharsets.ISO_8859_1.newEncoder();
 		encoder.onMalformedInput(CodingErrorAction.REPORT);
