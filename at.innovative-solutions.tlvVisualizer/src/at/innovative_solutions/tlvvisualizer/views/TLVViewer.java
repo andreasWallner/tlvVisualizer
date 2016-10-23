@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -24,8 +25,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
@@ -45,6 +45,8 @@ import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 import at.innovative_solutions.tlv.ValueDecoder;
 
+// TODO cache byte/string serialization?
+
 public class TLVViewer extends Composite {
 	public static final String PROP_ID = "ID";
 	public static final String PROP_TYPE = "TYPE";
@@ -55,13 +57,14 @@ public class TLVViewer extends Composite {
 	public static final String[] PROPS = { PROP_ID, PROP_TYPE, PROP_SIZE, PROP_NAME,
 		PROP_DECODED, PROP_ENCODED };
 	
-	private Action fDeleteAction;
-	private Action fAddPrimitiveAction;
-	private Action fAddConstructedAction;
+	Action fDeleteAction;
+	Action fAddPrimitiveAction;
+	Action fAddConstructedAction;
 	
-	private TreeViewer fViewer;
-	private ValueDecoder fDecoder;
-	//private HashMap<Long, TagInfo> fTagInfo;
+	TreeViewer fViewer;
+	ValueDecoder fDecoder;
+	
+	private Vector<ModifyListener> fModifyListeners = new Vector<ModifyListener>();
 	
 	class TreeRootWrapper {
 		Object[] fWrapped;
@@ -107,11 +110,8 @@ public class TLVViewer extends Composite {
 		}
 
 		@Override
-		public void dispose() {
-		}
-
-		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO what does this do?
 		}
 	}
 
@@ -290,15 +290,7 @@ public class TLVViewer extends Composite {
 				tlv.setData(Utils.hexStringToBytes(value.toString()));
 			}
 			fViewer.refresh();
-			Object[] input = ((TreeRootWrapper) fViewer.getInput())
-					.getWrapped();
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			for (Object o : input) {
-				TLV t = (TLV) o;
-				byte[] serialized = t.toBytes();
-				stream.write(serialized, 0, serialized.length);
-			}
-			// notify bec. of change
+			modified();
 		}
 	}
 
@@ -309,10 +301,10 @@ public class TLVViewer extends Composite {
 	}
 
 	public void createContents(final Composite parent) {
-		final GridLayout gridLayout = new GridLayout();
-		parent.setLayout(gridLayout);
+		final FillLayout gridLayout = new FillLayout();
+		this.setLayout(gridLayout);
 		
-		final Tree tlvTree = new Tree(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Tree tlvTree = new Tree(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tlvTree.setHeaderVisible(true);
 		tlvTree.setLinesVisible(true);
 		
@@ -346,13 +338,6 @@ public class TLVViewer extends Composite {
 		fViewer.setContentProvider(new TLVContentProvider());
 		fViewer.setLabelProvider(new TLVLabelProvider());
 		fViewer.setInput(null);
-		
-		final GridData viewerGD = new GridData();
-		viewerGD.horizontalAlignment = GridData.FILL;
-		viewerGD.verticalAlignment = GridData.FILL;
-		viewerGD.grabExcessHorizontalSpace = true;
-		viewerGD.grabExcessVerticalSpace = true;
-		tlvTree.setLayoutData(viewerGD);
 		
 		final CellEditor[] editors = new CellEditor[PROPS.length];
 		for(int i = 0; i < PROPS.length; i++)
@@ -388,6 +373,11 @@ public class TLVViewer extends Composite {
 		contributeToActionBars();
 	}
 	
+	@Override
+	public boolean setFocus() {
+		return fViewer.getControl().setFocus();
+	}
+	
 	public void setTLV(String str) {
 		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(str));
 		final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
@@ -395,6 +385,36 @@ public class TLVViewer extends Composite {
 		fViewer.setInput(w);
 		fViewer.refresh();
 	}
+	
+	public String getTLV() {
+		// TODO 
+		return "";
+	}
+	
+	public void addModifyListener(ModifyListener listener) {
+		fModifyListeners.addElement(listener);
+	}
+	
+	public void removeModifyListener(ModifyListener listener) {
+		fModifyListeners.removeElement(listener);
+	}
+	
+	private void modified() {
+		Object[] input = ((TreeRootWrapper) fViewer.getInput())
+				.getWrapped();
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		for (Object o : input) {
+			TLV t = (TLV) o;
+			byte[] serialized = t.toBytes();
+			stream.write(serialized, 0, serialized.length);
+		}
+		
+		ModifyEvent e = new ModifyEvent(this, Utils.bytesToHexString(stream.toByteArray()));
+		for(ModifyListener listener : fModifyListeners)
+			listener.modified(e);
+	}
+
+	// TODO rename setTLV to setTLVString, implement setTLV really setting a TLV object 
 
 	private void hookContextMenu() {
 		final MenuManager menuMgr = new MenuManager("#PopupMenu");
