@@ -5,9 +5,12 @@ import java.util.TimerTask;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
@@ -22,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.service.prefs.BackingStoreException;
 import at.innovative_solutions.tlv.EMVValueDecoder;
+import at.innovative_solutions.tlv.NullValueDecoder;
 
 public class MainView extends ViewPart {
 
@@ -32,12 +36,14 @@ public class MainView extends ViewPart {
 
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
 	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
+	public static final String PREFERENCE_DECODER = "decoder";
+	public static final long AUTO_UPATE_TIMEOUT = 500; // ms
 
 	TLVViewer fTlvViewer;
 	Text fTextField;
 	
 	Action fParseTextFieldAction;
-	Timer fTimer;
+	TimerTask fTimerTask;
 	
 	final IEclipsePreferences fPreferences;
 	Clipboard fClipboard;
@@ -62,7 +68,7 @@ public class MainView extends ViewPart {
 		labelLayoutData.horizontalAlignment = SWT.FILL;
 		labelLayoutData.grabExcessHorizontalSpace = true;
 
-		fTlvViewer = new TLVViewer(parent, SWT.NONE, new EMVValueDecoder());
+		fTlvViewer = new TLVViewer(parent, SWT.NONE);
 		final GridData tlvViewerLayout = new GridData();
 		fTlvViewer.setLayoutData(tlvViewerLayout);
 		tlvViewerLayout.horizontalAlignment = SWT.FILL;
@@ -70,6 +76,7 @@ public class MainView extends ViewPart {
 		tlvViewerLayout.grabExcessVerticalSpace = true;
 		tlvViewerLayout.grabExcessHorizontalSpace = true;
 		
+		setDecoder(fPreferences.get(PREFERENCE_DECODER, null));
 		makeActions();
 		contributeToActionBars();
 
@@ -80,7 +87,14 @@ public class MainView extends ViewPart {
 			}
 		});
 		
-		fTimer = new Timer();
+		// setup automatic update on textfield change
+		final Timer timer = new Timer();
+		final Runnable timeoutEvent = new Runnable() {
+			@Override
+			public void run() {
+				fParseTextFieldAction.run();
+			}
+		};
 		fTextField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -88,19 +102,16 @@ public class MainView extends ViewPart {
 					fParseTextFieldAction.run();
 				} else if (e.character != 0 && 
 					       fPreferences.getBoolean(PREFERENCE_AUTO_UPDATE, false)) {
-					fTimer.cancel();
-					fTimer = new Timer();
-					fTimer.schedule(new TimerTask() {
+					if(fTimerTask != null)
+						fTimerTask.cancel();
+					
+					fTimerTask = new TimerTask() {
 						@Override
 						public void run() {
-							parent.getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									fTlvViewer.setTLV(fTextField.getText());
-								}
-							});
+							parent.getDisplay().asyncExec(timeoutEvent);
 						}
-					}, 500);
+					}; 
+					timer.schedule(fTimerTask, AUTO_UPATE_TIMEOUT);
 				}
 			}
 
@@ -108,6 +119,16 @@ public class MainView extends ViewPart {
 			public void keyReleased(KeyEvent arg0) {
 			}
 		});
+
+		fPreferences.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			@Override
+			public void preferenceChange(PreferenceChangeEvent event) {
+				if(!PREFERENCE_DECODER.equals(event.getKey()))
+					return;
+				setDecoder((String)event.getNewValue());
+			}
+		});
+		
 		parent.pack();
 	}
 
@@ -120,6 +141,22 @@ public class MainView extends ViewPart {
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(new BooleanPreferenceAction("Auto update", fPreferences,
 				PREFERENCE_AUTO_UPDATE));
+		
+		final MenuManager decoderMenu = new MenuManager("Decoder", null);
+		manager.add(decoderMenu);
+		decoderMenu.add(new SelectionPreferenceAction("None", fPreferences, PREFERENCE_DECODER, "null"));
+		decoderMenu.add(new SelectionPreferenceAction("EMV", fPreferences, PREFERENCE_DECODER, "emv"));
+	}
+	
+	private void setDecoder(String name) {
+		switch(name) {
+		case "emv":
+			fTlvViewer.setDecoder(new EMVValueDecoder());
+			break;
+		default:
+			fTlvViewer.setDecoder(new NullValueDecoder());
+			break;
+		}
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {

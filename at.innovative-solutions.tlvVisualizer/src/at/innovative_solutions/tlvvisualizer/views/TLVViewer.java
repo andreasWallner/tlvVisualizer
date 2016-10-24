@@ -40,12 +40,13 @@ import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.ErrorTLV;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.InvalidEncodedValueException;
+import at.innovative_solutions.tlv.NullValueDecoder;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 import at.innovative_solutions.tlv.ValueDecoder;
 
-// TODO cache byte/string serialization?
+//TODO cache byte/string serialization?
 
 public class TLVViewer extends Composite {
 	public static final String PROP_ID = "ID";
@@ -110,9 +111,7 @@ public class TLVViewer extends Composite {
 		}
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO what does this do?
-		}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 
 	class TLVLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -143,11 +142,11 @@ public class TLVViewer extends Composite {
 				if (element instanceof ErrorTLV) {
 					ret = "ERROR: " + ((ErrorTLV) element).getError();
 				} else {
-					ret = fDecoder.getName(e);
+					ret = TLVViewer.this.fDecoder.getName(e);
 				}
 				break;
 			case 4:
-				ret = fDecoder.toString(e);
+				ret = TLVViewer.this.fDecoder.toString(e);
 				break;
 			case 5:
 				if (element instanceof PrimitiveTLV)
@@ -187,11 +186,15 @@ public class TLVViewer extends Composite {
 
 		@Override
 		public boolean canModify(Object element, String property) {
-			if (property == PROP_ID)
+			switch(property) {
+			case PROP_ID:
 				return true;
-			if ((property == PROP_ENCODED || property == PROP_DECODED)
-					&& element instanceof PrimitiveTLV)
-				return true;
+			case PROP_DECODED:
+				return (element instanceof PrimitiveTLV) && (TLVViewer.this.fDecoder.isValueParsable((TLV)element));
+			case PROP_ENCODED:
+				return element instanceof PrimitiveTLV;
+			}
+
 			return false;
 		}
 
@@ -205,7 +208,7 @@ public class TLVViewer extends Composite {
 					ret = Utils.bytesToHexString(e.getID().toBytes());
 				break;
 			case PROP_DECODED:
-				ret = fDecoder.toString(e);
+				ret = TLVViewer.this.fDecoder.toString(e);
 				break;
 			case PROP_ENCODED:
 				if (element instanceof PrimitiveTLV)
@@ -276,13 +279,13 @@ public class TLVViewer extends Composite {
 				PrimitiveTLV tlv = (PrimitiveTLV) element;
 				byte[] encoded = null;
 				try {
-					encoded = fDecoder.toValue(value.toString(), tlv);
+					encoded = TLVViewer.this.fDecoder.toValue(value.toString(), tlv);
 					tlv.setData(encoded);
 				} catch(InvalidEncodedValueException ex)
 				{
 					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 					box.setText("Invalid input");
-					box.setMessage("Invalid input for element of type " + fDecoder.getFormat(tlv) + "\n" + ex.getMessage());
+					box.setMessage("Invalid input for element of type " + TLVViewer.this.fDecoder.getFormat(tlv) + "\n" + ex.getMessage());
 					box.open();
 				}
 			} else if (property == PROP_ENCODED) {
@@ -294,10 +297,10 @@ public class TLVViewer extends Composite {
 		}
 	}
 
-	public TLVViewer(Composite parent, int style, ValueDecoder decoder) {
+	public TLVViewer(Composite parent, int style) {
 		super(parent, style);
 		createContents(parent);
-		fDecoder = decoder;
+		fDecoder = new NullValueDecoder();
 	}
 
 	public void createContents(final Composite parent) {
@@ -378,6 +381,13 @@ public class TLVViewer extends Composite {
 		return fViewer.getControl().setFocus();
 	}
 	
+	public void setDecoder(ValueDecoder decoder) {
+		if(decoder == null)
+			fDecoder = new NullValueDecoder();
+		fDecoder = decoder;
+		fViewer.refresh();
+	}
+	
 	public void setTLV(String str) {
 		final ByteBuffer input = ByteBuffer.wrap(Utils.hexStringToBytes(str));
 		final List<TLV> tlvs = TLV.parseTLVsWithErrors(input);
@@ -386,9 +396,8 @@ public class TLVViewer extends Composite {
 		fViewer.refresh();
 	}
 	
-	public String getTLV() {
-		// TODO 
-		return "";
+	public String getTLV() { 
+		return Utils.bytesToHexString(serializeTlv());
 	}
 	
 	public void addModifyListener(ModifyListener listener) {
@@ -399,7 +408,7 @@ public class TLVViewer extends Composite {
 		fModifyListeners.removeElement(listener);
 	}
 	
-	private void modified() {
+	private byte[] serializeTlv() {
 		Object[] input = ((TreeRootWrapper) fViewer.getInput())
 				.getWrapped();
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -409,7 +418,11 @@ public class TLVViewer extends Composite {
 			stream.write(serialized, 0, serialized.length);
 		}
 		
-		ModifyEvent e = new ModifyEvent(this, Utils.bytesToHexString(stream.toByteArray()));
+		return stream.toByteArray();
+	}
+	
+	private void modified() {
+		ModifyEvent e = new ModifyEvent(this, Utils.bytesToHexString(serializeTlv()));
 		for(ModifyListener listener : fModifyListeners)
 			listener.modified(e);
 	}
@@ -464,7 +477,7 @@ public class TLVViewer extends Composite {
 				}
 				
 				fViewer.refresh();
-				// TODO signal
+				modified();
 			}
 		};
 		fDeleteAction.setText("Delete");

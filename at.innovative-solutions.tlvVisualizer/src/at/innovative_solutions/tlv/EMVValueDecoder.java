@@ -256,4 +256,8 @@ public class EMVValueDecoder implements ValueDecoder {
 		}
 		}
 	}
+	
+	public boolean isValueParsable(final TLV tlv) {
+		return true;
+	}
 }

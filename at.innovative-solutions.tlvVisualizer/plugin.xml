@@ -10,7 +10,7 @@
       </category>
       <view
             name="TLV Visualizer View"
-            icon="icons/sample.gif"
+            icon="icons/binary-data-search-symbol.png"
             category="at.innovative_solutions.tlvVisualizer"
             class="at.innovative_solutions.tlvvisualizer.views.MainView"
             id="at.innovative_solutions.tlvvisualizer.views.MainView">
