@@ -7,22 +7,22 @@ import org.eclipse.jface.action.Action;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class BooleanPreferenceAction extends Action {
-	private IEclipsePreferences preferences;
-	private String property;
+	final private IEclipsePreferences fPreferences;
+	final private String fProperty;
 	
 	BooleanPreferenceAction(String title, IEclipsePreferences preferences, String property) {
 		super(title, AS_CHECK_BOX);
 		if(preferences == null || property == null)
 			throw new IllegalArgumentException();
 		
-		this.preferences = preferences;
-		this.property = property;
+		this.fPreferences = preferences;
+		this.fProperty = property;
 		
 		preferences.addPreferenceChangeListener(new IPreferenceChangeListener() {
 			@Override
-			public void preferenceChange(PreferenceChangeEvent arg0) {
-				if(property.equals(arg0.getKey())) {
-					Boolean newVal = Boolean.parseBoolean((String)arg0.getNewValue());
+			public void preferenceChange(PreferenceChangeEvent event) {
+				if(fProperty.equals(event.getKey())) {
+					Boolean newVal = Boolean.parseBoolean((String)event.getNewValue());
 					setChecked(Boolean.TRUE.equals(newVal));
 				}
 			}
@@ -31,6 +31,6 @@ public class BooleanPreferenceAction extends Action {
 	}
 	
 	public void run() {
-		preferences.putBoolean(property, isChecked());
+		fPreferences.putBoolean(fProperty, isChecked());
 	}
 }
