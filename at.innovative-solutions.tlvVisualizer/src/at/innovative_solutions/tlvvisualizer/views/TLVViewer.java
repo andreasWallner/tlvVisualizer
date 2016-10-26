@@ -64,6 +64,7 @@ public class TLVViewer extends Composite {
 	
 	TreeViewer fViewer;
 	ValueDecoder fDecoder;
+	boolean fPinned;
 	
 	private Vector<ModifyListener> fModifyListeners = new Vector<ModifyListener>();
 	
@@ -186,11 +187,16 @@ public class TLVViewer extends Composite {
 
 		@Override
 		public boolean canModify(Object element, String property) {
+			TLV tlv = (TLV)element;
+			
+			if(fPinned && tlv.getParent() == null)
+				return false;
+			
 			switch(property) {
 			case PROP_ID:
 				return true;
 			case PROP_DECODED:
-				return (element instanceof PrimitiveTLV) && (TLVViewer.this.fDecoder.isValueParsable((TLV)element));
+				return tlv.getID().isPrimitive() && (TLVViewer.this.fDecoder.isValueParsable(tlv));
 			case PROP_ENCODED:
 				return element instanceof PrimitiveTLV;
 			}
@@ -368,6 +374,8 @@ public class TLVViewer extends Composite {
 					fAddPrimitiveAction.setEnabled(true);
 					fAddConstructedAction.setEnabled(true);
 				}
+				if(tlv.getParent() == null && fPinned)
+					fDeleteAction.setEnabled(false);
 			}
 		});
 		
@@ -406,6 +414,10 @@ public class TLVViewer extends Composite {
 	
 	public void removeModifyListener(ModifyListener listener) {
 		fModifyListeners.removeElement(listener);
+	}
+	
+	public void pinRootTLV(boolean doPin) {
+		fPinned = doPin;
 	}
 	
 	private byte[] serializeTlv() {

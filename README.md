@@ -12,7 +12,6 @@ information based on the tag types defined by EMVco.
 
 # Todo
  - fix TODOs in code...
- - TLVViewer: allow to pin root TLV
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)
  - TLVViewer: don't change tree visibility on e.g. setTlvString if not necessary 
