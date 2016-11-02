@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 
+import at.innovative_solutions.tlvvisualizer.views.EMVValueDecoder;
 import at.innovative_solutions.tlvvisualizer.views.TagInfo;
 
 public class DecodingFormatter implements Formatter<String> {

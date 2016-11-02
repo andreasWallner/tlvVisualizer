@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlv;
+package at.innovative_solutions.tlvvisualizer.views;
 
 public class InvalidEncodedValueException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

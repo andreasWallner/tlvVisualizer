@@ -1,8 +1,13 @@
 package at.innovative_solutions.tlvvisualizer.views;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -24,20 +29,18 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.service.prefs.BackingStoreException;
-import at.innovative_solutions.tlv.EMVValueDecoder;
-import at.innovative_solutions.tlv.NullValueDecoder;
 
 public class MainView extends ViewPart {
-
-	/**
-	 * The ID of the view as specified by the extension.
-	 */
 	public static final String ID = "at.innovativesolutions.tlvvisualizer.views.MainView";
 
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
 	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
 	public static final String PREFERENCE_DECODER = "decoder";
+	public static final String DECODER_ATTRIBUTE_NAME = "decoder_name";
 	public static final long AUTO_UPATE_TIMEOUT = 500; // ms
+	public static final String IVALUEDECODER_ID = "at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder";
+
+	final static private HashMap<String, IConfigurationElement> fDecoders = new HashMap<String, IConfigurationElement>();
 
 	TLVViewer fTlvViewer;
 	Text fTextField;
@@ -47,15 +50,23 @@ public class MainView extends ViewPart {
 	
 	final IEclipsePreferences fPreferences;
 	Clipboard fClipboard;
-
+	
 	public MainView() {
 		// TODO correctly dispose of this using event?
 		fPreferences = InstanceScope.INSTANCE.getNode(PREFERENCE_NODE);
 	}
 	
+	private void initDecoders() {
+		IConfigurationElement decoderElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(IVALUEDECODER_ID);
+		for(IConfigurationElement e : decoderElements) {
+			fDecoders.put(e.getAttribute("class"), e);
+		}
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		fClipboard = new Clipboard(parent.getDisplay());
+		initDecoders();
 
 		final GridLayout layout = new GridLayout();
 		parent.setLayout(layout);
@@ -143,20 +154,26 @@ public class MainView extends ViewPart {
 				PREFERENCE_AUTO_UPDATE));
 		
 		final MenuManager decoderMenu = new MenuManager("Decoder", null);
+		
 		manager.add(decoderMenu);
+		for(Map.Entry<String, IConfigurationElement> e : fDecoders.entrySet()) {
+			decoderMenu.add(new SelectionPreferenceAction(e.getValue().getAttribute(DECODER_ATTRIBUTE_NAME), fPreferences, PREFERENCE_DECODER, e.getKey()));
+		}
 		decoderMenu.add(new SelectionPreferenceAction("None", fPreferences, PREFERENCE_DECODER, "null"));
-		decoderMenu.add(new SelectionPreferenceAction("EMV", fPreferences, PREFERENCE_DECODER, "emv"));
 	}
 	
 	private void setDecoder(String name) {
-		switch(name) {
-		case "emv":
-			fTlvViewer.setDecoder(new EMVValueDecoder());
-			break;
-		default:
-			fTlvViewer.setDecoder(new NullValueDecoder());
-			break;
+		if(fDecoders.containsKey(name)) {
+			try {
+				IConfigurationElement e = fDecoders.get(name);
+				fTlvViewer.setDecoder((ValueDecoder)e.createExecutableExtension("class"));
+				return;
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 		}
+		
+		fTlvViewer.setDecoder(null);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {

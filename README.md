@@ -14,7 +14,10 @@ information based on the tag types defined by EMVco.
  - fix TODOs in code...
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)
- - TLVViewer: don't change tree visibility on e.g. setTlvString if not necessary 
+ - TLVViewer: don't change tree visibility on e.g. setTlvString if not necessary
+ - is the tlvvisualizer.views sub-package really needed?
+ - DecodingFormatter is at the wrong place, should be passed a decoder
+ - cleanup what is in which package (emv decoder to subnamespace, valuedecoder to tlv, ...) 
  - extension point for decoder
  - ...
  

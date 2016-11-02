@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlv;
+package at.innovative_solutions.tlvvisualizer.views;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +19,10 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 
-import at.innovative_solutions.tlvvisualizer.views.TagInfo;
+import at.innovative_solutions.tlv.ID;
+import at.innovative_solutions.tlv.PrimitiveTLV;
+import at.innovative_solutions.tlv.TLV;
+import at.innovative_solutions.tlv.Utils;
 
 // TODO character set checks
 // TODO trailing character check on cn

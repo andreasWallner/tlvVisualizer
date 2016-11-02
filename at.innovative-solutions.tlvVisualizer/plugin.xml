@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder" name="ValueDecoder" schema="schema/at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder.exsd"/>
 
    <extension
          point="org.eclipse.ui.views">
@@ -33,6 +34,13 @@
       <contexts
             file="contexts.xml">
       </contexts>
+   </extension>
+   <extension
+         point="at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder">
+      <decoder
+            class="at.innovative_solutions.tlvvisualizer.views.EMVValueDecoder"
+            decoder_name="EMV">
+      </decoder>
    </extension>
 
 </plugin>

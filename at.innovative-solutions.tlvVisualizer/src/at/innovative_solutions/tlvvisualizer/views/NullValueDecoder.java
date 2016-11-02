@@ -1,7 +1,8 @@
-package at.innovative_solutions.tlv;
+package at.innovative_solutions.tlvvisualizer.views;
+
+import at.innovative_solutions.tlv.TLV;
 
 public class NullValueDecoder implements ValueDecoder {
-
 	@Override
 	public String getName(TLV tlv) {
 		return null;

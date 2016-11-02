@@ -39,12 +39,9 @@ import org.eclipse.ui.PlatformUI;
 import at.innovative_solutions.tlv.ConstructedTLV;
 import at.innovative_solutions.tlv.ErrorTLV;
 import at.innovative_solutions.tlv.ID;
-import at.innovative_solutions.tlv.InvalidEncodedValueException;
-import at.innovative_solutions.tlv.NullValueDecoder;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
-import at.innovative_solutions.tlv.ValueDecoder;
 
 //TODO cache byte/string serialization?
 
@@ -392,7 +389,8 @@ public class TLVViewer extends Composite {
 	public void setDecoder(ValueDecoder decoder) {
 		if(decoder == null)
 			fDecoder = new NullValueDecoder();
-		fDecoder = decoder;
+		else
+			fDecoder = decoder;
 		fViewer.refresh();
 	}
 	

@@ -5,5 +5,7 @@ Bundle-SymbolicName: at.innovative-solutions.tlvVisualizer;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: me
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.eclipse.e4.core.di
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: at.innovative_solutions.tlvvisualizer.views

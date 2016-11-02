@@ -1,4 +1,6 @@
-package at.innovative_solutions.tlv;
+package at.innovative_solutions.tlvvisualizer.views;
+
+import at.innovative_solutions.tlv.TLV;
 
 public interface ValueDecoder {
 	public String getName(final TLV tlv);
