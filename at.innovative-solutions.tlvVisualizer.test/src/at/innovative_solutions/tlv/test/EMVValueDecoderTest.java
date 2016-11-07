@@ -8,7 +8,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import at.innovative_solutions.tlv.Utils;
-import at.innovative_solutions.tlvvisualizer.views.EMVValueDecoder;
+import at.innovative_solutions.tlvVisualizer.decoder.emv.EMVValueDecoder;
 import at.innovative_solutions.tlvvisualizer.views.InvalidEncodedValueException;
 
 // Data format are given in EMV Book 3, Chapter "Data Element Format Conventions" (4.3, p. 29 in v4.2)

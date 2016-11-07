@@ -1,6 +1,7 @@
 package at.innovative_solutions.tlvvisualizer.views;
 
 import at.innovative_solutions.tlv.TLV;
+import at.innovative_solutions.tlv.ValueDecoder;
 
 public class NullValueDecoder implements ValueDecoder {
 	@Override

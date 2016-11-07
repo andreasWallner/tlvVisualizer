@@ -3,10 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>at.innovative-solutions.tlvVisualizer.test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<!-- <packaging>eclipse-test-plugin</packaging> -->
 	
 	<build>
 		<testSourceDirectory>src</testSourceDirectory>
 	</build>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.hamcrest</groupId>

@@ -46,6 +46,7 @@
 
 	<modules>
 		<module>../at.innovative-solutions.tlvVisualizer</module>
+		<module>../at.innovative-solutions.tlvVisualizer.decoder.emv</module>
 		<module>../at.innovative-solutions.tlvVisualizer.feature</module>
 		<module>../at.innovative-solutions.tlvVisualizer.test</module>
 		<module>../at.innovative-solutions.tlvVisualizer.releng.p2</module>

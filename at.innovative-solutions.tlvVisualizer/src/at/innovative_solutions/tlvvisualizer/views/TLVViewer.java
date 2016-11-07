@@ -42,6 +42,7 @@ import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
+import at.innovative_solutions.tlv.ValueDecoder;
 
 //TODO cache byte/string serialization?
 

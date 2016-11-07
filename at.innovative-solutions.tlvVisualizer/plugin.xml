@@ -35,12 +35,5 @@
             file="contexts.xml">
       </contexts>
    </extension>
-   <extension
-         point="at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder">
-      <decoder
-            class="at.innovative_solutions.tlvvisualizer.views.EMVValueDecoder"
-            decoder_name="EMV">
-      </decoder>
-   </extension>
 
 </plugin>

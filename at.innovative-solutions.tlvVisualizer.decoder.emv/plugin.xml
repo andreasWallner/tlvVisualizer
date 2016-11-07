@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder">
+      <decoder
+            class="at.innovative_solutions.tlvVisualizer.decoder.emv.EMVValueDecoder"
+            decoder_name="EMV">
+      </decoder>
+   </extension>
+
+</plugin>

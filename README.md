@@ -19,6 +19,8 @@ information based on the tag types defined by EMVco.
  - DecodingFormatter is at the wrong place, should be passed a decoder
  - cleanup what is in which package (emv decoder to subnamespace, valuedecoder to tlv, ...) 
  - extension point for decoder
+ - remove default TLV and remember last entered TLV until next time
+ - decode e.g. bitfields
  - ...
  
 # Credits

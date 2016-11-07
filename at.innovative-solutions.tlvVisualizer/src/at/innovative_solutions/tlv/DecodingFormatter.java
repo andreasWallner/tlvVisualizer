@@ -4,18 +4,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 
-import at.innovative_solutions.tlvvisualizer.views.EMVValueDecoder;
 import at.innovative_solutions.tlvvisualizer.views.TagInfo;
 
 public class DecodingFormatter implements Formatter<String> {
 	final String _indentChars;
 	int _indentLevel;
-	final HashMap<Long, TagInfo> _tagInfo;
+	final ValueDecoder fDecoder;
 	
-	public DecodingFormatter(final String indentChars, HashMap<Long, TagInfo> tagInfo) {
+	public DecodingFormatter(final String indentChars, ValueDecoder decoder) {
 		_indentChars = indentChars;
 		_indentLevel = 0;
-		_tagInfo = tagInfo;
+		fDecoder = decoder;
 	}
 	
 	public String format(final List<TLV> tlvs) {
@@ -41,16 +40,14 @@ public class DecodingFormatter implements Formatter<String> {
 		sb.append(Utils.printChars(_indentChars, _indentLevel));
 		sb.append(idString);
 		sb.append(" > ");
-		if(_tagInfo.containsKey(id)) {
-			sb.append(_tagInfo.get(id)._name);
+		String name = fDecoder.getName(tlv);
+		if(name != null) {
+			sb.append(name);
 			sb.append("\n");
 			sb.append(Utils.printChars(_indentChars, _indentLevel));
 			sb.append(Utils.printChars(" ", idString.length() + 3));
 			
-			String decoded = "";
-			try {
-				decoded = EMVValueDecoder.asString(tlv.getData(), _tagInfo.get(id)._format);
-			} catch(UnsupportedEncodingException e) {}
+			String decoded = fDecoder.toString(tlv);
 			
 			if(!decoded.equals(""))
 				sb.append(decoded).append(" (").append(encoded).append(")");
@@ -73,8 +70,7 @@ public class DecodingFormatter implements Formatter<String> {
 		sb.append(Utils.printChars(_indentChars, _indentLevel));
 		sb.append(Utils.bytesToHexString(tlv.getID().toBytes()));
 		
-		if(_tagInfo.containsKey(id))
-			sb.append(" : ").append(_tagInfo.get(id)._name);
+		sb.append(" : ").append(fDecoder.getName(tlv));
 		
 		sb.append("\n");
 		_indentLevel += 1;

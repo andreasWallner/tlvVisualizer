@@ -30,6 +30,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.service.prefs.BackingStoreException;
 
+import at.innovative_solutions.tlv.ValueDecoder;
+
 public class MainView extends ViewPart {
 	public static final String ID = "at.innovativesolutions.tlvvisualizer.views.MainView";
 
