@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlv.test;
+package at.innovative_solutions.tlv;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;

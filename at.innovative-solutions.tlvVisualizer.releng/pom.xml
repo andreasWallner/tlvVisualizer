@@ -3,13 +3,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>at.innovative-solutions.tlvVisualizer</groupId>
 	<artifactId>at.innovative-solutions.tlvVisualizer.releng</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>0.26.0</tycho-version>
 		<neon-repo.url>http://download.eclipse.org/releases/neon</neon-repo.url>
+		<org.hamcrest-core-version>1.3</org.hamcrest-core-version>
+		<org.hamcrest-library-version>1.3</org.hamcrest-library-version>
+		<org.mockito-version>2.2.13</org.mockito-version>
+		<junit-version>4.12</junit-version>
 	</properties>
 
 	<repositories>
@@ -37,6 +41,14 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<pomDependencies>consider</pomDependencies>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>
@@ -47,8 +59,9 @@
 	<modules>
 		<module>../at.innovative-solutions.tlvVisualizer</module>
 		<module>../at.innovative-solutions.tlvVisualizer.decoder.emv</module>
+		<!-- <module>../at.innovative-solutions.tlvVisualizer.decoder.emv.test</module> -->
 		<module>../at.innovative-solutions.tlvVisualizer.feature</module>
-		<module>../at.innovative-solutions.tlvVisualizer.test</module>
+		<!-- <module>../at.innovative-solutions.tlvVisualizer.test</module> -->
 		<module>../at.innovative-solutions.tlvVisualizer.releng.p2</module>
 	</modules>
 </project>

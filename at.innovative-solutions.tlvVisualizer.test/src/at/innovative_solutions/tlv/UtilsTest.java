@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlv.test;
+package at.innovative_solutions.tlv;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertArrayEquals;

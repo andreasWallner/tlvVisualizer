@@ -2,15 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>at.innovative_solutions.tlvVisualizer</groupId>
   <artifactId>at.innovative-solutions.tlvVisualizer.feature</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   
-  <name>TLVVisualizer</name>
-  <url>http://github.com/andreasWallner</url>
   <parent>
   	<groupId>at.innovative-solutions.tlvVisualizer</groupId>
   	<artifactId>at.innovative-solutions.tlvVisualizer.releng</artifactId>
-  	<version>0.0.1</version>
+  	<version>0.0.1-SNAPSHOT</version>
   	<relativePath>../at.innovative-solutions.tlvVisualizer.releng</relativePath>
   </parent>
 </project>
