@@ -12,6 +12,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -22,6 +24,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -113,6 +116,7 @@ public class TLVViewer extends Composite {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 
+	// TODO provide colors
 	class TLVLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -157,150 +161,192 @@ public class TLVViewer extends Composite {
 			}
 			return ret;
 		}
-
-		@Override
-		public void addListener(ILabelProviderListener listener) {
-		}
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property) {
-			return false;
-		}
-
-		@Override
-		public void removeListener(ILabelProviderListener listener) {
-		}
 	}
-
-	class TLVCellModifier implements ICellModifier {
-		private Viewer fViewer;
-
-		public TLVCellModifier(Viewer viewer) {
-			fViewer = viewer;
+	
+	class IDEditingSupport extends EditingSupport {
+		final private TextCellEditor cellEditor;
+		
+		public IDEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+			cellEditor = new TextCellEditor(((TreeViewer)viewer).getTree());
 		}
 
 		@Override
-		public boolean canModify(Object element, String property) {
-			TLV tlv = (TLV)element;
+		protected CellEditor getCellEditor(Object element) {
+			return cellEditor;
+		}
+		
+		@Override
+		protected void setValue(Object element, Object value) {
+			if (element instanceof Item)
+				element = ((Item) element).getData();
 			
+			TLV tlv = (TLV) element;
+			byte[] idBytes = Utils.hexStringToBytes(value.toString());
+			ByteBuffer buffer = ByteBuffer.wrap(idBytes);
+			ID newID = at.innovative_solutions.tlv.ID.parseID(buffer);
+			if(newID.isPrimitive() == tlv.getID().isPrimitive()) {
+				tlv.setID(newID);
+			} else {
+				String message;
+				if(tlv.getID().isPrimitive())
+					message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a primitive TLV\n"
+					        + "Should the tag be converted to a constructed TLV (loosing the current TLV content), the ID\n"
+							+ "be adapted for a primitive TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
+				else
+					message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a constructed TLV\n"
+					        + "Should the tag be converted to a primitive TLV (loosing all subtags), the ID\n"
+							+ "be adapted for a constructed TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
+				
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				MessageDialog dialog = new MessageDialog(shell, "Invalid ID", null, message, MessageDialog.QUESTION, new String[] {"Convert", "Adopt", "Cancel"}, 0);
+				int result = dialog.open();
+				
+				switch(result) {
+				case 0:
+					TLV newTlv = newID.isPrimitive() ? new PrimitiveTLV(newID) : new ConstructedTLV(newID);
+					ConstructedTLV parent = (ConstructedTLV)tlv.getParent();
+					if(parent != null) {
+						parent.replaceChild(tlv, newTlv);
+					} else {
+						List<TLV> newTlvs = new LinkedList<TLV>();
+						Object[] oldTlvs = ((TreeRootWrapper)fViewer.getInput()).getWrapped();
+						for(Object o : oldTlvs) {
+							if(o != tlv)
+								newTlvs.add((TLV)o);
+							else
+								newTlvs.add(newTlv);
+						}
+						fViewer.setInput(new TreeRootWrapper(newTlvs));
+					}
+					break;
+				case 1:
+					tlv.setID(newID.withChangedPC());
+					break;
+				case 2:
+					return;
+				}
+			}
+			fViewer.refresh();
+			modified();
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			TLV tlv = (TLV)element;
 			if(fPinned && tlv.getParent() == null)
 				return false;
 			
-			switch(property) {
-			case PROP_ID:
-				return true;
-			case PROP_DECODED:
-				return tlv.getID().isPrimitive() && (TLVViewer.this.fDecoder.isValueParsable(tlv));
-			case PROP_ENCODED:
-				return element instanceof PrimitiveTLV;
-			}
-
-			return false;
+			return true;
 		}
 
 		@Override
-		public Object getValue(Object element, String property) {
+		protected Object getValue(Object element) {
 			TLV e = (TLV) element;
-			String ret = "";
-			switch (property) {
-			case PROP_ID:
-				if (e.getID() != null)
-					ret = Utils.bytesToHexString(e.getID().toBytes());
-				break;
-			case PROP_DECODED:
-				ret = TLVViewer.this.fDecoder.toString(e);
-				break;
-			case PROP_ENCODED:
-				if (element instanceof PrimitiveTLV)
-					ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
-				else if (element instanceof ErrorTLV)
-					ret += Utils.bytesToHexString(((ErrorTLV) e)
-							.getRemainingData());
-				break;
-			default:
-				throw new RuntimeException("can't edit read-only value");
-			}
-			return ret;
+			if (e.getID() == null)
+				return "";
+			return Utils.bytesToHexString(e.getID().toBytes());
+		}
+	}
+
+	class DecodedEditingSupport extends EditingSupport {
+		final private TextCellEditor cellEditor;
+		
+		public DecodedEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+			cellEditor = new TextCellEditor(((TreeViewer)viewer).getTree());
 		}
 
 		@Override
-		public void modify(Object element, String property, Object value) {
+		protected CellEditor getCellEditor(Object element) {
+			return cellEditor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			TLV tlv = (TLV)element;
+			if(fPinned && tlv.getParent() == null)
+				return false;
+
+			return tlv.getID().isPrimitive() && (TLVViewer.this.fDecoder.isValueParsable(tlv));
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			TLV e = (TLV) element;
+			return TLVViewer.this.fDecoder.toString(e);
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
 			if (element instanceof Item)
 				element = ((Item) element).getData();
 
-			if (property == PROP_ID) {
-				TLV tlv = (TLV) element;
-				byte[] idBytes = Utils.hexStringToBytes(value.toString());
-				ByteBuffer buffer = ByteBuffer.wrap(idBytes);
-				ID newID = at.innovative_solutions.tlv.ID.parseID(buffer);
-				if(newID.isPrimitive() == tlv.getID().isPrimitive()) {
-					tlv.setID(newID);
-				} else {
-					String message;
-					if(tlv.getID().isPrimitive())
-						message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a primitive TLV\n"
-						        + "Should the tag be converted to a constructed TLV (loosing the current TLV content), the ID\n"
-								+ "be adapted for a primitive TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
-					else
-						message = "'" + Utils.bytesToHexString(newID.toBytes()) + "' is an invalid ID for a constructed TLV\n"
-						        + "Should the tag be converted to a primitive TLV (loosing all subtags), the ID\n"
-								+ "be adapted for a constructed TLV (to '" + Utils.bytesToHexString(newID.withChangedPC().toBytes()) + ")', or no action taken?";
-					
-					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-					MessageDialog dialog = new MessageDialog(shell, "Invalid ID", null, message, MessageDialog.QUESTION, new String[] {"Convert", "Adopt", "Cancel"}, 0);
-					int result = dialog.open();
-					
-					switch(result) {
-					case 0:
-						TLV newTlv = newID.isPrimitive() ? new PrimitiveTLV(newID) : new ConstructedTLV(newID);
-						ConstructedTLV parent = (ConstructedTLV)tlv.getParent();
-						if(parent != null) {
-							parent.replaceChild(tlv, newTlv);
-						} else {
-							List<TLV> newTlvs = new LinkedList<TLV>();
-							Object[] oldTlvs = ((TreeRootWrapper)fViewer.getInput()).getWrapped();
-							for(Object o : oldTlvs) {
-								if(o != tlv)
-									newTlvs.add((TLV)o);
-								else
-									newTlvs.add(newTlv);
-							}
-							fViewer.setInput(new TreeRootWrapper(newTlvs));
-						}
-						break;
-					case 1:
-						tlv.setID(newID.withChangedPC());
-						break;
-					case 2:
-						return;
-					}
-				}
-			} else if (property == PROP_DECODED) {
-				PrimitiveTLV tlv = (PrimitiveTLV) element;
-				byte[] encoded = null;
-				try {
-					encoded = TLVViewer.this.fDecoder.toValue(value.toString(), tlv);
-					tlv.setData(encoded);
-				} catch(InvalidEncodedValueException ex)
-				{
-					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-					box.setText("Invalid input");
-					box.setMessage("Invalid input for element of type " + TLVViewer.this.fDecoder.getFormat(tlv) + "\n" + ex.getMessage());
-					box.open();
-				}
-			} else if (property == PROP_ENCODED) {
-				PrimitiveTLV tlv = (PrimitiveTLV) element;
-				tlv.setData(Utils.hexStringToBytes(value.toString()));
+			PrimitiveTLV tlv = (PrimitiveTLV) element;
+			byte[] encoded = null;
+			try {
+				encoded = TLVViewer.this.fDecoder.toValue(value.toString(), tlv);
+				tlv.setData(encoded);
+			} catch(InvalidEncodedValueException ex)
+			{
+				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				box.setText("Invalid input");
+				box.setMessage("Invalid input for element of type " + TLVViewer.this.fDecoder.getFormat(tlv) + "\n" + ex.getMessage());
+				box.open();
 			}
 			fViewer.refresh();
 			modified();
 		}
 	}
+	
+	class EncodedEditingSupport extends EditingSupport {
+		final private TextCellEditor cellEditor;
+		
+		public EncodedEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+			cellEditor = new TextCellEditor(((TreeViewer)viewer).getTree());
+		}
 
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return cellEditor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			TLV tlv = (TLV)element;
+			if(fPinned && tlv.getParent() == null)
+				return false;
+			
+			return tlv.getID().isPrimitive();
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			TLV e = (TLV) element;
+			String ret = "";
+			if (element instanceof PrimitiveTLV)
+				ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
+			else if (element instanceof ErrorTLV)
+				ret += Utils.bytesToHexString(((ErrorTLV) e)
+						.getRemainingData());
+			return ret;
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			if (element instanceof Item)
+				element = ((Item) element).getData();
+
+			PrimitiveTLV tlv = (PrimitiveTLV) element;
+			tlv.setData(Utils.hexStringToBytes(value.toString()));
+			
+			fViewer.refresh();
+			modified();
+		}
+		
+	}
+	
 	public TLVViewer(Composite parent, int style) {
 		super(parent, style);
 		createContents(parent);
@@ -311,48 +357,43 @@ public class TLVViewer extends Composite {
 		final FillLayout gridLayout = new FillLayout();
 		this.setLayout(gridLayout);
 		
-		final Tree tlvTree = new Tree(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Tree tlvTree = new Tree(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tlvTree.setHeaderVisible(true);
 		tlvTree.setLinesVisible(true);
 		
 		fViewer = new TreeViewer(tlvTree);
 		
-		final TreeColumn column1 = new TreeColumn(tlvTree, SWT.LEFT);
-		column1.setAlignment(SWT.LEFT);
-		column1.setText("ID");
-		column1.setWidth(100);
-		final TreeColumn column2 = new TreeColumn(tlvTree, SWT.CENTER);
-		column2.setAlignment(SWT.CENTER);
-		column2.setText("P/C");
-		column2.setWidth(35);
-		final TreeColumn column3 = new TreeColumn(tlvTree, SWT.RIGHT);
-		column3.setAlignment(SWT.CENTER);
-		column3.setText("Size");
-		column3.setWidth(35);
-		final TreeColumn column4 = new TreeColumn(tlvTree, SWT.RIGHT);
-		column4.setAlignment(SWT.LEFT);
-		column4.setText("Name");
-		column4.setWidth(300);
-		final TreeColumn column5 = new TreeColumn(tlvTree, SWT.RIGHT);
-		column5.setAlignment(SWT.LEFT);
-		column5.setText("Decoded");
-		column5.setWidth(150);
-		final TreeColumn column6 = new TreeColumn(tlvTree, SWT.RIGHT);
-		column6.setAlignment(SWT.LEFT);
-		column6.setText("Encoded");
-		column6.setWidth(300);
+		final TreeViewerColumn column1 = new TreeViewerColumn(fViewer, SWT.LEFT);
+		column1.getColumn().setAlignment(SWT.LEFT);
+		column1.getColumn().setText("ID");
+		column1.getColumn().setWidth(100);
+		column1.setEditingSupport(new IDEditingSupport(fViewer));
+		final TreeViewerColumn column2 = new TreeViewerColumn(fViewer, SWT.CENTER);
+		column2.getColumn().setAlignment(SWT.CENTER);
+		column2.getColumn().setText("P/C");
+		column2.getColumn().setWidth(35);
+		final TreeViewerColumn column3 = new TreeViewerColumn(fViewer, SWT.RIGHT);
+		column3.getColumn().setAlignment(SWT.CENTER);
+		column3.getColumn().setText("Size");
+		column3.getColumn().setWidth(35);
+		final TreeViewerColumn column4 = new TreeViewerColumn(fViewer, SWT.RIGHT);
+		column4.getColumn().setAlignment(SWT.LEFT);
+		column4.getColumn().setText("Name");
+		column4.getColumn().setWidth(300);
+		final TreeViewerColumn column5 = new TreeViewerColumn(fViewer, SWT.RIGHT);
+		column5.getColumn().setAlignment(SWT.LEFT);
+		column5.getColumn().setText("Decoded");
+		column5.getColumn().setWidth(150);
+		column5.setEditingSupport(new DecodedEditingSupport(fViewer));
+		final TreeViewerColumn column6 = new TreeViewerColumn(fViewer, SWT.RIGHT);
+		column6.getColumn().setAlignment(SWT.LEFT);
+		column6.getColumn().setText("Encoded");
+		column6.getColumn().setWidth(300);
+		column6.setEditingSupport(new EncodedEditingSupport(fViewer));
 
 		fViewer.setContentProvider(new TLVContentProvider());
 		fViewer.setLabelProvider(new TLVLabelProvider());
 		fViewer.setInput(null);
-		
-		final CellEditor[] editors = new CellEditor[PROPS.length];
-		for(int i = 0; i < PROPS.length; i++)
-			editors[i] = new TextCellEditor(tlvTree);
-		
-		fViewer.setColumnProperties(PROPS);
-		fViewer.setCellModifier(new TLVCellModifier(fViewer));
-		fViewer.setCellEditors(editors);
 		
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
