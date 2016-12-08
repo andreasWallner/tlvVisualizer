@@ -62,6 +62,8 @@ public class TLVViewer extends Composite {
 	Action fDeleteAction;
 	Action fAddPrimitiveAction;
 	Action fAddConstructedAction;
+	Action fExpandAllBelowAction;
+	Action fCollapseAllBelowAction;
 	
 	TreeViewer fViewer;
 	ValueDecoder fDecoder;
@@ -401,6 +403,8 @@ public class TLVViewer extends Composite {
 				fDeleteAction.setEnabled(false);
 				fAddPrimitiveAction.setEnabled(false);
 				fAddConstructedAction.setEnabled(false);
+				fExpandAllBelowAction.setEnabled(false);
+				fCollapseAllBelowAction.setEnabled(false);
 
 				if(!event.getSelection().isEmpty())
 					fDeleteAction.setEnabled(true);
@@ -412,6 +416,8 @@ public class TLVViewer extends Composite {
 				if(!tlv.getID().isPrimitive()) {
 					fAddPrimitiveAction.setEnabled(true);
 					fAddConstructedAction.setEnabled(true);
+					fExpandAllBelowAction.setEnabled(true);
+					fCollapseAllBelowAction.setEnabled(true);
 				}
 				if(tlv.getParent() == null && fPinned)
 					fDeleteAction.setEnabled(false);
@@ -499,6 +505,8 @@ public class TLVViewer extends Composite {
 		manager.add(fDeleteAction);
 		manager.add(fAddPrimitiveAction);
 		manager.add(fAddConstructedAction);
+		manager.add(fExpandAllBelowAction);
+		manager.add(fCollapseAllBelowAction);
 	}
 	
 	private void contributeToActionBars() {
@@ -557,6 +565,42 @@ public class TLVViewer extends Composite {
 		fAddConstructedAction.setText("Add constructed TLV");
 		fAddConstructedAction.setToolTipText("Adds new constructed TLV");
 		fAddConstructedAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		
+		fExpandAllBelowAction = new Action() {
+			@Override
+			public void run() {
+				if(fViewer.getSelection().isEmpty() || !(fViewer.getSelection() instanceof IStructuredSelection))
+					return;
+				
+				Object sel = ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
+				if(sel instanceof ConstructedTLV)
+					setExpandedRecursive((ConstructedTLV)sel, true);
+			}
+		};
+		fExpandAllBelowAction.setText("Expand All");
+		fExpandAllBelowAction.setToolTipText("Opens tree for elements all below the selected");
+		
+		fCollapseAllBelowAction = new Action() {
+			@Override
+			public void run() {
+				if(fViewer.getSelection().isEmpty() || !(fViewer.getSelection() instanceof IStructuredSelection))
+					return;
+				
+				Object sel = ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
+				if(sel instanceof ConstructedTLV)
+					setExpandedRecursive((ConstructedTLV)sel, false);
+			}
+		};
+		fCollapseAllBelowAction.setText("Collapse All");
+		fCollapseAllBelowAction.setToolTipText("Closes tree for all elements below the selected");
+	}
+	
+	private void setExpandedRecursive(ConstructedTLV element, boolean expanded) {
+		fViewer.setExpandedState(element, expanded);
+		for(TLV subelement : element.getTLVs()) {
+			if(subelement instanceof ConstructedTLV)
+				setExpandedRecursive((ConstructedTLV)subelement, expanded);
+		}
 	}
 	
 	private void addTlvToSelected(TLV tlv) {

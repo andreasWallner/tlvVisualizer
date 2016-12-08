@@ -31,9 +31,9 @@ as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in E
  - ...
 
 # Running build/tests
-To run the build, either use the command line to run the master .pom file, or when using
-Eclipse do a maven build of the at.innovative-solutions.tlvVisualizer.releng project.
-Common options are 'clean verify'. After the first build, the 'offline' option can be
+To run the build, either use the command line to run the master POM `./pom.xml` file, or when using
+Eclipse do a maven build of the `at.innovative-solutions.tlvVisualizer.releng` project.
+Common options are `clean verify`. After the first build, the `offline` option can be
 set to reduce download volume.
 
 When trying to run unit tests from Eclipse, run the test projects as JUnit Plugin tests.
