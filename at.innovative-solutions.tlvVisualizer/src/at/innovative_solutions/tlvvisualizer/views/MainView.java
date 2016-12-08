@@ -20,9 +20,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
@@ -38,6 +41,7 @@ public class MainView extends ViewPart {
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
 	public static final String PREFERENCE_AUTO_UPDATE = "auto-update";
 	public static final String PREFERENCE_DECODER = "decoder";
+	public static final String PREFERENCE_LAST_STRING = "last-string";
 	public static final String DECODER_ATTRIBUTE_NAME = "decoder_name";
 	public static final long AUTO_UPATE_TIMEOUT = 500; // ms
 	public static final String IVALUEDECODER_ID = "at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder";
@@ -74,8 +78,7 @@ public class MainView extends ViewPart {
 		parent.setLayout(layout);
 		
 		fTextField = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.FILL);
-		fTextField.setText("6F1A840E315041592E5359532E4444463031A5088801025F2D02656E");
-		//fTextField.setText("8407A0000000041010A50F500A4D617374657243617264870101");
+		fTextField.setText(fPreferences.get(PREFERENCE_LAST_STRING, ""));
 		final GridData labelLayoutData = new GridData();
 		fTextField.setLayoutData(labelLayoutData);
 		labelLayoutData.horizontalAlignment = SWT.FILL;
@@ -93,9 +96,9 @@ public class MainView extends ViewPart {
 		makeActions();
 		contributeToActionBars();
 
-		fTlvViewer.addModifyListener(new ModifyListener() {
+		fTlvViewer.addModifyListener(new at.innovative_solutions.tlvvisualizer.views.ModifyListener() {
 			@Override
-			public void modified(ModifyEvent e) {
+			public void modified(at.innovative_solutions.tlvvisualizer.views.ModifyEvent e) {
 				fTextField.setText(e.getNewTlvString());
 			}
 		});
@@ -108,6 +111,7 @@ public class MainView extends ViewPart {
 				fParseTextFieldAction.run();
 			}
 		};
+		// TODO fix misbehaving on paste (no update triggered)
 		fTextField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -121,7 +125,7 @@ public class MainView extends ViewPart {
 					fTimerTask = new TimerTask() {
 						@Override
 						public void run() {
-							parent.getDisplay().asyncExec(timeoutEvent);
+							Display.getDefault().asyncExec(timeoutEvent);
 						}
 					}; 
 					timer.schedule(fTimerTask, AUTO_UPATE_TIMEOUT);
@@ -132,7 +136,13 @@ public class MainView extends ViewPart {
 			public void keyReleased(KeyEvent arg0) {
 			}
 		});
-
+		fTextField.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				fPreferences.put(PREFERENCE_LAST_STRING, fTextField.getText());
+			}
+		});
+		
 		fPreferences.addPreferenceChangeListener(new IPreferenceChangeListener() {
 			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
@@ -202,8 +212,14 @@ public class MainView extends ViewPart {
 	}
 	
 	public void setTlvString(String s) {
-		fTextField.setText(s);
-		fTlvViewer.setTLV(s);
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				fPreferences.put(PREFERENCE_LAST_STRING, s);
+				fTextField.setText(s);
+				fTlvViewer.setTLV(s);
+			}
+		});
 	}
 	
 	/**
@@ -213,7 +229,7 @@ public class MainView extends ViewPart {
 	public void setFocus() {
 		fTlvViewer.setFocus();
 	}
-
+	
 	@Override
 	public void dispose() {
 		try {
