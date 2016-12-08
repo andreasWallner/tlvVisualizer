@@ -14,6 +14,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 public class Utils {
+	/**
+	 * conversion function courtesy of maybeWeCouldStealAVan @ Stackoverflow
+	 * http://stackoverflow.com/a/9855338
+	 */
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 	public static String bytesToHexString(byte[] bytes) {
 	    char[] hexChars = new char[bytes.length * 2];
