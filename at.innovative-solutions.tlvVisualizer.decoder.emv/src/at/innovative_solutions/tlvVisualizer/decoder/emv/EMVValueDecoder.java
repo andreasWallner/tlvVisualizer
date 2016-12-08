@@ -34,7 +34,7 @@ public class EMVValueDecoder implements ValueDecoder {
 	
 	public EMVValueDecoder() {
 		Bundle bundle = Platform
-				.getBundle("at.innovative-solutions.tlvVisualizer");
+				.getBundle("at.innovative-solutions.tlvVisualizer.decoder.emv");
 		URL fileURL = bundle.getEntry("resources/EMV.xml");
 		try {
 			File file = new File(FileLocator.resolve(fileURL).toURI());
