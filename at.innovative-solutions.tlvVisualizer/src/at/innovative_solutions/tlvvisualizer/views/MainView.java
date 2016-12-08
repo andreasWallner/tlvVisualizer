@@ -201,6 +201,11 @@ public class MainView extends ViewPart {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 	}
 	
+	public void setTlvString(String s) {
+		fTextField.setText(s);
+		fTlvViewer.setTLV(s);
+	}
+	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
