@@ -2,8 +2,8 @@ package at.innovative_solutions.tlv;
 
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,7 +76,7 @@ public class PrimitiveTLVTest {
 		String result = "asdf";
 		@SuppressWarnings("unchecked")
 		Formatter<String> f = (Formatter<String>) mock(Formatter.class);
-		PrimitiveTLV ref = new PrimitiveTLV(null, null);
+		PrimitiveTLV ref = new PrimitiveTLV(new ID(ID.CLASS_UNIVERSAL, true, 1), null);
 		when(f.format(ref)).thenReturn(result);
 		
 		String retVal = ref.accept(f);

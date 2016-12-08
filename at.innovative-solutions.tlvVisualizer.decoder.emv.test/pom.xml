@@ -1,7 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>at.innovative-solutions.tlvVisualizer.decoder.emv.test</groupId>
 	<artifactId>at.innovative-solutions.tlvVisualizer.decoder.emv.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 
@@ -11,25 +10,4 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../at.innovative-solutions.tlvVisualizer.releng</relativePath>
 	</parent>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>${org.hamcrest-core-version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-library</artifactId>
-			<version>${org.hamcrest-library-version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit-version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>

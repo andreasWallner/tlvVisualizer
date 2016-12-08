@@ -121,7 +121,7 @@ public class ConstructedTLVTest {
 		String result = "asdf";
 		@SuppressWarnings("unchecked")
 		Formatter<String> f = mock(Formatter.class);
-		ConstructedTLV ref = new ConstructedTLV(null, new LinkedList<TLV>());
+		ConstructedTLV ref = new ConstructedTLV(new ID(ID.CLASS_UNIVERSAL, false, 1), new LinkedList<TLV>());
 		when(f.format(ref)).thenReturn(result);
 
 		String retVal = ref.accept(f);

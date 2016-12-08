@@ -11,6 +11,7 @@ Currently allows one to parse TLV (tag-length-value) data, and displays some add
 information based on the tag types defined by EMVco.
 
 # Todo
+ - add public method to set TLV in view
  - fix TODOs in code...
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)

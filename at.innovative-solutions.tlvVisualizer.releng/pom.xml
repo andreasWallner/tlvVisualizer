@@ -8,21 +8,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>0.26.0</tycho-version>
-		<neon-repo.url>http://download.eclipse.org/releases/neon</neon-repo.url>
-		<org.hamcrest-core-version>1.3</org.hamcrest-core-version>
-		<org.hamcrest-library-version>1.3</org.hamcrest-library-version>
-		<org.mockito-version>2.2.13</org.mockito-version>
-		<junit-version>4.12</junit-version>
+		<tycho.version>0.26.0</tycho.version>
+		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 	</properties>
-
-	<repositories>
-		<repository>
-			<id>neon</id>
-			<url>${neon-repo.url}</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
 
 	<build>
 		<plugins>
@@ -37,15 +25,30 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
+				<version>${tycho.version}</version>
 				<configuration>
-					<pomDependencies>consider</pomDependencies>
+					<target>
+						<artifact>
+							<groupId>at.innovative-solutions.tlvVisualizer</groupId>
+							<artifactId>at.innovative-solutions.tlvVisualizer.releng.target</artifactId>
+							<version>0.0.1-SNAPSHOT</version>
+						</artifact>
+					</target>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>org.hamcrest</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -53,15 +56,34 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-buildtimestamp-jgit</artifactId>
+						<version>${tycho.extras.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<timestampProvider>jgit</timestampProvider>
+					<jgit.dirtyWorkingTree>ignore</jgit.dirtyWorkingTree>
+					<jgit.ignore>pom.xml</jgit.ignore>
+					<format>yyyyMMddHHmm</format>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
 	<modules>
 		<module>../at.innovative-solutions.tlvVisualizer</module>
 		<module>../at.innovative-solutions.tlvVisualizer.decoder.emv</module>
-		<!-- <module>../at.innovative-solutions.tlvVisualizer.decoder.emv.test</module> -->
+		<module>../at.innovative-solutions.tlvVisualizer.decoder.emv.test</module>
 		<module>../at.innovative-solutions.tlvVisualizer.feature</module>
-		<!-- <module>../at.innovative-solutions.tlvVisualizer.test</module> -->
+		<module>../at.innovative-solutions.tlvVisualizer.test</module>
+		<module>../at.innovative-solutions.tlvVisualizer.releng.target</module>
 		<module>../at.innovative-solutions.tlvVisualizer.releng.p2</module>
 	</modules>
 </project>

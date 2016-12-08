@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlvvisualizer.views.test;
+package at.innovative_solutions.tlvvisualizer.views;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
