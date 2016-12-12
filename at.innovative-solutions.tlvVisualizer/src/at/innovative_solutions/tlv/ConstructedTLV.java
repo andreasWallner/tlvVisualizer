@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class ConstructedTLV extends TLV {
 	LinkedList<TLV> _tlvs;

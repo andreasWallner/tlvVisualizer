@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="at.innovative-solutions.tlvVisualizer.feature"
+      id="at.innovative_solutions.tlvVisualizer.feature"
       label="TLV"
       version="0.0.1.qualifier"
       provider-name="Andreas Wallner">

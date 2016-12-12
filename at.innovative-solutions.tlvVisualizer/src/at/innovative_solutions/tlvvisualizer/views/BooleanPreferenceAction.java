@@ -4,7 +4,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.action.Action;
-import org.osgi.service.prefs.BackingStoreException;
 
 public class BooleanPreferenceAction extends Action {
 	final private IEclipsePreferences fPreferences;

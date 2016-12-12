@@ -19,7 +19,7 @@ as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in E
     6F1A840E315041592E5359532E4444463031A5088801025F2D02656E
     8407A0000000041010A50F500A4D617374657243617264870101
 
-# Todo
+# Todo (...Ideas)
  - fix TODOs in code...
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)
@@ -29,6 +29,14 @@ as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in E
  - cleanup what is in which package (emv decoder to subnamespace, valuedecoder to tlv, ...) 
  - decode e.g. bitfields
  - ...
+ - context specific add menu (show tags allowed under current tag, depending on decoder)
+ - tooltip explaining content (decode?)
+
+# Eclipse setup
+- import all projects into eclipse
+- use `Window`/`Preferences`/`Plug-in Development`/`Target Platform` to set
+  target platform in `at.innovative-solutions.tlvVisualizer.releng.target`
+- build/run/debug  
 
 # Running build/tests
 To run the build, either use the command line to run the master POM `./pom.xml` file, or when using

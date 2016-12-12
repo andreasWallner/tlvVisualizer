@@ -12,6 +12,21 @@
 		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 	</properties>
 
+ <pluginRepositories>
+    <pluginRepository>
+      <id>central</id>
+      <name>Maven Plugin Repository</name>
+      <url>http://repo1.maven.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
 	<build>
 		<plugins>
 			<plugin>
