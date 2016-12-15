@@ -3,6 +3,8 @@ package at.innovative_solutions.tlv;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -12,6 +14,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Utils {
 	/**
@@ -72,5 +76,29 @@ public class Utils {
 
 	    transformer.transform(new DOMSource(doc),
 	         new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+	}
+	
+	public static Iterable<Node> iterate(NodeList nl) {
+		return new Iterable<Node>() {
+			@Override
+			public Iterator<Node> iterator() {
+				return new Iterator<Node>() {
+					int fIdxNext = 0;
+					
+					@Override
+					public boolean hasNext() {
+						return fIdxNext < nl.getLength();
+					}
+
+					@Override
+					public Node next() {
+						if(!hasNext())
+							throw new NoSuchElementException();
+						
+						return nl.item(fIdxNext++);
+					}
+				};
+			}
+		};
 	}
 }

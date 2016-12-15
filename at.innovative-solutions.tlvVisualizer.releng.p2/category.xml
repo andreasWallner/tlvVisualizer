@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/at.innovative-solutions.tlvVisualizer.feature_0.0.1.qualifier.jar" id="at.innovative-solutions.tlvVisualizer.feature" version="0.0.1.qualifier">
+   <feature url="features/at.innovative_solutions.tlvVisualizer.feature_0.0.1.qualifier.jar" id="at.innovative_solutions.tlvVisualizer.feature" version="0.0.1.qualifier">
       <category name="at.innovative-solutions.tlvVisualizer"/>
    </feature>
    <category-def name="at.innovative-solutions.tlvVisualizer" label="TLV">

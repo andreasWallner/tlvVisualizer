@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="at.innovative_solutions.tlvvisualizer.extensionpoint.valuedecoder">
+      <decoder
+            class="at.innovative_solutions.tlvVisualizer.decoder.sparameter.SParameterValueDecoder"
+            decoder_name="ISO14443 S(Parameter)">
+      </decoder>
+   </extension>
+
+</plugin>

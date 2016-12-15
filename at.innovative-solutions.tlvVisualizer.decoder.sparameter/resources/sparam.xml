@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tags version="1">
+	<tag>
+		<id>A0</id>
+		<name>S(PARAMETERS) block definition</name>
+	</tag>
+	
+	<tag>
+		<id>A1</id>
+		<name>Bit rates Request</name>
+		<length>0</length>
+		<parent>A0</parent>
+	</tag>
+	<tag>
+		<id>A2</id>
+		<name>Bit rates Indication</name>
+		<parent>A0</parent>
+	</tag>
+	<tag>
+		<id>80</id>
+		<name>Supported bit rates from PCD to PICC</name>
+		<length>2</length>
+		<parent>A2</parent>
+	</tag>
+	<tag>
+		<id>81</id>
+		<name>Supported bit rates from PICC to PCD</name>
+		<length>2</length>
+		<parent>A2</parent>
+	</tag>
+	<tag>
+		<id>82</id>
+		<name>Supported framing options PICC to PCD</name>
+		<length>1</length>
+		<parent>A2</parent>
+	</tag>
+	
+	<tag>
+		<id>A3</id>
+		<name>Bit rates Activation</name>
+		<parent>A0</parent>
+	</tag>
+	<tag>
+		<id>83</id>
+		<name>Selected bit rates from PCD to PICC</name>
+		<length>2</length>
+		<parent>A3</parent>
+	</tag>
+	<tag>
+		<id>84</id>
+		<name>Selected bit rates from PICC to PCD</name>
+		<length>2</length>
+		<parent>A3</parent>
+	</tag>
+	<tag>
+		<id>85</id>
+		<name>Selected framing options PICC to PCD</name>
+		<length>1</length>
+		<parent>A3</parent>
+	</tag>
+	
+	<tag>
+		<id>A4</id>
+		<name>Bit rates Acknowledgement</name>
+		<length>0</length>
+		<parent>A0</parent>
+	</tag>
+	
+	<tag>
+		<id>A5</id>
+		<name>Frame format Request</name>
+		<length>0</length>
+		<parent>A0</parent>
+	</tag>
+	
+	<tag>
+		<id>A6</id>
+		<name>Frame format Indication</name>
+		<parent>A0</parent>
+	</tag>
+	<tag>
+		<id>80</id>
+		<name>Supported frames PCD to PICC</name>
+		<length>1</length>
+		<parent>A6</parent>
+	</tag>
+	<tag>
+		<id>81</id>
+		<name>Supported frames PICC to PCD</name>
+		<length>1</length>
+		<parent>A6</parent>
+	</tag>
+	<tag>
+		<id>82</id>
+		<name>Supported framing options PCD to PICC</name>
+		<length>1</length>
+		<parent>A6</parent>
+	</tag>
+	<tag>
+		<id>83</id>
+		<name>Supported framing options PICC to PCD</name>
+		<length>1</length>
+		<parent>A6</parent>
+	</tag>
+	
+	<tag>
+		<id>A7</id>
+		<name>Frame format Activation</name>
+		<parent>A0</parent>
+	</tag>
+	<tag>
+		<id>84</id>
+		<name>Selected frame PCD to PICC</name>
+		<length>1</length>
+		<parent>A7</parent>
+	</tag>
+	<tag>
+		<id>85</id>
+		<name>Selected frame PICC to PCD</name>
+		<length>1</length>
+		<parent>A7</parent>
+	</tag>
+	<tag>
+		<id>86</id>
+		<name>Selected framing options from PCD to PICC</name>
+		<length>1</length>
+		<parent>A7</parent>
+	</tag>
+	<tag>
+		<id>87</id>
+		<name>Selected framing options PICC to PCD</name>
+		<length>1</length>
+		<parent>A7</parent>
+	</tag>
+	
+	<tag>
+		<id>A8</id>
+		<name>Frame Format Acknowledgement</name>
+		<length>0</length>
+		<parent>A0</parent>
+	</tag>
+</tags>

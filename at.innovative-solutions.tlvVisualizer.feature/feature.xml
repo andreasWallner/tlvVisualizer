@@ -50,4 +50,18 @@ SOFTWARE.
          version="0.0.1.qualifier"
          unpack="false"/>
 
+   <plugin
+         id="at.innovative-solutions.tlvVisualizer.decoder.emv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="at.innovative-solutions.tlvVisualizer.decoder.sparameter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
