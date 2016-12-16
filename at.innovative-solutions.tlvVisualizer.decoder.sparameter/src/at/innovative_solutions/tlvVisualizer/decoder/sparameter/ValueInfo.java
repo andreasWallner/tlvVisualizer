@@ -16,12 +16,14 @@ class ValueInfo {
 	final public ValueInfo fParent;
 	final public String fName;
 	final public Integer fLength;
+	final public Boolean fIsSelection;
 
-	ValueInfo(ID id, ValueInfo parent, String name, Integer length) {
+	ValueInfo(ID id, ValueInfo parent, String name, Integer length, Boolean isSelection) {
 		fId = id;
 		fParent = parent;
 		fName = name;
 		fLength = length;
+		fIsSelection = isSelection;
 	}
 
 	public static ValueInfo fromNode(Node tagNode, ArrayList<ValueInfo> knownNodes) {
@@ -29,6 +31,7 @@ class ValueInfo {
 		ValueInfo parent = null;
 		String name = null;
 		Integer length = null;
+		Boolean isSelection = tagNode.getAttributes().getNamedItem("selection").getTextContent() == "true";
 
 		NodeList children = tagNode.getChildNodes();
 
@@ -59,7 +62,7 @@ class ValueInfo {
 		if(id == null || name == null)
 			throw new RuntimeException("invalid file format");
 		
-		return new ValueInfo(id, parent, name, length);
+		return new ValueInfo(id, parent, name, length, isSelection);
 	}
 	
 	public static ArrayList<ValueInfo> fromResource(Document doc) {

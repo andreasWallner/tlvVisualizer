@@ -21,18 +21,46 @@
 		<name>Supported bit rates from PCD to PICC</name>
 		<length>2</length>
 		<parent>A2</parent>
+		<encoding>
+			<flag><bit>14</bit><meaning>6M8</meaning></flag>
+			<flag><bit>13</bit><meaning>3M4</meaning></flag>
+			<flag><bit>12</bit><meaning>1M7</meaning></flag>
+			<flag><bit>11</bit><meaning>848k</meaning></flag>
+			<flag><bit>10</bit><meaning>424k</meaning></flag>
+			<flag><bit>9</bit><meaning>212k</meaning></flag>
+			<flag><bit>8</bit><meaning>106k</meaning></flag>
+			<flag><bit>7</bit><meaning>10M2</meaning></flag>
+			<flag><bit>6</bit><meaning>13M6</meaning></flag>
+			<flag><bit>5</bit><meaning>20M4</meaning></flag>
+			<flag><bit>4</bit><meaning>27M2</meaning></flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>81</id>
 		<name>Supported bit rates from PICC to PCD</name>
 		<length>2</length>
 		<parent>A2</parent>
+		<encoding>
+			<flag><bit>14</bit><meaning>6M8</meaning></flag>
+			<flag><bit>13</bit><meaning>3M4</meaning></flag>
+			<flag><bit>12</bit><meaning>1M7</meaning></flag>
+			<flag><bit>11</bit><meaning>848k</meaning></flag>
+			<flag><bit>10</bit><meaning>424k</meaning></flag>
+			<flag><bit>9</bit><meaning>212k</meaning></flag>
+			<flag><bit>8</bit><meaning>106k</meaning></flag>
+			<flag><bit>7</bit><meaning>10M2</meaning></flag>
+			<flag><bit>6</bit><meaning>13M6</meaning></flag>
+			<flag><bit>5</bit><meaning>20M4</meaning></flag>
+			<flag><bit>4</bit><meaning>27M2</meaning></flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>82</id>
 		<name>Supported framing options PICC to PCD</name>
 		<length>1</length>
 		<parent>A2</parent>
+		<flag><bit>1</bit><meaning>start &amp; stop bit suppression</meaning></flag>
+		<flag><bit>0</bit><meaning>SOF &amp; EOF suppression</meaning></flag>
 	</tag>
 	
 	<tag>
@@ -40,19 +68,20 @@
 		<name>Bit rates Activation</name>
 		<parent>A0</parent>
 	</tag>
-	<tag>
+	<tag selection="true">
 		<id>83</id>
 		<name>Selected bit rates from PCD to PICC</name>
 		<length>2</length>
 		<parent>A3</parent>
+		
 	</tag>
-	<tag>
+	<tag selection="true">
 		<id>84</id>
 		<name>Selected bit rates from PICC to PCD</name>
 		<length>2</length>
 		<parent>A3</parent>
 	</tag>
-	<tag>
+	<tag selection="true">
 		<id>85</id>
 		<name>Selected framing options PICC to PCD</name>
 		<length>1</length>
@@ -66,14 +95,14 @@
 		<parent>A0</parent>
 	</tag>
 	
-	<tag>
+	<tag selection="true">
 		<id>A5</id>
 		<name>Frame format Request</name>
 		<length>0</length>
 		<parent>A0</parent>
 	</tag>
 	
-	<tag>
+	<tag selection="true">
 		<id>A6</id>
 		<name>Frame format Indication</name>
 		<parent>A0</parent>

@@ -15,9 +15,12 @@ Binary versions of TLVVisualizer can be found at https://bintray.com/andreaswall
 as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in Eclipse to install.
 
 # Example TLVs to try
-
+## EMV
     6F1A840E315041592E5359532E4444463031A5088801025F2D02656E
     8407A0000000041010A50F500A4D617374657243617264870101
+## S(PARAMETER)
+    A00EA60C800103810103820107830107
+    
 
 # Todo (...Ideas)
  - fix TODOs in code...
@@ -33,6 +36,7 @@ as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in E
  - tooltip explaining content (decode?)
 
 # Eclipse setup
+- make sure you have `m2e - Maven Integration for Eclipse` installed
 - import all projects into eclipse
 - use `Window`/`Preferences`/`Plug-in Development`/`Target Platform` to set
   target platform in `at.innovative-solutions.tlvVisualizer.releng.target`
