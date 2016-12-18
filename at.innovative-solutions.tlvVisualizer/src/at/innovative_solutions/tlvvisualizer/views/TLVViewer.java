@@ -18,9 +18,7 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -28,7 +26,7 @@ import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -70,6 +68,7 @@ public class TLVViewer extends Composite {
 	boolean fPinned;
 	
 	private Vector<ModifyListener> fModifyListeners = new Vector<ModifyListener>();
+	final public Font fTooltipFont;
 	
 	class TreeRootWrapper {
 		Object[] fWrapped;
@@ -188,6 +187,29 @@ public class TLVViewer extends Composite {
 			TLV e = (TLV)element;
 			String text = TLVViewer.this.fDecoder.toString(e);
 			cell.setText(text);
+		}
+
+		@Override
+		public int getToolTipTimeDisplayed(Object object) {
+			return 20000;
+		}
+
+		@Override
+		public String getToolTipText(Object o) {
+			if (!(o instanceof TLV))
+				return null;
+
+			return TLVViewer.this.fDecoder.getSimpleDecoded((TLV) o).replaceAll("&", "&&");
+		}
+
+		@Override
+		public int getToolTipDisplayDelayTime(Object object) {
+			return 100;
+		}
+		
+		@Override
+		public Font getToolTipFont(Object object) {
+			return fTooltipFont;
 		}
 	}
 	
@@ -397,6 +419,7 @@ public class TLVViewer extends Composite {
 		super(parent, style);
 		createContents(parent);
 		fDecoder = new NullValueDecoder();
+		fTooltipFont = new Font(parent.getDisplay(), "Consolas", 8, SWT.NONE);
 	}
 
 	public void createContents(final Composite parent) {
@@ -445,6 +468,7 @@ public class TLVViewer extends Composite {
 
 		fViewer.setContentProvider(new TLVContentProvider());
 		fViewer.setInput(null);
+		ColumnViewerToolTipSupport.enableFor(fViewer);
 		
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

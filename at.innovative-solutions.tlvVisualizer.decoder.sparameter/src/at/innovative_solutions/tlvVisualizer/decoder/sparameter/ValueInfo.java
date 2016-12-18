@@ -2,6 +2,7 @@ package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -16,27 +17,24 @@ class ValueInfo {
 	final public ValueInfo fParent;
 	final public String fName;
 	final public Integer fLength;
-	final public Boolean fIsSelection;
+	final public Collection<Encoding> fEncodings;
 
-	ValueInfo(ID id, ValueInfo parent, String name, Integer length, Boolean isSelection) {
+	ValueInfo(ID id, ValueInfo parent, String name, Integer length, Collection<Encoding> encodings) {
 		fId = id;
 		fParent = parent;
 		fName = name;
 		fLength = length;
-		fIsSelection = isSelection;
+		fEncodings = encodings;
 	}
 
-	public static ValueInfo fromNode(Node tagNode, ArrayList<ValueInfo> knownNodes) {
+	public static ValueInfo fromNode(Node tagNode, ArrayList<ValueInfo> knownTags) {
 		ID id = null;
 		ValueInfo parent = null;
 		String name = null;
 		Integer length = null;
-		Boolean isSelection = tagNode.getAttributes().getNamedItem("selection").getTextContent() == "true";
+		Collection<Encoding> encodings = null;
 
-		NodeList children = tagNode.getChildNodes();
-
-		for (int i = 0; i < children.getLength(); i++) {
-			Node node = children.item(i);
+		for (Node node : iterate(tagNode.getChildNodes())) {
 			switch (node.getNodeName()) {
 			case "id":
 				id = ID.parseID(ByteBuffer.wrap(Utils.hexStringToBytes(node.getTextContent())));
@@ -49,10 +47,14 @@ class ValueInfo {
 				break;
 			case "parent":
 				ID parentId = ID.parseID(ByteBuffer.wrap(Utils.hexStringToBytes(node.getTextContent())));
-				ArrayList<ValueInfo> parentCandidates = findById(parentId, knownNodes);
+				ArrayList<ValueInfo> parentCandidates = findById(parentId, knownTags);
 				if(parentCandidates.size() > 1)
 					throw new RuntimeException("invalid file format, more than one possible parent");
-				parent = findFirstById(parentId, knownNodes);
+				parent = findFirstById(parentId, knownTags);
+				break;
+			case "encoding":
+				encodings = EncodingFactory.loadEncoding(node);
+				break;
 			default:
 				// ignore unknown tags
 				break;
@@ -62,7 +64,7 @@ class ValueInfo {
 		if(id == null || name == null)
 			throw new RuntimeException("invalid file format");
 		
-		return new ValueInfo(id, parent, name, length, isSelection);
+		return new ValueInfo(id, parent, name, length, encodings);
 	}
 	
 	public static ArrayList<ValueInfo> fromResource(Document doc) {

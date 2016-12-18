@@ -28,4 +28,14 @@ public class NullValueDecoder implements ValueDecoder {
 	public boolean isValueParsable(final TLV tlv) {
 		return false;
 	}
+
+	@Override
+	public String getSimpleDecoded(TLV tlv) {
+		return null;
+	}
+
+	@Override
+	public boolean isValid(TLV tlv) {
+		return true;
+	}
 }

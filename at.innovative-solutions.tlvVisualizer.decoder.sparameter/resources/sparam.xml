@@ -22,17 +22,17 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
-			<flag><bit>14</bit><meaning>6M8</meaning></flag>
-			<flag><bit>13</bit><meaning>3M4</meaning></flag>
-			<flag><bit>12</bit><meaning>1M7</meaning></flag>
-			<flag><bit>11</bit><meaning>848k</meaning></flag>
-			<flag><bit>10</bit><meaning>424k</meaning></flag>
-			<flag><bit>9</bit><meaning>212k</meaning></flag>
-			<flag><bit>8</bit><meaning>106k</meaning></flag>
-			<flag><bit>7</bit><meaning>10M2</meaning></flag>
-			<flag><bit>6</bit><meaning>13M6</meaning></flag>
-			<flag><bit>5</bit><meaning>20M4</meaning></flag>
-			<flag><bit>4</bit><meaning>27M2</meaning></flag>
+			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>11</bit><name>848k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>10</bit><name>424k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>9</bit><name>212k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>8</bit><name>106k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>7</bit><name>10M2</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>6</bit><name>13M6</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>5</bit><name>20M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>4</bit><name>27M2</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 		</encoding>
 	</tag>
 	<tag>
@@ -41,17 +41,17 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
-			<flag><bit>14</bit><meaning>6M8</meaning></flag>
-			<flag><bit>13</bit><meaning>3M4</meaning></flag>
-			<flag><bit>12</bit><meaning>1M7</meaning></flag>
-			<flag><bit>11</bit><meaning>848k</meaning></flag>
-			<flag><bit>10</bit><meaning>424k</meaning></flag>
-			<flag><bit>9</bit><meaning>212k</meaning></flag>
-			<flag><bit>8</bit><meaning>106k</meaning></flag>
-			<flag><bit>7</bit><meaning>10M2</meaning></flag>
-			<flag><bit>6</bit><meaning>13M6</meaning></flag>
-			<flag><bit>5</bit><meaning>20M4</meaning></flag>
-			<flag><bit>4</bit><meaning>27M2</meaning></flag>
+			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>11</bit><name>848k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>10</bit><name>424k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>9</bit><name>212k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>8</bit><name>106k</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>7</bit><name>10M2</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>6</bit><name>13M6</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>5</bit><name>20M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>4</bit><name>27M2</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 		</encoding>
 	</tag>
 	<tag>
@@ -59,8 +59,10 @@
 		<name>Supported framing options PICC to PCD</name>
 		<length>1</length>
 		<parent>A2</parent>
-		<flag><bit>1</bit><meaning>start &amp; stop bit suppression</meaning></flag>
-		<flag><bit>0</bit><meaning>SOF &amp; EOF suppression</meaning></flag>
+		<encoding>
+			<flag><bit>1</bit><name>start &amp; stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>0</bit><name>SOF &amp; EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+		</encoding>
 	</tag>
 	
 	<tag>
@@ -68,20 +70,51 @@
 		<name>Bit rates Activation</name>
 		<parent>A0</parent>
 	</tag>
-	<tag selection="true">
+	<tag>
 		<id>83</id>
 		<name>Selected bit rates from PCD to PICC</name>
 		<length>2</length>
 		<parent>A3</parent>
-		
+		<encoding>
+			<selection>
+				<mask>0x7ff0</mask>
+				<option><value>0x4000</value><name>6M8</name></option>
+				<option><value>0x2000</value><name>3M4</name></option>
+				<option><value>0x1000</value><name>1M7</name></option>
+				<option><value>0x0800</value><name>848k</name></option>
+				<option><value>0x0400</value><name>424k</name></option>
+				<option><value>0x0200</value><name>212k</name></option>
+				<option><value>0x0100</value><name>106k</name></option>
+				<option><value>0x0080</value><name>10M2</name></option>
+				<option><value>0x0040</value><name>13M6</name></option>
+				<option><value>0x0020</value><name>20M4</name></option>
+				<option><value>0x0010</value><name>27M2</name></option>
+			</selection>
+		</encoding>
 	</tag>
-	<tag selection="true">
+	<tag>
 		<id>84</id>
 		<name>Selected bit rates from PICC to PCD</name>
 		<length>2</length>
 		<parent>A3</parent>
+		<encoding>
+			<selection>
+				<mask>0x7ff0</mask>
+				<option><value>0x4000</value><name>6M8</name></option>
+				<option><value>0x2000</value><name>3M4</name></option>
+				<option><value>0x1000</value><name>1M7</name></option>
+				<option><value>0x0800</value><name>848k</name></option>
+				<option><value>0x0400</value><name>424k</name></option>
+				<option><value>0x0200</value><name>212k</name></option>
+				<option><value>0x0100</value><name>106k</name></option>
+				<option><value>0x0080</value><name>10M2</name></option>
+				<option><value>0x0040</value><name>13M6</name></option>
+				<option><value>0x0020</value><name>20M4</name></option>
+				<option><value>0x0010</value><name>27M2</name></option>
+			</selection>
+		</encoding>
 	</tag>
-	<tag selection="true">
+	<tag>
 		<id>85</id>
 		<name>Selected framing options PICC to PCD</name>
 		<length>1</length>
@@ -95,7 +128,7 @@
 		<parent>A0</parent>
 	</tag>
 	
-	<tag selection="true">
+	<tag>
 		<id>A5</id>
 		<name>Frame format Request</name>
 		<length>0</length>

@@ -101,4 +101,25 @@ public class Utils {
 			}
 		};
 	}
+	
+	public static Node getSingleChild(String name, Node parent) {
+		Node result = null;
+		for(Node node : iterate(parent.getChildNodes())) {
+			if(!name.equals(parent.getNodeName()))
+				continue;
+			if(result != null)
+				throw new RuntimeException("found second '" + name + "' node where only one was expected");
+			result = node;
+		}
+		return result;
+	}
+
+	public static Long bytesToLong(byte[] data) {
+		if(data.length > 8)
+			throw new RuntimeException("array too long to convert to long");
+		long result = 0;
+		for(byte x : data)
+			result = (result << 8) | (x & 0xff);
+		return result;
+	}
 }

@@ -266,4 +266,16 @@ public class EMVValueDecoder implements ValueDecoder {
 	public boolean isValueParsable(final TLV tlv) {
 		return true;
 	}
+
+	@Override
+	public String getSimpleDecoded(TLV tlv) {
+		// TODO implement
+		return null;
+	}
+
+	@Override
+	public boolean isValid(TLV tlv) {
+		// TODO implement
+		return true;
+	}
 }

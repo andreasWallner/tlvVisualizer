@@ -7,4 +7,6 @@ public interface ValueDecoder {
 	// TODO does this belong here?
 	public String getFormat(final TLV tlv);
 	public boolean isValueParsable(final TLV tlv);
+	public String getSimpleDecoded(final TLV tlv);
+	public boolean isValid(final TLV tlv);
 }
