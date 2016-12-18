@@ -12,7 +12,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,6 +26,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -114,51 +117,95 @@ public class TLVViewer extends Composite {
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
-
-	// TODO provide colors
-	class TLVLabelProvider extends LabelProvider implements ITableLabelProvider {
+	
+	class IdLabelProvider extends CellLabelProvider {
 		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex) {
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
 			if (!(element instanceof TLV))
-				return null;
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			String text = (e.getID() != null) ? Utils.bytesToHexString(e.getID().toBytes()) : "";
 
-			TLV e = (TLV) element;
-			String ret = "";
-			switch (columnIndex) {
-			case 0:
-				if (e.getID() != null)
-					ret = Utils.bytesToHexString(e.getID().toBytes());
-				break;
-			case 1:
-				ret = e.getID().isPrimitive() ? "P" : "C"; // TODO error tlv
-				break;
-			case 2:
-				ret = String.valueOf(e.getLength());
-				break;
-			case 3:
-				if (element instanceof ErrorTLV) {
-					ret = "ERROR: " + ((ErrorTLV) element).getError();
-				} else {
-					ret = TLVViewer.this.fDecoder.getName(e);
-				}
-				break;
-			case 4:
-				ret = TLVViewer.this.fDecoder.toString(e);
-				break;
-			case 5:
-				if (element instanceof PrimitiveTLV)
-					ret += Utils.bytesToHexString(((PrimitiveTLV) e).getData());
-				else if (element instanceof ErrorTLV)
-					ret += Utils.bytesToHexString(((ErrorTLV) e)
-							.getRemainingData());
-				break;
+			cell.setText(text);
+		}
+	}
+	
+	class TypeLabelProvider extends CellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			if (!(element instanceof TLV))
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			String text = e.getID().isPrimitive() ? "P" : "C"; // TODO error tlv
+			cell.setText(text);
+		}
+	}
+	
+	class SizeLabelProvider extends CellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			if (!(element instanceof TLV))
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			String text = String.valueOf(e.getLength());
+			cell.setText(text);
+		}
+	}
+
+	class NameLabelProvider extends CellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			if (!(element instanceof TLV))
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			
+			String text;
+			if (element instanceof ErrorTLV) {
+				text = "ERROR: " + ((ErrorTLV) element).getError();
+			} else {
+				text = TLVViewer.this.fDecoder.getName(e);
 			}
-			return ret;
+			
+			cell.setText(text);
+		}
+	}
+	
+	class DecodedLabelProvider extends CellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			if (!(element instanceof TLV))
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			String text = TLVViewer.this.fDecoder.toString(e);
+			cell.setText(text);
+		}
+	}
+	
+	class EncodedLabelProvider extends CellLabelProvider {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			if (!(element instanceof TLV))
+				cell.setText("");
+			
+			TLV e = (TLV)element;
+			String text = "";
+			if (element instanceof PrimitiveTLV)
+				text = Utils.bytesToHexString(((PrimitiveTLV) e).getData());
+			else if (element instanceof ErrorTLV)
+				text = Utils.bytesToHexString(((ErrorTLV) e)
+						.getRemainingData());
+			cell.setText(text);
 		}
 	}
 	
@@ -367,31 +414,36 @@ public class TLVViewer extends Composite {
 		column1.getColumn().setText("ID");
 		column1.getColumn().setWidth(100);
 		column1.setEditingSupport(new IDEditingSupport(fViewer));
+		column1.setLabelProvider(new IdLabelProvider());
 		final TreeViewerColumn column2 = new TreeViewerColumn(fViewer, SWT.CENTER);
 		column2.getColumn().setAlignment(SWT.CENTER);
 		column2.getColumn().setText("P/C");
 		column2.getColumn().setWidth(35);
+		column2.setLabelProvider(new TypeLabelProvider());
 		final TreeViewerColumn column3 = new TreeViewerColumn(fViewer, SWT.RIGHT);
 		column3.getColumn().setAlignment(SWT.CENTER);
 		column3.getColumn().setText("Size");
 		column3.getColumn().setWidth(35);
+		column3.setLabelProvider(new SizeLabelProvider());
 		final TreeViewerColumn column4 = new TreeViewerColumn(fViewer, SWT.RIGHT);
 		column4.getColumn().setAlignment(SWT.LEFT);
 		column4.getColumn().setText("Name");
 		column4.getColumn().setWidth(300);
+		column4.setLabelProvider(new NameLabelProvider());
 		final TreeViewerColumn column5 = new TreeViewerColumn(fViewer, SWT.RIGHT);
 		column5.getColumn().setAlignment(SWT.LEFT);
 		column5.getColumn().setText("Decoded");
 		column5.getColumn().setWidth(150);
 		column5.setEditingSupport(new DecodedEditingSupport(fViewer));
+		column5.setLabelProvider(new DecodedLabelProvider());
 		final TreeViewerColumn column6 = new TreeViewerColumn(fViewer, SWT.RIGHT);
 		column6.getColumn().setAlignment(SWT.LEFT);
 		column6.getColumn().setText("Encoded");
 		column6.getColumn().setWidth(300);
 		column6.setEditingSupport(new EncodedEditingSupport(fViewer));
+		column6.setLabelProvider(new EncodedLabelProvider());
 
 		fViewer.setContentProvider(new TLVContentProvider());
-		fViewer.setLabelProvider(new TLVLabelProvider());
 		fViewer.setInput(null);
 		
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
