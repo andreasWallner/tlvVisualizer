@@ -119,6 +119,10 @@
 		<name>Selected framing options PICC to PCD</name>
 		<length>1</length>
 		<parent>A3</parent>
+		<encoding>
+			<flag><bit>1</bit><name>start &amp; stop bit suppression</name><enabled>enabled</enabled><disabled>disabled</disabled></flag>
+			<flag><bit>0</bit><name>SOF &amp; EOF suppression</name><enabled>enabled</enabled><disabled>disabled</disabled></flag>
+		</encoding>
 	</tag>
 	
 	<tag>
@@ -135,7 +139,7 @@
 		<parent>A0</parent>
 	</tag>
 	
-	<tag selection="true">
+	<tag>
 		<id>A6</id>
 		<name>Frame format Indication</name>
 		<parent>A0</parent>
@@ -145,29 +149,49 @@
 		<name>Supported frames PCD to PICC</name>
 		<length>1</length>
 		<parent>A6</parent>
+		<encoding>
+			<flag><bit>0</bit><name>Standard Frame</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>1</bit><name>Frame w. error correction</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>7</bit><name>Frame format limitation</name><enabled>same format in both directions</enabled><disabled>none</disabled></flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>81</id>
 		<name>Supported frames PICC to PCD</name>
 		<length>1</length>
 		<parent>A6</parent>
+		<encoding>
+			<flag><bit>0</bit><name>Standard Frame</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>1</bit><name>Frame w. error correction</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>7</bit><name>Frame format limitation</name><enabled>same format in both directions</enabled><disabled>none</disabled></flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>82</id>
 		<name>Supported framing options PCD to PICC</name>
 		<length>1</length>
 		<parent>A6</parent>
+		<encoding>
+			<flag><bit>0</bit><name>Start and stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>1</bit><name>SOF and EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>2</bit><name>SYNC suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>83</id>
 		<name>Supported framing options PICC to PCD</name>
 		<length>1</length>
 		<parent>A6</parent>
+		<encoding>
+			<flag><bit>0</bit><name>Start and stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>1</bit><name>SOF and EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+			<flag><bit>2</bit><name>SYNC suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
+		</encoding>
 	</tag>
 	
 	<tag>
 		<id>A7</id>
-		<name>Frame format Activation</name>
+		<name>Frame Format Activation</name>
 		<parent>A0</parent>
 	</tag>
 	<tag>
@@ -175,24 +199,62 @@
 		<name>Selected frame PCD to PICC</name>
 		<length>1</length>
 		<parent>A7</parent>
+		<encoding>
+			<selection>
+				<mask>0x03</mask>
+				<option><value>0x01</value><name>Standard frame</name></option>
+				<option><value>0x02</value><name>Frame with error correction</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	<tag>
 		<id>85</id>
 		<name>Selected frame PICC to PCD</name>
 		<length>1</length>
 		<parent>A7</parent>
+		<encoding>
+			<selection>
+				<mask>0x03</mask>
+				<option><value>0x01</value><name>Standard frame</name></option>
+				<option><value>0x02</value><name>Frame with error correction</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	<tag>
 		<id>86</id>
 		<name>Selected framing options from PCD to PICC</name>
 		<length>1</length>
 		<parent>A7</parent>
+		<encoding>
+			<selection>
+				<mask>0x07</mask>
+				<option><value>0x00</value><name>No options</name></option>
+				<option><value>0x01</value><name>Start and stop bit suppressed</name></option>
+				<option><value>0x02</value><name>SOF and EOF suppressed</name></option>
+				<option><value>0x03</value><name>Start/stop bit and SOF/EOF suppressed</name></option>
+				<option><value>0x04</value><name>SYNC suppressed</name></option>
+				<option><value>0x05</value><name>SYNC and start/stop bit suppressed</name></option>
+				<option><value>0x06</value><name>SYNC and SOF/EOF suppressed</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	<tag>
 		<id>87</id>
 		<name>Selected framing options PICC to PCD</name>
 		<length>1</length>
 		<parent>A7</parent>
+		<encoding>
+			<selection>
+				<mask>0x07</mask>
+				<option><value>0x00</value><name>No options</name></option>
+				<option><value>0x01</value><name>Start and stop bit suppressed</name></option>
+				<option><value>0x02</value><name>SOF and EOF suppressed</name></option>
+				<option><value>0x03</value><name>Start/stop bit and SOF/EOF suppressed</name></option>
+				<option><value>0x04</value><name>SYNC suppressed</name></option>
+				<option><value>0x05</value><name>SYNC and start/stop bit suppressed</name></option>
+				<option><value>0x06</value><name>SYNC and SOF/EOF suppressed</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	
 	<tag>

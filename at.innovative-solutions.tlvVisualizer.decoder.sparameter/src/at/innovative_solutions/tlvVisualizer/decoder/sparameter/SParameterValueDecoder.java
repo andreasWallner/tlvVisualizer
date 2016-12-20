@@ -66,7 +66,6 @@ public class SParameterValueDecoder implements ValueDecoder {
 
 	@Override
 	public byte[] toValue(String str, TLV tlv) {
-		System.out.println(getSimpleDecoded(tlv));
 		return Utils.hexStringToBytes(str);
 	}
 
@@ -85,12 +84,13 @@ public class SParameterValueDecoder implements ValueDecoder {
 		if(!(tlv instanceof PrimitiveTLV) || tlv.getID() == null)
 			return null;
 		PrimitiveTLV ptlv = (PrimitiveTLV)tlv;
-		ValueInfo info = ValueInfo.findById(ptlv.getID(), fTags).get(0);
+		ID parentId = tlv.getParent() != null ? tlv.getParent().getID() : null;
+		ValueInfo info = ValueInfo.findByIds(ptlv.getID(), parentId, fTags);
 		if(info == null)
 			return null;
 		
 		if(ptlv.getData().length != info.fLength)
-			return "Error: Invalid Length";
+			return "Error: Invalid Length (!=" + info.fLength + ")";
 		
 		Long value = Utils.bytesToLong(ptlv.getData());
 		

@@ -13,14 +13,24 @@ information based on the tag types defined by EMVco.
 # Binary versions
 Binary versions of TLVVisualizer can be found at https://bintray.com/andreaswallner/TLVVisualizer/releases
 as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in Eclipse to install.
+The binary version is currently most likely outdated because of ongoing development.
+
+# Features
+* Parse arbitrary BER-TLVs
+* Usable as library
+* Decodes TLVs used in EMVco systems
+* Decodes S(Parameter) TLVs as specified in ISO 14443-4:2016
+** Decoder down to bitlevel using tooltips
 
 # Example TLVs to try
 ## EMV
     6F1A840E315041592E5359532E4444463031A5088801025F2D02656E
     8407A0000000041010A50F500A4D617374657243617264870101
 ## S(PARAMETER)
-    A00EA60C800103810103820107830107
-    
+    A002 A100
+    A00A A208 80021900 80024900
+    A00A A308 83021000 84024000
+    A00E A60C 800103 810103 820107 830107    
 
 # Todo (...Ideas)
  - fix TODOs in code...
@@ -33,7 +43,7 @@ as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in E
  - decode e.g. bitfields
  - ...
  - context specific add menu (show tags allowed under current tag, depending on decoder)
- - tooltip explaining content (decode?)
+ - colorize fields on invalid length, etc.
 
 # Eclipse setup
 - make sure you have `m2e - Maven Integration for Eclipse` installed
