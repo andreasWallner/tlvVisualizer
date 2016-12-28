@@ -22,6 +22,8 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
+			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x0F</mask></rfu>
 			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -41,6 +43,8 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
+			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x0F</mask></rfu>
 			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -60,6 +64,7 @@
 		<length>1</length>
 		<parent>A2</parent>
 		<encoding>
+			<rfu><mask>0xFC</mask></rfu>
 			<flag><bit>1</bit><name>start &amp; stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>0</bit><name>SOF &amp; EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 		</encoding>
@@ -76,6 +81,8 @@
 		<length>2</length>
 		<parent>A3</parent>
 		<encoding>
+			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x0F</mask></rfu>
 			<selection>
 				<mask>0x7ff0</mask>
 				<option><value>0x4000</value><name>6M8</name></option>
@@ -98,6 +105,8 @@
 		<length>2</length>
 		<parent>A3</parent>
 		<encoding>
+			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x0F</mask></rfu>
 			<selection>
 				<mask>0x7ff0</mask>
 				<option><value>0x4000</value><name>6M8</name></option>
@@ -120,6 +129,7 @@
 		<length>1</length>
 		<parent>A3</parent>
 		<encoding>
+			<rfu><mask>0xFC</mask></rfu>
 			<flag><bit>1</bit><name>start &amp; stop bit suppression</name><enabled>enabled</enabled><disabled>disabled</disabled></flag>
 			<flag><bit>0</bit><name>SOF &amp; EOF suppression</name><enabled>enabled</enabled><disabled>disabled</disabled></flag>
 		</encoding>
@@ -150,6 +160,7 @@
 		<length>1</length>
 		<parent>A6</parent>
 		<encoding>
+			<rfu><mask>0x7C</mask></rfu>
 			<flag><bit>0</bit><name>Standard Frame</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>1</bit><name>Frame w. error correction</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>7</bit><name>Frame format limitation</name><enabled>same format in both directions</enabled><disabled>none</disabled></flag>
@@ -161,6 +172,7 @@
 		<length>1</length>
 		<parent>A6</parent>
 		<encoding>
+			<rfu><mask>0x7C</mask></rfu>
 			<flag><bit>0</bit><name>Standard Frame</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>1</bit><name>Frame w. error correction</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>7</bit><name>Frame format limitation</name><enabled>same format in both directions</enabled><disabled>none</disabled></flag>
@@ -172,6 +184,7 @@
 		<length>1</length>
 		<parent>A6</parent>
 		<encoding>
+			<rfu><mask>0x7C</mask></rfu>
 			<flag><bit>0</bit><name>Start and stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>1</bit><name>SOF and EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>2</bit><name>SYNC suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -183,6 +196,7 @@
 		<length>1</length>
 		<parent>A6</parent>
 		<encoding>
+			<rfu><mask>0x7C</mask></rfu>
 			<flag><bit>0</bit><name>Start and stop bit suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>1</bit><name>SOF and EOF suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>2</bit><name>SYNC suppression</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -200,6 +214,7 @@
 		<length>1</length>
 		<parent>A7</parent>
 		<encoding>
+			<rfu><mask>0xFC</mask></rfu>
 			<selection>
 				<mask>0x03</mask>
 				<option><value>0x01</value><name>Standard frame</name></option>
@@ -213,6 +228,7 @@
 		<length>1</length>
 		<parent>A7</parent>
 		<encoding>
+			<rfu><mask>0xFC</mask></rfu>
 			<selection>
 				<mask>0x03</mask>
 				<option><value>0x01</value><name>Standard frame</name></option>
@@ -226,6 +242,7 @@
 		<length>1</length>
 		<parent>A7</parent>
 		<encoding>
+			<rfu><mask>0xF7</mask></rfu>
 			<selection>
 				<mask>0x07</mask>
 				<option><value>0x00</value><name>No options</name></option>
@@ -244,6 +261,7 @@
 		<length>1</length>
 		<parent>A7</parent>
 		<encoding>
+			<rfu><mask>0xF7</mask></rfu>
 			<selection>
 				<mask>0x07</mask>
 				<option><value>0x00</value><name>No options</name></option>

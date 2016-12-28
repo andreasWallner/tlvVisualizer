@@ -20,6 +20,9 @@ public class EncodingFactory {
 			case "selection":
 				e = loadSelection(child);
 				break;
+			case "rfu":
+				e = loadRfu(child);
+				break;
 			}
 			if(e != null)
 				result.add(e);
@@ -28,6 +31,23 @@ public class EncodingFactory {
 		return result;
 	}
 	
+	public static Encoding loadRfu(Node node) {
+		Long mask = null;
+		
+		for(Node c : iterate(node.getChildNodes())) {
+			switch(c.getNodeName()) {
+			case "mask":
+				mask = Long.decode(c.getTextContent());
+				break;
+			}
+		}
+		
+		if(mask == null)
+			throw new RuntimeException("mask must be present for RFU: " + node.toString());
+		
+		return new Rfu(mask);
+	}
+
 	public static Flag loadFlag(Node node) {
 		Long mask = null;
 		String name = null;
