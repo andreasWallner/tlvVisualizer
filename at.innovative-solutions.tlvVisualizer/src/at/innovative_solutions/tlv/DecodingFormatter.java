@@ -32,15 +32,15 @@ public class DecodingFormatter implements Formatter<String> {
 		String idString = Utils.bytesToHexString(tlv.getID().toBytes());
 		String encoded = Utils.bytesToHexString(tlv.getData());
 		
-		sb.append(Utils.printChars(fIndentChars, fIndentLevel));
+		sb.append(Utils.repeat(fIndentChars, fIndentLevel));
 		sb.append(idString);
 		sb.append(" > ");
 		String name = fDecoder.getName(tlv);
 		if(name != null) {
 			sb.append(name);
 			sb.append("\n");
-			sb.append(Utils.printChars(fIndentChars, fIndentLevel));
-			sb.append(Utils.printChars(" ", idString.length() + 3));
+			sb.append(Utils.repeat(fIndentChars, fIndentLevel));
+			sb.append(Utils.repeat(" ", idString.length() + 3));
 			
 			String decoded = fDecoder.toString(tlv);
 			
@@ -60,7 +60,7 @@ public class DecodingFormatter implements Formatter<String> {
 	public String format(final ConstructedTLV tlv) {
 		final StringBuilder sb = new StringBuilder();
 		
-		sb.append(Utils.printChars(fIndentChars, fIndentLevel));
+		sb.append(Utils.repeat(fIndentChars, fIndentLevel));
 		sb.append(Utils.bytesToHexString(tlv.getID().toBytes()));
 		
 		sb.append(" : ").append(fDecoder.getName(tlv));
@@ -78,7 +78,7 @@ public class DecodingFormatter implements Formatter<String> {
 	@Override
 	public String format(final ErrorTLV tlv) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append(Utils.printChars(fIndentChars, fIndentLevel));
+		sb.append(Utils.repeat(fIndentChars, fIndentLevel));
 		sb.append("ERROR");
 		return sb.toString();
 	}

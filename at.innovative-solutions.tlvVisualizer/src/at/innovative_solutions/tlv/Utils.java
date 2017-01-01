@@ -3,6 +3,7 @@ package at.innovative_solutions.tlv;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -25,12 +26,23 @@ public class Utils {
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 	public static String bytesToHexString(byte[] bytes) {
 	    char[] hexChars = new char[bytes.length * 2];
-	    for ( int j = 0; j < bytes.length; j++ ) {
+	    for(int j = 0; j < bytes.length; j++ ) {
 	        int v = bytes[j] & 0xFF;
 	        hexChars[j * 2] = hexArray[v >>> 4];
 	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 	    }
 	    return new String(hexChars);
+	}
+	
+	// TODO optimize?
+	public static String bytesToBinString(byte[] bytes) {
+		char[] binChars = new char[bytes.length * 8];
+		int idx = 0;
+		for(int i = 0; i < bytes.length; i++) {
+			for(int bit = 7; bit >= 0; bit--, idx++)
+				binChars[idx] = (((bytes[i] & 0xff) >> bit) & 0x01) != 0 ? '1' : '0'; 
+		}
+		return new String(binChars);
 	}
 
 	// TODO implement checks for characters
@@ -58,11 +70,19 @@ public class Utils {
 	    return data;
 	}
 
-	public static String printChars(String chars, int count) {
-		StringBuilder b = new StringBuilder();
-		for(int i = 0; i < count; i++)
-			b.append(chars);
-		return b.toString();
+	public static String repeat(String str, int count) {
+		byte[] chars = str.getBytes();
+		byte[] result = new byte[chars.length * count];
+		int resultIdx = 0;
+		for(int i = 0; i < count; i++, resultIdx += chars.length)
+			System.arraycopy(chars, 0, result, resultIdx, chars.length);
+		return new String(result);
+	}
+	
+	public static String repeat(char c, int count) {
+		char[] result = new char[count];
+		Arrays.fill(result, c);
+		return new String(result);
 	}
 
 	public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {

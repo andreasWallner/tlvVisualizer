@@ -98,17 +98,17 @@ public class SParameterValueDecoder implements ValueDecoder {
 		
 		final int bitLength = 8 * info.fLength;
 		String valueString = Long.toBinaryString(value);
-		String valuePadding = Utils.printChars("0", bitLength - valueString.length());
+		String valuePadding = Utils.repeat("0", bitLength - valueString.length());
 		builder.append(valuePadding + valueString + "\n");
 		
 		for(Encoding e : info.fEncodings) {
 			Range range = e.getRange();
 			String bitString = Long.toBinaryString((value & e.fMask) >> range.fStop);
-			String padding = Utils.printChars("0", range.fLength - bitString.length());
+			String padding = Utils.repeat("0", range.fLength - bitString.length());
 			
-			builder.append(Utils.printChars(".", bitLength - 1 - range.fStart));
+			builder.append(Utils.repeat(".", bitLength - 1 - range.fStart));
 			builder.append(padding + bitString);
-			builder.append(Utils.printChars(".", range.fStop));
+			builder.append(Utils.repeat(".", range.fStop));
 			builder.append(" ");
 			builder.append(e.getDescription(value));
 			builder.append("\n");
