@@ -1,8 +1,10 @@
 package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 
-public class Rfu extends Encoding {
+public class Rfu implements IBitfieldEncoding {
+	final long fMask;
+	
 	public Rfu(long mask) {
-		super(mask);
+		fMask = mask;
 	}
 	
 	@Override
@@ -23,5 +25,15 @@ public class Rfu extends Encoding {
 			return "RFU - must be 0";
 		else
 			return "RFU";
+	}
+
+	@Override
+	public String toString() {
+		return "Rfu(" + Long.toHexString(fMask) + ", " + getRange().toString() + ")";
+	}
+	
+	@Override
+	public void accept(IBitfieldProcessor processor, byte[] data, Object context) {
+		processor.visit(this, data, context);
 	}
 }

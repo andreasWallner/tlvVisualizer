@@ -2,11 +2,12 @@ package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 
 import java.util.Collection;
 
-public class Selection extends Encoding {
+public class Selection implements IBitfieldEncoding {
+	final long fMask;
 	Collection<SelectionOption> fOptions;
 	
 	public Selection(long mask, Collection<SelectionOption> options) {
-		super(mask);
+		fMask = mask;
 		fOptions = options;
 	}
 	
@@ -33,5 +34,20 @@ public class Selection extends Encoding {
 				return option.fName;
 		}
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		str.append("Selection(" + Long.toHexString(fMask));
+		for(SelectionOption o : fOptions)
+			str.append(",\n  " + o.toString());
+		str.append(")");
+		return str.toString();
+	}
+
+	@Override
+	public void accept(IBitfieldProcessor processor, byte[] data, Object context) {
+		processor.visit(this, data, context);
 	}
 }

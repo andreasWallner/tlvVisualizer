@@ -17,9 +17,9 @@ class ValueInfo {
 	final public ValueInfo fParent;
 	final public String fName;
 	final public Integer fLength;
-	final public Collection<Encoding> fEncodings;
+	final public Collection<IBitfieldEncoding> fEncodings;
 
-	ValueInfo(ID id, ValueInfo parent, String name, Integer length, Collection<Encoding> encodings) {
+	ValueInfo(ID id, ValueInfo parent, String name, Integer length, Collection<IBitfieldEncoding> encodings) {
 		fId = id;
 		fParent = parent;
 		fName = name;
@@ -32,7 +32,7 @@ class ValueInfo {
 		ValueInfo parent = null;
 		String name = null;
 		Integer length = null;
-		Collection<Encoding> encodings = null;
+		Collection<IBitfieldEncoding> encodings = null;
 
 		for (Node node : iterate(tagNode.getChildNodes())) {
 			switch (node.getNodeName()) {
@@ -53,7 +53,7 @@ class ValueInfo {
 				parent = findFirstById(parentId, knownTags);
 				break;
 			case "encoding":
-				encodings = EncodingFactory.loadEncoding(node);
+				encodings = BitfieldEncodingFactory.loadEncoding(node);
 				break;
 			default:
 				// ignore unknown tags

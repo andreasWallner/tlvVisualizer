@@ -8,4 +8,9 @@ class SelectionOption {
 		fValue = value;
 		fName = name;
 	}
+	
+	@Override
+	public String toString() {
+		return "Option(" + Long.toHexString(fValue) + ", " + fName + ")";
+	}
 }

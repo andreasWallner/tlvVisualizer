@@ -1,15 +1,21 @@
 package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 
-public class Flag extends Encoding {
+public class Flag implements IBitfieldEncoding {
+	final long fMask;
 	final String fName;
 	final String fEnabled;
 	final String fDisabled;
 	
-	public Flag(long mask, String name, String enabled, String disabled) {
-		super(mask);
+	public Flag(long mask, String name, String enabled, String disabled, boolean concat) {
+		fMask = mask;
 		fName = name;
-		fEnabled = name + " " + enabled;
-		fDisabled = name + " " + disabled;
+		if(concat) {
+			fEnabled = name + " " + enabled;
+			fDisabled = name + " " + disabled;
+		} else {
+			fEnabled = enabled;
+			fDisabled = disabled;
+		}
 		
 		if(Long.bitCount(mask) != 1)
 			throw new RuntimeException("exactly on bit must be set for flag, but is not for " + name);
@@ -37,5 +43,15 @@ public class Flag extends Encoding {
 			return fEnabled;
 		else
 			return fDisabled;
+	}
+	
+	@Override
+	public String toString() {
+		return "Flag(" + Long.toHexString(fMask) + ", " + fName + ", " + fEnabled + ", " + fDisabled + ", " + getRange().toString() + ")";
+	}
+
+	@Override
+	public void accept(IBitfieldProcessor processor, byte[] data, Object context) {
+		processor.visit(this, data, context);
 	}
 }

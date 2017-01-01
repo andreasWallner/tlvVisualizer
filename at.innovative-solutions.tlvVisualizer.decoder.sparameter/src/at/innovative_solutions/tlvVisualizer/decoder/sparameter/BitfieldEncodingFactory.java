@@ -7,12 +7,12 @@ import org.w3c.dom.Node;
 
 import static at.innovative_solutions.tlv.Utils.iterate;
 
-public class EncodingFactory {
-	public static Collection<Encoding> loadEncoding(Node node) {
-		Collection<Encoding> result = new ArrayList<Encoding>();
+public class BitfieldEncodingFactory {
+	public static Collection<IBitfieldEncoding> loadEncoding(Node node) {
+		Collection<IBitfieldEncoding> result = new ArrayList<IBitfieldEncoding>();
 		
 		for(Node child : iterate(node.getChildNodes())) {
-			Encoding e = null;
+			IBitfieldEncoding e = null;
 			switch(child.getNodeName()) {
 			case "flag":
 				e = loadFlag(child);
@@ -31,7 +31,7 @@ public class EncodingFactory {
 		return result;
 	}
 	
-	public static Encoding loadRfu(Node node) {
+	public static Rfu loadRfu(Node node) {
 		Long mask = null;
 		
 		for(Node c : iterate(node.getChildNodes())) {
@@ -53,6 +53,11 @@ public class EncodingFactory {
 		String name = null;
 		String enabled = null;
 		String disabled = null;
+		boolean concat = true;
+		
+		Node concatAttrib = node.getAttributes().getNamedItem("concat");
+		if(concatAttrib != null)
+			concat = Boolean.parseBoolean(concatAttrib.getNodeValue());
 		
 		for(Node c : iterate(node.getChildNodes())) {
 			switch(c.getNodeName()) {
@@ -74,7 +79,7 @@ public class EncodingFactory {
 		if(mask == null || name == null || enabled == null || disabled == null)
 			throw new RuntimeException("mask & description must be present for flag: " + node.toString());
 		
-		return new Flag(mask, name, enabled, disabled);
+		return new Flag(mask, name, enabled, disabled, concat);
 	}
 	
 	public static Selection loadSelection(Node node) {
@@ -117,5 +122,13 @@ public class EncodingFactory {
 			throw new RuntimeException("value & name must be present for option: " + node.toString());
 		
 		return new SelectionOption(value, name);
+	}
+	
+	public static String toString(Collection<IBitfieldEncoding> encoding) {
+		StringBuffer str = new StringBuffer();
+		for(IBitfieldEncoding e : encoding) {
+			str.append(e.toString() + "\n");
+		}
+		return str.toString();
 	}
 }

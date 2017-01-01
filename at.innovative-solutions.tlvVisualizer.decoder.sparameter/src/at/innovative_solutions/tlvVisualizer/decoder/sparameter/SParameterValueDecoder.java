@@ -76,7 +76,6 @@ public class SParameterValueDecoder implements ValueDecoder {
 
 	@Override
 	public boolean isValueParsable(TLV tlv) {
-		// TODO do we want a length check here?
 		return true;
 	}
 	
@@ -89,32 +88,12 @@ public class SParameterValueDecoder implements ValueDecoder {
 		if(info == null)
 			return null;
 		
-		if(ptlv.getData().length != info.fLength)
+		if(info.fLength != null && ptlv.getData().length != info.fLength)
 			return "Error: Invalid Length (!=" + info.fLength + ")";
 		
-		Long value = Utils.bytesToLong(ptlv.getData());
-		
-		StringBuilder builder = new StringBuilder();
-		
-		final int bitLength = 8 * info.fLength;
-		String valueString = Long.toBinaryString(value);
-		String valuePadding = Utils.repeat("0", bitLength - valueString.length());
-		builder.append(valuePadding + valueString + "\n");
-		
-		for(Encoding e : info.fEncodings) {
-			Range range = e.getRange();
-			String bitString = Long.toBinaryString((value & e.fMask) >> range.fStop);
-			String padding = Utils.repeat("0", range.fLength - bitString.length());
-			
-			builder.append(Utils.repeat(".", bitLength - 1 - range.fStart));
-			builder.append(padding + bitString);
-			builder.append(Utils.repeat(".", range.fStop));
-			builder.append(" ");
-			builder.append(e.getDescription(value));
-			builder.append("\n");
-		}
-		
-		return builder.toString();
+		SimpleBitfieldFormatter formatter = new SimpleBitfieldFormatter(info);
+		formatter.process(ptlv.getData());
+		return formatter.getResult();
 	}
 	
 	public boolean isValid(final TLV tlv) {
