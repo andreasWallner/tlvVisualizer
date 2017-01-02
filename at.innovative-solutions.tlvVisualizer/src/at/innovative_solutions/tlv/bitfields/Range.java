@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
+package at.innovative_solutions.tlv.bitfields;
 
 public class Range {
 	final public int fStart;

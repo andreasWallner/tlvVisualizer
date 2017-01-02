@@ -1,11 +1,12 @@
-package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
+package at.innovative_solutions.tlv.bitfields;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import at.innovative_solutions.tlv.Utils;
 
 public class SimpleBitfieldFormatter implements IBitfieldProcessor {
-	final ValueInfo fInfo;
+	final Collection<IBitfieldEncoding> fEncoding;
 	private String fResult;
 	
 	class Context {
@@ -23,18 +24,18 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		public String fPostfixString;
 	}
 	
-	SimpleBitfieldFormatter(ValueInfo info) {
-		fInfo = info;
+	public SimpleBitfieldFormatter(Collection<IBitfieldEncoding> encoding) {
+		fEncoding = encoding;
 	}
 	
 	// TODO check where length check is done
 	@Override
 	public void process(byte[] data) {
-		System.out.println(BitfieldEncodingFactory.toString(fInfo.fEncodings));
+		System.out.println(BitfieldEncodingFactory.toString(fEncoding));
 		Long value = Utils.bytesToLong(data);
 		StringBuilder builder = new StringBuilder();
 		
-		final int bitLength = 8 * fInfo.fLength;
+		final int bitLength = data.length * 8;
 		String valueString = Long.toBinaryString(value);
 		String valuePadding = Utils.repeat("0", bitLength - valueString.length());
 		builder.append(valuePadding + valueString + "\n");
@@ -42,7 +43,7 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		String bitString = Utils.bytesToBinString(data);
 		Context context = new Context(builder, bitString, "", "", "");
 		
-		for(IBitfieldEncoding e : fInfo.fEncodings) {
+		for(IBitfieldEncoding e : fEncoding) {
 			e.accept(this, data, context);
 		}
 		

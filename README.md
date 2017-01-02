@@ -33,6 +33,7 @@ The binary version is currently most likely outdated because of ongoing developm
     A00E A60C 800103 810103 820107 830107    
 
 # Todo (...Ideas)
+ - EMV format 'b' decoders
  - fix TODOs in code...
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)

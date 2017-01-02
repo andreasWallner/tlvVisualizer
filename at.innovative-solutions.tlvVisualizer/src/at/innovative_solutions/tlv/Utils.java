@@ -71,6 +71,9 @@ public class Utils {
 	}
 
 	public static String repeat(String str, int count) {
+		if(count < 0)
+			throw new IllegalArgumentException("count must be positive");
+		
 		byte[] chars = str.getBytes();
 		byte[] result = new byte[chars.length * count];
 		int resultIdx = 0;
@@ -80,6 +83,9 @@ public class Utils {
 	}
 	
 	public static String repeat(char c, int count) {
+		if(count < 0)
+			throw new IllegalArgumentException("count must be positive");
+		
 		char[] result = new char[count];
 		Arrays.fill(result, c);
 		return new String(result);

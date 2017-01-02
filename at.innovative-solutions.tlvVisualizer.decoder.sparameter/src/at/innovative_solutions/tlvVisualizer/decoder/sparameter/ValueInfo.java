@@ -10,6 +10,9 @@ import org.w3c.dom.NodeList;
 
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.Utils;
+import at.innovative_solutions.tlv.bitfields.BitfieldEncodingFactory;
+import at.innovative_solutions.tlv.bitfields.IBitfieldEncoding;
+
 import static at.innovative_solutions.tlv.Utils.iterate;
 
 class ValueInfo {

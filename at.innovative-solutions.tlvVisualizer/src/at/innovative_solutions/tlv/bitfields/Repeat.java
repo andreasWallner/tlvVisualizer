@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
+package at.innovative_solutions.tlv.bitfields;
 
 import java.util.Arrays;
 import java.util.Collection;

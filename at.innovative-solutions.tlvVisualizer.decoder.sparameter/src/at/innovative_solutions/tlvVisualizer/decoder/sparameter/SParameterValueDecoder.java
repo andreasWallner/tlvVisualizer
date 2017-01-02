@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.ValueDecoder;
+import at.innovative_solutions.tlv.bitfields.SimpleBitfieldFormatter;
 
 public class SParameterValueDecoder implements ValueDecoder {
 	private ArrayList<ValueInfo> fTags;
@@ -91,7 +92,7 @@ public class SParameterValueDecoder implements ValueDecoder {
 		if(info.fLength != null && ptlv.getData().length != info.fLength)
 			return "Error: Invalid Length (!=" + info.fLength + ")";
 		
-		SimpleBitfieldFormatter formatter = new SimpleBitfieldFormatter(info);
+		SimpleBitfieldFormatter formatter = new SimpleBitfieldFormatter(info.fEncodings);
 		formatter.process(ptlv.getData());
 		return formatter.getResult();
 	}
