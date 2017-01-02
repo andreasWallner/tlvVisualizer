@@ -6,9 +6,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 6-11</format>
-		<description>Uniquely identifies the acquirer within each payment
-			system
-		</description>
+		<description>Uniquely identifies the acquirer within each payment system</description>
 		<length>6</length>
 		<source>Terminal</source>
 	</tag>
@@ -18,11 +16,175 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates the data input and output capabilities of the
-			terminal
-		</description>
+		<description>Indicates the data input and output capabilities of the terminal</description>
 		<length>5</length>
 		<source>Terminal</source>
+		<!-- EMV 4.3 Book 4 p.118 -->
+		<encoding>
+			<flag>
+				<bit>39</bit>
+				<name>Cash</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>38</bit>
+				<name>Goods</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>37</bit>
+				<name>Services</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>36</bit>
+				<name>Cashback</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>35</bit>
+				<name>Inquiry</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>34</bit>
+				<name>Transfer</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>33</bit>
+				<name>Payment</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>32</bit>
+				<name>Administrative</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			
+			<flag>
+				<bit>31</bit>
+				<name>Cash deposit</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<rfu><mask>0x007f000000</mask></rfu>
+			
+			<flag>
+				<bit>23</bit>
+				<name>Numeric keys</name>
+				<enabled>present</enabled>
+				<disabled>not present</disabled>
+			</flag>
+			<flag>
+				<bit>22</bit>
+				<name>Alphabetic and special character keys</name>
+				<enabled>present</enabled>
+				<disabled>not present</disabled>
+			</flag>
+			<flag>
+				<bit>21</bit>
+				<name>Command keys</name>
+				<enabled>present</enabled>
+				<disabled>not present</disabled>
+			</flag>
+			<flag>
+				<bit>20</bit>
+				<name>Function keys</name>
+				<enabled>present</enabled>
+				<disabled>not present</disabled>
+			</flag>
+			<rfu><mask>0x00000F0000</mask></rfu>
+			
+			<flag>
+				<bit>15</bit>
+				<name>Print, attendant</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>14</bit>
+				<name>Print, cardholder</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>13</bit>
+				<name>Display, attendant</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>12</bit>
+				<name>Display, cardholder</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>11</bit>
+				<name>Code table 10</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<rfu><mask>0x0000000C00</mask></rfu>
+			
+			<flag>
+				<bit>7</bit>
+				<name>Code table 8</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>6</bit>
+				<name>Code table 7</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>5</bit>
+				<name>Code table 6</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>4</bit>
+				<name>Code table 5</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>3</bit>
+				<name>Code table 4</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>2</bit>
+				<name>Code table 3</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>1</bit>
+				<name>Code table 2</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>0</bit>
+				<name>Code table 1</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+		</encoding>
 	</tag>
 	<tag>
 		<id>81</id>
@@ -30,9 +192,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Authorised amount of the transaction (excluding
-			adjustments)
-		</description>
+		<description>Authorised amount of the transaction (excluding adjustments)</description>
 		<length>4</length>
 		<source>Terminal</source>
 	</tag>
@@ -42,9 +202,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 12</format>
-		<description>Authorised amount of the transaction (excluding
-			adjustments)
-		</description>
+		<description>Authorised amount of the transaction (excluding adjustments)</description>
 		<length>6</length>
 		<source>Terminal</source>
 	</tag>
@@ -54,9 +212,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Secondary amount associated with the transaction
-			representing a cashback amount
-		</description>
+		<description>Secondary amount associated with the transaction representing a cashback amount</description>
 		<length>4</length>
 		<source>Terminal</source>
 	</tag>
@@ -66,9 +222,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 12</format>
-		<description>Secondary amount associated with the transaction
-			representing a cashback amount
-		</description>
+		<description>Secondary amount associated with the transaction representing a cashback amount</description>
 		<length>6</length>
 		<source>Terminal</source>
 	</tag>
@@ -78,8 +232,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Authorised amount expressed in the reference currency
-		</description>
+		<description>Authorised amount expressed in the reference currency</description>
 		<length>4</length>
 		<source>Terminal</source>
 	</tag>
@@ -92,9 +245,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Cryptogram returned by the ICC in response of the
-			GENERATE AC command
-		</description>
+		<description>Cryptogram returned by the ICC in response of the GENERATE AC command</description>
 		<length>8</length>
 		<source>ICC</source>
 	</tag>
@@ -107,9 +258,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 3</format>
-		<description>Indicates the currency in which the account is managed
-			according to ISO 4217
-		</description>
+		<description>Indicates the currency in which the account is managed according to ISO 4217</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -122,9 +271,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 1</format>
-		<description>Indicates the implied position of the decimal point from
-			the right of the amount represented according to ISO 4217
-		</description>
+		<description>Indicates the implied position of the decimal point from the right of the amount represented according to ISO 4217</description>
 		<length>1</length>
 		<source>ICC</source>
 	</tag>
@@ -137,9 +284,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Issuer or payment system specified data relating to the
-			application
-		</description>
+		<description>Issuer or payment system specified data relating to the application</description>
 		<length>1-32</length>
 		<source>ICC</source>
 	</tag>
@@ -178,9 +323,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>var.</format>
-		<description>Indicates the location (SFI, range of records) of the
-			AEFs related to a given application
-		</description>
+		<description>Indicates the location (SFI, range of records) of the AEFs related to a given application</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -192,8 +335,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the application as described in ISO/IEC 7816-5
-		</description>
+		<description>Identifies the application as described in ISO/IEC 7816-5</description>
 		<length>5-16</length>
 		<source>ICC</source>
 	</tag>
@@ -203,8 +345,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the application as described in ISO/IEC 7816-5
-		</description>
+		<description>Identifies the application as described in ISO/IEC 7816-5</description>
 		<length>5-16</length>
 		<source>Terminal</source>
 	</tag>
@@ -217,44 +358,48 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates the capabilities of the card to support
-			specific functions in the application
-		</description>
+		<description>Indicates the capabilities of the card to support specific functions in the application</description>
 		<length>2</length>
 		<source>ICC</source>
+		<!-- EMV 4.3 Book 3 p.160 -->
 		<encoding>
-			<flag>
-				<bit>15</bit>
-				<meaning>RFU</meaning>
-			</flag>
+			<rfu><mask>0x80</mask></rfu>
 			<flag>
 				<bit>14</bit>
-				<meaning>SDA supported</meaning>
+				<name>SDA</name>
+				<enabled>supported</enabled>
+				<disabled>not supported</disabled>
 			</flag>
 			<flag>
 				<bit>13</bit>
-				<meaning>DDA supported</meaning>
+				<name>DDA</name>
+				<enabled>supported</enabled>
+				<disabled>not supported</disabled>
 			</flag>
 			<flag>
 				<bit>12</bit>
-				<meaning>Cardholder verification is supported</meaning>
+				<name>Cardholder verification</name>
+				<enabled>supported</enabled>
+				<disabled>not supported</disabled>
 			</flag>
 			<flag>
 				<bit>11</bit>
-				<meaning>Terminal risk management is to be performed</meaning>
+				<name>Terminal risk management</name>
+				<enabled>is to be performed</enabled>
+				<disabled>is not performed</disabled>
 			</flag>
 			<flag>
 				<bit>10</bit>
-				<meaning>Issuer authentication is supported</meaning>
+				<name>Issuer authentication</name>
+				<enabled>is supported</enabled>
+				<disabled>is not supported</disabled>
 			</flag>
-			<flag>
-				<start>9</start>
-				<end>9</end>
-				<meaning>RFU</meaning>
-			</flag>
+			<rfu><mask>0x0200</mask></rfu>
 			<flag>
 				<bit>8</bit>
-				<meaning>CDA supported</meaning>
+				<name>CDA</name>
+				<enabled>supported</enabled>
+				<disabled>not supported</disabled>
 			</flag>
 		</encoding>
 	</tag>
@@ -267,9 +412,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>ans with the special character limited to space</format>
-		<description>Mnemonic associated with the AID according to ISO/IEC
-			7816-5
-		</description>
+		<description>Mnemonic associated with the AID according to ISO/IEC 7816-5</description>
 		<length>1-16</length>
 		<source>ICC</source>
 	</tag>
@@ -313,6 +456,7 @@
 		<length>1</length>
 		<source>ICC</source>
 	</tag>
+	<!-- EMV 4.3 B1 p.138 -->
 	<tag>
 		<id>87</id>
 		<name>Application Priority Indicator</name>
@@ -322,11 +466,39 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates the priority of a given application or group of
-			applications in a directory
-		</description>
+		<description>Indicates the priority of a given application or group of applications in a directory</description>
 		<length>1</length>
 		<source>ICC</source>
+		<!-- EMV 4.3 Book 2 p.138 -->
+		<encoding>
+			<flag>
+				<bit>8</bit>
+				<name>Selection</name>
+				<enabled>Application cannot be selected without confirmation by the cardholder</enabled>
+				<disabled>Application may be selected without confirmation by the cardholder</disabled>
+			</flag>
+			<rfu><mask>0x70</mask></rfu>
+			<selection>
+				<name>Priority</name>
+				<mask>0x0F</mask>
+				<option><value>0x00</value><name>no priority</name></option>
+				<option><value>0x01</value><name>priority 1</name></option>
+				<option><value>0x02</value><name>priority 2</name></option>
+				<option><value>0x03</value><name>priority 3</name></option>
+				<option><value>0x04</value><name>priority 4</name></option>
+				<option><value>0x05</value><name>priority 5</name></option>
+				<option><value>0x06</value><name>priority 6</name></option>
+				<option><value>0x07</value><name>priority 7</name></option>
+				<option><value>0x08</value><name>priority 8</name></option>
+				<option><value>0x09</value><name>priority 9</name></option>
+				<option><value>0x0A</value><name>priority 10</name></option>
+				<option><value>0x0B</value><name>priority 11</name></option>
+				<option><value>0x0C</value><name>priority 12</name></option>
+				<option><value>0x0D</value><name>priority 13</name></option>
+				<option><value>0x0E</value><name>priority 14</name></option>
+				<option><value>0x0F</value><name>priority 15</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	<tag>
 		<id>9F3B</id>
@@ -353,21 +525,10 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 1</format>
-		<description>Indicates the implied position of the decimal point from
-			the right of the amount, for each of the 1-4 reference currencies
-			represented according to ISO 4217
-		</description>
+		<description>Indicates the implied position of the decimal point from the right of the amount, for each of the 1-4 reference currencies represented according to ISO 4217</description>
 		<length>1-4</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Application Selection Indicator</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>At the discretion of 
-		the terminal. The data is not sent across the interface</format> <description>For 
-		an application in the ICC to be supported by an application in the terminal, 
-		the Application Selection Indicator indicates whether the associated AID 
-		in the terminal must match the AID in the card exactly, including the length 
-		of the AID, or only up to the length of the AID in the terminal There is 
-		only one Application Selection Indicator per AID supported by the terminal</description> 
-		<length>See format</length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>61</id>
 		<name>Application Template</name>
@@ -376,9 +537,7 @@
 		</templates>
 		<primitive>False</primitive>
 		<format>b</format>
-		<description>Contains one or more data objects relevant to an
-			application directory entry according to ISO/IEC 7816-5
-		</description>
+		<description>Contains one or more data objects relevant to an application directory entry according to ISO/IEC 7816-5</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -391,9 +550,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Counter maintained by the application in the ICC
-			(incrementing the ATC is managed by the ICC)
-		</description>
+		<description>Counter maintained by the application in the ICC (incrementing the ATC is managed by the ICC)</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -406,52 +563,72 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates issuer&#8217;s specified restrictions on the
-			geographic usage and services allowed for the application
-		</description>
+		<description>Indicates issuer&#8217;s specified restrictions on the geographic usage and services allowed for the application</description>
 		<length>2</length>
 		<source>ICC</source>
+		<!-- EMV 4.3 Book 3 p.161 -->
 		<encoding>
 			<flag>
 				<bit>15</bit>
-				<meaning>Valid for domestic cash transactions</meaning>
+				<name>Domestic cash transactions</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>14</bit>
-				<meaning>Valid for international cash transaction</meaning>
+				<name>International cash transaction</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>13</bit>
-				<meaning>Valid for domestic goods</meaning>
+				<name>Domestic goods</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>12</bit>
-				<meaning>Valid for international goods</meaning>
+				<name>International goods</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>11</bit>
-				<meaning>Valid for domestic services</meaning>
+				<name>Domestic services</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>10</bit>
-				<meaning>Valid for international services</meaning>
+				<name>International services</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>9</bit>
-				<meaning>Valid for ATMs</meaning>
+				<name>ATMs</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>8</bit>
-				<meaning>Valid at terminals other than ATMs</meaning>
+				<name>Terminals other than ATMs</name>
+				<enabled>valid</enabled>
+				<disabled>invalid</disabled>
 			</flag>
 			<flag>
 				<bit>7</bit>
-				<meaning>Domestic cashback allowed</meaning>
+				<name>Domestic cashback</name>
+				<enabled>allowed</enabled>
+				<disabled>disallowed</disabled>
 			</flag>
 			<flag>
 				<bit>6</bit>
-				<meaning>International cashback allowed</meaning>
+				<name>International cashback</name>
+				<enabled>allowed</enabled>
+				<disabled>disallowed</disabled>
 			</flag>
+			<rfu><mask>0x003F</mask></rfu>
 		</encoding>
 	</tag>
 	<tag>
@@ -463,9 +640,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Version number assigned by the payment system for the
-			application
-		</description>
+		<description>Version number assigned by the payment system for the application</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -475,9 +650,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Version number assigned by the payment system for the
-			application
-		</description>
+		<description>Version number assigned by the payment system for the application</description>
 		<length>2</length>
 		<source>Terminal</source>
 	</tag>
@@ -487,9 +660,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>As defined by the Payment Systems</format>
-		<description>Value generated by the authorisation authority for an
-			approved transaction
-		</description>
+		<description>Value generated by the authorization authority for an approved transaction</description>
 		<length>6</length>
 		<source>Issuer</source>
 	</tag>
@@ -503,11 +674,7 @@
 		</description>
 		<length>2</length>
 		<source>Issuer/Terminal</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Authorisation Response Cryptogram 
-		(ARPC)</name> <templates/> <primitive>&#8212;</primitive> <format>b</format> 
-		<description>Cryptogram generated by the issuer and used by the card to verify 
-		that the response came from the issuer.</description> <length>4 or 8</length> 
-		<source>Issuer</source> </tag> -->
+	</tag>
 	<tag>
 		<id>5F54</id>
 		<name>Bank Identifier Code (BIC)</name>
@@ -531,9 +698,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>List of data objects (tag and length) to be passed to the
-			ICC in the first GENERATE AC command
-		</description>
+		<description>List of data objects (tag and length) to be passed to the ICC in the first GENERATE AC command</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -546,17 +711,10 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>List of data objects (tag and length) to be passed to the
-			ICC in the second GENERATE AC command
-		</description>
+		<description>List of data objects (tag and length) to be passed to the ICC in the second GENERATE AC command</description>
 		<length>0-252</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Card Status Update (CSU)</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>b</format> <description>Contains 
-		data sent to the ICC to indicate whether the issuer approves or declines 
-		the transaction, and to initiate actions specified by the issuer. Transmitted 
-		to the card in Issuer Authentication Data.</description> <length>4</length> 
-		<source>Issuer</source> </tag> -->
+	</tag>
 	<tag>
 		<id>5F20</id>
 		<name>Cardholder Name</name>
@@ -580,9 +738,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>ans 27-45</format>
-		<description>Indicates the whole cardholder name when greater than 26
-			characters using the same coding convention as in ISO 7813
-		</description>
+		<description>Indicates the whole cardholder name when greater than 26 characters using the same coding convention as in ISO 7813</description>
 		<length>27-45</length>
 		<source>ICC</source>
 	</tag>
@@ -595,59 +751,49 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies a method of verification of the cardholder
-			supported by the application
-		</description>
+		<description>Identifies a method of verification of the cardholder supported by the application</description>
 		<length>0-252</length>
 		<source>ICC</source>
 		<encoding>
 			<repeat size="2">
 				<name>Cardholder verification rule</name>
-				<slice>
-					<start>15</start>
-					<end>15</end>
-					<meaning>RFU</meaning>
-				</slice>
-				<slice>
-					<start>14</start>
-					<end>14</end>
-					<meaning value="1">Apply succeeding CV Rule if this CVM is unsuccessful</meaning>
-					<meaning value="0">Fail cardholder verification if this CVM is unsuccessful</meaning>
-				</slice>
-				<slice>
-					<start>13</start>
-					<end>8</end>
-					<name>Cardholder verification method code</name>
-					<meaning value="0">Fail CVM processing</meaning>
-					<meaning value="1">Plaintext PIN verification performed by ICC</meaning>
-					<meaning value="2">Enciphered PIN verification online</meaning>
-					<meaning value="3">Plaintext PIN verification performed by ICC and signature (paper)</meaning>
-					<meaning value="4">Enciphered PIN verification performed by ICC</meaning>
-					<meaning value="5">Enciphered PIN verification performed by ICC and signature (paper)</meaning>
-					<meaning value="1E">Signature (paper)</meaning>
-					<meaning value="1F">No CVM required</meaning>
-					<meaning value="3F">This valud is not available for use</meaning>
-					<meaning value="0" mask="20">Values in the range 000110-011101 reserved for future use by EMV specification</meaning>
-					<meaning value="20" mask="30">Values in the range 100000-101111 reserved for use by the individual payment systems</meaning>
-					<meaning value="30" mask="30">Values in the range 110000-111110 reserved for use by the issuer</meaning>
-				</slice>
-				<slice>
-					<start>7</start>
-					<end>0</end>
-					<name>Condition Code</name>
-					<meaning value="0">Always</meaning>
-					<meaning value="1">If unattended cash</meaning>
-					<meaning value="2">If no unattended cash and not manual cash and not purchase with cashback</meaning>
-					<meaning value="3">If terminal supports the CVM</meaning>
-					<meaning value="4">If manual cash</meaning>
-					<meaning value="5">If purchase with cashback</meaning>
-					<meaning value="6">If transaction is in the application currency and is under X value (see EMV book 3 section 10.5 for a discussion of "X")</meaning>
-					<meaning value="7">If transaction is in the application currency and is over X value</meaning>
-					<meaning value="8">If transaction is in the application currency and is under Y value (see EMV book 3 section 10.5 for a discussion of "Y")</meaning>
-					<meaning value="9">If transaction is in the application currency and is over Y value</meaning>
-					<meaning value="0" mask="80">RFU</meaning>
-					<meaning value="80" mask="80">Reserved for use by individual payment systems</meaning>
-				</slice>
+				<rfu><mask>0x8000</mask></rfu>
+				<flag>
+					<bit>14</bit>
+					<name></name>
+					<enabled>Apply succeeding CV Rule if this CVM is unsuccessful</enabled>
+					<disabled>Fail cardholder verification if this CVM is unsuccessful</disabled>
+				</flag>
+				<selection>
+					<mask>0x3F00</mask>
+					<name>Verification</name>
+					<option><value>0x00</value><name>Fail CVM processing</name></option>
+					<option><value>0x01</value><name>Plaintext PIN verification performed by ICC</name></option>
+					<option><value>0x02</value><name>Enciphered PIN verification online</name></option>
+					<option><value>0x03</value><name>Plaintext PIN verification performed by ICC and signature (paper)</name></option>
+					<option><value>0x04</value><name>Enciphered PIN verification performed by ICC</name></option>
+					<option><value>0x05</value><name>Enciphered PIN verification performed by ICC and signature (paper)</name></option>
+					<option><value>0x1E</value><name>Signature (paper)</name></option>
+					<option><value>0x1F</value><name>No CVM required</name></option>
+					<option><value>0x3F</value><name>This value is not available for use</name></option>
+					<group><value>0x20</value><mask>0x30</mask><name>Values in the range 0b100000-0b101111 reserved for use by the individual payment systems</name></group>
+					<group><value>0x30</value><mask>0x30</mask><name>Values in the range 0b110000-0b111110 reserved for use by the issuer</name></group>
+				</selection>
+				<selection>
+					<mask>0x00FF</mask>
+					<name>Condition</name>
+					<option><value>0</value><name>Always</name></option>
+					<option><value>1</value><name>If unattended cash</name></option>
+					<option><value>2</value><name>If no unattended cash and not manual cash and not purchase with cashback</name></option>
+					<option><value>3</value><name>If terminal supports the CVM</name></option>
+					<option><value>4</value><name>If manual cash</name></option>
+					<option><value>5</value><name>If purchase with cashback</name></option>
+					<option><value>6</value><name>If transaction is in the application currency and is under X value (see EMV book 3 section 10.5 for a discussion of "X")</name></option>
+					<option><value>7</value><name>If transaction is in the application currency and is over X value</name></option>
+					<option><value>8</value><name>If transaction is in the application currency and is under Y value (see EMV book 3 section 10.5 for a discussion of "Y")</name></option>
+					<option><value>9</value><name>If transaction is in the application currency and is over Y value</name></option>
+					<group><value>0x80</value><mask>0x80</mask><name>Reserved for use by individual payment systems</name></group>
+				</selection>
 			</repeat>
 		</encoding>
 	</tag>
@@ -661,16 +807,52 @@
 		</description>
 		<length>3</length>
 		<source>Terminal</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Certification Authority Public Key 
-		Check Sum</name> <templates/> <primitive>&#8212;</primitive> <format>b</format> 
-		<description>A check value calculated on the concatenation of all parts of 
-		the Certification Authority Public Key (RID, Certification Authority Public 
-		Key Index, Certification Authority Public Key Modulus, Certification Authority 
-		Public Key Exponent) using SHA-1</description> <length>20</length> <source>Terminal</source> 
-		</tag> <tag> <id>&#8212;</id> <name>Certification Authority Public Key Exponent</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>b</format> <description>Value 
-		of the exponent part of the Certification Authority Public Key</description> 
-		<length>1 or 3</length> <source>Terminal</source> </tag> -->
+		<!-- EMV 4.3 Book 4 p.121 -->
+		<encoding>
+			<!-- EMV 4.3 Book 3 p.162 -->
+			<selection>
+				<mask>0xFF0000</mask>
+				<name>CVM Performed</name>
+				<option><value>0x00</value><name>Fail CVM processing</name></option>
+				<option><value>0x01</value><name>Plaintext PIN verification performed by ICC</name></option>
+				<option><value>0x02</value><name>Enciphered PIN verification online</name></option>
+				<option><value>0x03</value><name>Plaintext PIN verification performed by ICC and signature (paper)</name></option>
+				<option><value>0x04</value><name>Enciphered PIN verification performed by ICC</name></option>
+				<option><value>0x05</value><name>Enciphered PIN verification performed by ICC and signature (paper)</name></option>
+				<option><value>0x1E</value><name>Signature (paper)</name></option>
+				<option><value>0x1F</value><name>No CVM required</name></option>
+				<option><value>0x3F</value><name>No CVM Performed</name></option>
+				<group><value>0x20</value><mask>0x30</mask><name>Values in the range 0b100000-0b101111 reserved for use by the individual payment systems</name></group>
+				<group><value>0x30</value><mask>0x30</mask><name>Values in the range 0b110000-0b111110 reserved for use by the issuer</name></group>
+			</selection>
+			
+			<!-- EMV 4.3 Book 3 p.163 -->
+			<selection>
+				<mask>0x00FF00</mask>
+				<name>CVM condition</name>
+				<option><value>0x00</value><name>No CVM Performed</name></option>
+				<option><value>0x01</value><name>If unattended cash</name></option>
+				<option><value>0x02</value><name>If not unattended cash and not manual cash and not purchase with cashback</name></option>
+				<option><value>0x03</value><name>If terminal supports the CVM</name></option>
+				<option><value>0x04</value><name>If manual cash</name></option>
+				<option><value>0x05</value><name>If purchase with cashback</name></option>
+				<option><value>0x06</value><name>If transaction is in the application currency and is under X value</name></option>
+				<option><value>0x07</value><name>If transaction is in the application currency and is over X value</name></option>
+				<option><value>0x08</value><name>If transaction is in the application currency and is under Y value</name></option>
+				<option><value>0x09</value><name>If transaction is in the application currency and is over Y value</name></option>
+				<group><from>0x0A</from><to>0x7F</to><name>RFU</name></group>
+				<group><from>0x80</from><to>0xFF</to><name>Reserved for use by individual payment systems</name></group>
+			</selection>
+			
+			<selection>
+				<mask>0x0000FF</mask>
+				<name>CVM result</name>
+				<option><value>0x00</value><name>Unknown</name></option>
+				<option><value>0x01</value><name>Failed</name></option>
+				<option><value>0x02</value><name>Successful</name></option>
+			</selection>
+		</encoding>
+	</tag>
 	<tag>
 		<id>8F</id>
 		<name>Certification Authority Public Key Index</name>
@@ -680,9 +862,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the certification authority&#8217;s public key
-			in conjunction with the RID
-		</description>
+		<description>Identifies the certification authority&#8217;s public key in conjunction with the RID</description>
 		<length>1</length>
 		<source>ICC</source>
 	</tag>
@@ -692,16 +872,10 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the certification authority&#8217;s public key
-			in conjunction with the RID
-		</description>
+		<description>Identifies the certification authority&#8217;s public key in conjunction with the RID</description>
 		<length>1</length>
 		<source>Terminal</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Certification Authority Public Key 
-		Modulus</name> <templates/> <primitive>&#8212;</primitive> <format>b</format> 
-		<description>Value of the modulus part of the Certification Authority Public 
-		Key</description> <length>NCA (up to 248)</length> <source>Terminal</source> 
-		</tag> -->
+	</tag>
 	<tag>
 		<id>83</id>
 		<name>Command Template</name>
@@ -722,11 +896,38 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates the type of cryptogram and the actions to be
-			performed by the terminal
-		</description>
+		<description>Indicates the type of cryptogram and the actions to be performed by the terminal</description>
 		<length>1</length>
 		<source>ICC</source>
+		<!-- EMV 4.3 Book 3 p.56 -->
+		<encoding>
+			<selection>
+				<name>cryptogram type</name>
+				<mask>0xC0</mask>
+				<option><value>0x00</value><name>AAC</name></option>
+				<option><value>0x40</value><name>TC</name></option>
+				<option><value>0x80</value><name>ARQC</name></option>
+				<option><value>0xC0</value><name>RFU</name></option><!-- TODO should we have this here, or just leave it out (to generate error)? -->
+			</selection>
+			<ignore>
+				<mask>0x30</mask>
+				<name>Payment System-specific cryptogram</name>
+			</ignore>
+			<flag>
+				<name>Advice</name>
+				<bit>7</bit>
+				<enabled>Advice required</enabled>
+				<disabled>No advice required</disabled>
+			</flag>
+			<selection>
+				<name>Reason</name>
+				<mask>0x07</mask>
+				<option><value>0x00</value><name>No information given</name></option>
+				<option><value>0x01</value><name>Service not allowed</name></option>
+				<option><value>0x02</value><name>PIN Try Limit exceeded</name></option>
+				<option><value>0x03</value><name>Issuer authentication failed</name></option>
+			</selection>
+		</encoding>
 	</tag>
 	<tag>
 		<id>9F45</id>
@@ -734,9 +935,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>An issuer assigned value that is retained by the terminal
-			during the verification process of the Signed Static Application Data
-		</description>
+		<description>An issuer assigned value that is retained by the terminal during the verification process of the Signed Static Application Data</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -748,20 +947,10 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the name of the DF as described in ISO/IEC
-			7816-4
-		</description>
+		<description>Identifies the name of the DF as described in ISO/IEC 7816-4</description>
 		<length>5-16</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Default Dynamic Data Authentication 
-		Data Object List (DDOL)</name> <templates/> <primitive>&#8212;</primitive> 
-		<format>b</format> <description>DDOL to be used for constructing the INTERNAL 
-		AUTHENTICATE command if the DDOL in the card is not present</description> 
-		<length>var.</length> <source>Terminal</source> </tag> <tag> <id>&#8212;</id> 
-		<name>Default Transaction Certificate Data Object List (TDOL)</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>b</format> <description>TDOL to be 
-		used for generating the TC Hash Value if the TDOL in the card is not present</description> 
-		<length>var.</length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>9D</id>
 		<name>Directory Definition File (DDF) Name</name>
@@ -770,8 +959,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the name of a DF associated with a directory
-		</description>
+		<description>Identifies the name of a DF associated with a directory</description>
 		<length>5-16</length>
 		<source>ICC</source>
 	</tag>
@@ -783,9 +971,7 @@
 		</templates>
 		<primitive>False</primitive>
 		<format>var.</format>
-		<description>Issuer discretionary part of the directory according to
-			ISO/IEC 7816-5
-		</description>
+		<description>Issuer discretionary part of the directory according to ISO/IEC 7816-5</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -798,9 +984,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>List of data objects (tag and length) to be passed to the
-			ICC in the INTERNAL AUTHENTICATE command
-		</description>
+		<description>List of data objects (tag and length) to be passed to the ICC in the INTERNAL AUTHENTICATE command</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -810,15 +994,10 @@
 		<templates />
 		<primitive>False</primitive>
 		<format>var.</format>
-		<description>Template proprietary to the EMV specification
-		</description>
+		<description>Template proprietary to the EMV specification</description>
 		<length>var.</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Enciphered Personal Identification 
-		Number (PIN) Data</name> <templates/> <primitive>&#8212;</primitive> <format>b</format> 
-		<description>Transaction PIN enciphered at the PIN pad for online verification 
-		or for offline verification if the PIN pad and IFD are not a single integrated 
-		device</description> <length>8</length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>BF0C</id>
 		<name>File Control Information (FCI) Issuer Discretionary Data</name>
@@ -839,9 +1018,7 @@
 		</templates>
 		<primitive>False</primitive>
 		<format>var.</format>
-		<description>Identifies the data object proprietary to this
-			specification in the FCI template according to ISO/IEC 7816-4
-		</description>
+		<description>Identifies the data object proprietary to this specification in the FCI template according to ISO/IEC 7816-4</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -851,8 +1028,7 @@
 		<templates />
 		<primitive>False</primitive>
 		<format>var.</format>
-		<description>Identifies the FCI template according to ISO/IEC 7816-4
-		</description>
+		<description>Identifies the FCI template according to ISO/IEC 7816-4</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -862,59 +1038,46 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Time-variant number generated by the ICC, to be captured
-			by the terminal
-		</description>
+		<description>Time-variant number generated by the ICC, to be captured by the terminal</description>
 		<length>2-8</length>
 		<source>ICC</source>
 	</tag>
 	<tag>
 		<id>9F2D</id>
-		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key
-			Certificate
-		</name>
+		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key Certificate</name>
 		<templates>
 			<template>70</template>
 			<template>77</template>
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>ICC PIN Encipherment Public Key certified by the issuer
-		</description>
+		<description>ICC PIN Encipherment Public Key certified by the issuer</description>
 		<length>NI</length>
 		<source>ICC</source>
 	</tag>
 	<tag>
 		<id>9F2E</id>
-		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key
-			Exponent
-		</name>
+		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key Exponent</name>
 		<templates>
 			<template>70</template>
 			<template>77</template>
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>ICC PIN Encipherment Public Key Exponent used for PIN
-			encipherment
-		</description>
+		<description>ICC PIN Encipherment Public Key Exponent used for PIN encipherment</description>
 		<length>1 or 3</length>
 		<source>ICC</source>
 	</tag>
 	<tag>
 		<id>9F2F</id>
-		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key
-			Remainder
-		</name>
+		<name>Integrated Circuit Card (ICC) PIN Encipherment Public Key Remainder</name>
 		<templates>
 			<template>70</template>
 			<template>77</template>
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Remaining digits of the ICC PIN Encipherment Public Key
-			Modulus
-		</description>
+		<description>Remaining digits of the ICC PIN Encipherment Public Key Modulus</description>
 		<length>NPE &#8722; NI + 42</length>
 		<source>ICC</source>
 	</tag>
@@ -940,9 +1103,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>ICC Public Key Exponent used for the verification of the
-			Signed Dynamic Application Data
-		</description>
+		<description>ICC Public Key Exponent used for the verification of the Signed Dynamic Application Data</description>
 		<length>1-3</length>
 		<source>ICC</source>
 	</tag>
@@ -966,9 +1127,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>an 8</format>
-		<description>Unique and permanent serial number assigned to the IFD by
-			the manufacturer
-		</description>
+		<description>Unique and permanent serial number assigned to the IFD by the manufacturer</description>
 		<length>8</length>
 		<source>Terminal</source>
 	</tag>
@@ -981,9 +1140,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>var.</format>
-		<description>Uniquely identifies the account of a customer at a
-			financial institution as defined in ISO 13616.
-		</description>
+		<description>Uniquely identifies the account of a customer at a financial institution as defined in ISO 13616.</description>
 		<length>0-34</length>
 		<source>ICC</source>
 	</tag>
@@ -996,10 +1153,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Specifies the issuer&#8217;s conditions that cause a
-			transaction to be rejected if it might have been approved online, but
-			the terminal is unable to process the transaction online
-		</description>
+		<description>Specifies the issuer&#8217;s conditions that cause a transaction to be rejected if it might have been approved online, but the terminal is unable to process the transaction online</description>
 		<length>5</length>
 		<source>ICC</source>
 	</tag>
@@ -1012,9 +1166,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Specifies the issuer&#8217;s conditions that cause the
-			denial of a transaction without attempt to go online
-		</description>
+		<description>Specifies the issuer&#8217;s conditions that cause the denial of a transaction without attempt to go online</description>
 		<length>5</length>
 		<source>ICC</source>
 	</tag>
@@ -1027,9 +1179,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Specifies the issuer&#8217;s conditions that cause a
-			transaction to be transmitted online
-		</description>
+		<description>Specifies the issuer&#8217;s conditions that cause a transaction to be transmitted online</description>
 		<length>5</length>
 		<source>ICC</source>
 	</tag>
@@ -1042,9 +1192,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Contains proprietary application data for transmission to
-			the issuer in an online transaction
-		</description>
+		<description>Contains proprietary application data for transmission to the issuer in an online transaction</description>
 		<length>0-32</length>
 		<source>ICC</source>
 		<encoding>
@@ -1070,26 +1218,25 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 2</format>
-		<description>Indicates the code table according to ISO/IEC 8859 for
-			displaying the Application Preferred Name
-		</description>
+		<description>Indicates the code table according to ISO/IEC 8859 for displaying the Application Preferred Name</description>
 		<length>1</length>
 		<source>ICC</source>
+		<!-- EMV 4.3 Book 3 p.164 -->
 		<encoding>
-			<slice>
-				<start>7</start>
-				<end>0</end>
-				<meaning value="1">Part 1 of ISO/IEC 8859</meaning>
-				<meaning value="2">Part 2 of ISO/IEC 8859</meaning>
-				<meaning value="3">Part 3 of ISO/IEC 8859</meaning>
-				<meaning value="4">Part 4 of ISO/IEC 8859</meaning>
-				<meaning value="5">Part 5 of ISO/IEC 8859</meaning>
-				<meaning value="6">Part 6 of ISO/IEC 8859</meaning>
-				<meaning value="7">Part 7 of ISO/IEC 8859</meaning>
-				<meaning value="8">Part 8 of ISO/IEC 8859</meaning>
-				<meaning value="9">Part 9 of ISO/IEC 8859</meaning>
-				<meaning value="A">Part 10 of ISO/IEC 8859</meaning>
-			</slice>
+			<selection>
+				<mask>0xFF</mask>
+				<name></name>
+				<option><value>0x01</value><name>Part 1 of ISO/IEC 8859</name></option>
+				<option><value>0x02</value><name>Part 2 of ISO/IEC 8859</name></option>
+				<option><value>0x03</value><name>Part 3 of ISO/IEC 8859</name></option>
+				<option><value>0x04</value><name>Part 4 of ISO/IEC 8859</name></option>
+				<option><value>0x05</value><name>Part 5 of ISO/IEC 8859</name></option>
+				<option><value>0x06</value><name>Part 6 of ISO/IEC 8859</name></option>
+				<option><value>0x07</value><name>Part 7 of ISO/IEC 8859</name></option>
+				<option><value>0x08</value><name>Part 8 of ISO/IEC 8859</name></option>
+				<option><value>0x09</value><name>Part 9 of ISO/IEC 8859</name></option>
+				<option><value>0x0A</value><name>Part 10 of ISO/IEC 8859</name></option>
+			</selection>
 		</encoding>
 	</tag>
 	<tag>
@@ -1115,9 +1262,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>a 2</format>
-		<description>Indicates the country of the issuer as defined in ISO
-			3166 (using a 2 character alphabetic code)
-		</description>
+		<description>Indicates the country of the issuer as defined in ISO 3166 (using a 2 character alphabetic code)</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -1130,9 +1275,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>a 3</format>
-		<description>Indicates the country of the issuer as defined in ISO
-			3166 (using a 3 character alphabetic code)
-		</description>
+		<description>Indicates the country of the issuer as defined in ISO 3166 (using a 3 character alphabetic code)</description>
 		<length>3</length>
 		<source>ICC</source>
 	</tag>
@@ -1145,10 +1288,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 6</format>
-		<description>The number that identifies the major industry and the
-			card issuer and that forms the first part of the Primary Account
-			Number (PAN)
-		</description>
+		<description>The number that identifies the major industry and the card issuer and that forms the first part of the Primary Account Number (PAN)</description>
 		<length>3</length>
 		<source>ICC</source>
 	</tag>
@@ -1175,9 +1315,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Issuer public key exponent used for theverification of
-			the Signed Static Application Data and the ICC Public Key Certificate
-		</description>
+		<description>Issuer public key exponent used for theverification of the Signed Static Application Data and the ICC Public Key Certificate</description>
 		<length>1-3</length>
 		<source>ICC</source>
 	</tag>
@@ -1190,8 +1328,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Remaining digits of the Issuer Public Key Modulus
-		</description>
+		<description>Remaining digits of the Issuer Public Key Modulus</description>
 		<length>NI &#8722; NCA + 36</length>
 		<source>ICC</source>
 	</tag>
@@ -1204,8 +1341,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Contains a command for transmission to the ICC
-		</description>
+		<description>Contains a command for transmission to the ICC</description>
 		<length>0-261</length>
 		<source>Issuer</source>
 	</tag>
@@ -1221,19 +1357,14 @@
 		<description>Identification of the Issuer Script</description>
 		<length>4</length>
 		<source>Issuer</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Issuer Script Results</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>b</format> <description>Indicates 
-		the result of the terminal script processing</description> <length>var.</length> 
-		<source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>71</id>
 		<name>Issuer Script Template 1</name>
 		<templates />
 		<primitive>False</primitive>
 		<format>b</format>
-		<description>Contains proprietary issuer data for transmission to the
-			ICC before the second GENERATE AC command
-		</description>
+		<description>Contains proprietary issuer data for transmission to the ICC before the second GENERATE AC command</description>
 		<length>var.</length>
 		<source>Issuer</source>
 	</tag>
@@ -1243,9 +1374,7 @@
 		<templates />
 		<primitive>False</primitive>
 		<format>b</format>
-		<description>Contains proprietary issuer data for transmission to the
-			ICC after the second GENERATE AC command
-		</description>
+		<description>Contains proprietary issuer data for transmission to the ICC after the second GENERATE AC command</description>
 		<length>var.</length>
 		<source>Issuer</source>
 	</tag>
@@ -1258,9 +1387,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>ans</format>
-		<description>The URL provides the location of the Issuer&#8217;s
-			Library Server on the Internet.
-		</description>
+		<description>The URL provides the location of the Issuer&#8217;s Library Server on the Internet.</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1272,14 +1399,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>an 2</format>
-		<description>1-4 languages stored in order of preference, each
-			represented by 2 alphabetical characters according to ISO 639
-
-			Note:
-			EMVCo strongly recommends that cards be personalised with data
-			element '5F2D' coded in lowercase, but that terminals accept the data
-			element whether it is coded in upper or lower case.
-		</description>
+		<description>1-4 languages stored in order of preference, each represented by 2 alphabetical characters according to ISO 639 Note: EMVCo strongly recommends that cards be personalised with data element '5F2D' coded in lowercase, but that terminals accept the data element whether it is coded in upper or lower case.</description>
 		<length>2-8</length>
 		<source>ICC</source>
 	</tag>
@@ -1290,8 +1410,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>ATC value of the last transaction that went online
-		</description>
+		<description>ATC value of the last transaction that went online</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -1304,9 +1423,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Provides the SFI of the Transaction Log file and its
-			number of records
-		</description>
+		<description>Provides the SFI of the Transaction Log file and its number of records</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -1316,10 +1433,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>List (in tag and length format) of data objects
-			representing the logged data elements that are passed to the terminal
-			when a transaction log record is read
-		</description>
+		<description>List (in tag and length format) of data objects representing the logged data elements that are passed to the terminal when a transaction log record is read</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1332,27 +1446,17 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Issuer-specified preference for the maximum number of
-			consecutive offline transactions for this ICC application allowed in
-			a terminal with online capability
-		</description>
+		<description>Issuer-specified preference for the maximum number of consecutive offline transactions for this ICC application allowed in a terminal with online capability</description>
 		<length>1</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Maximum Target Percentage to be 
-		used for Biased Random Selection</name> <templates/> <primitive>&#8212;</primitive> 
-		<format>&#8212;</format> <description>Value used in terminal risk management 
-		for random transaction selection</description> <length></length> <source>Terminal</source> 
-		</tag> -->
+	</tag>
 	<tag>
 		<id>9F15</id>
 		<name>Merchant Category Code</name>
 		<templates />
 		<primitive>True</primitive>
 		<format>n 4</format>
-		<description>Classifies the type of business being done by the
-			merchant, represented according to ISO 8583:1993 for Card Acceptor
-			Business Code
-		</description>
+		<description>Classifies the type of business being done by the merchant, represented according to ISO 8583:1993 for Card Acceptor Business Code</description>
 		<length>2</length>
 		<source>Terminal</source>
 	</tag>
@@ -1362,9 +1466,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>ans 15</format>
-		<description>When concatenated with the Acquirer Identifier, uniquely
-			identifies a given merchant
-		</description>
+		<description>When concatenated with the Acquirer Identifier, uniquely identifies a given merchant</description>
 		<length>15</length>
 		<source>Terminal</source>
 	</tag>
@@ -1374,20 +1476,10 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>ans</format>
-		<description>Indicates the name and location of the merchant
-		</description>
+		<description>Indicates the name and location of the merchant</description>
 		<length>var.</length>
 		<source>Terminal</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Message Type</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>n 2</format> <description>Indicates 
-		whether the batch data capture record is a financial record or advice</description> 
-		<length>1</length> <source>Terminal</source> </tag> <tag> <id>&#8212;</id> 
-		<name>Personal Identification Number (PIN) Pad Secret Key</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>&#8212;</format> <description>Secret 
-		key of a symmetric algorithm used by the PIN pad to encipher the PIN and 
-		by the card reader to decipher the PIN if the PIN pad and card reader are 
-		not integrated</description> <length></length> <source>Terminal</source> 
-		</tag> -->
+	</tag>
 	<tag>
 		<id>9F17</id>
 		<name>Personal Identification Number (PIN) Try Counter</name>
@@ -1404,9 +1496,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 2</format>
-		<description>Indicates the method by which the PAN was entered,
-			according to the first two digits of the ISO 8583:1987 POS Entry Mode
-		</description>
+		<description>Indicates the method by which the PAN was entered, according to the first two digits of the ISO 8583:1987 POS Entry Mode</description>
 		<length>1</length>
 		<source>Terminal</source>
 	</tag>
@@ -1418,29 +1508,17 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Contains a list of terminal resident data objects (tags
-			and lengths) needed by the ICC in processing the GET PROCESSING
-			OPTIONS command
-		</description>
+		<description>Contains a list of terminal resident data objects (tags and lengths) needed by the ICC in processing the GET PROCESSING OPTIONS command</description>
 		<length>var.</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Proprietary Authentication Data</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>b</format> <description>Contains 
-		issuer data for transmission to the card in the Issuer Authentication Data 
-		of an online transaction. For a cryptogram defined by the Common Core Definitions 
-		with a Cryptogram Version of '4', the Proprietary Authentication Data element 
-		shall be 0 bytes long. The only Cryptogram Version currently defined for 
-		the Common Core Definitions is '4'.</description> <length>0-8</length> <source>Issuer</source> 
-		</tag> -->
+	</tag>
 	<tag>
 		<id>80</id>
 		<name>Response Message Template Format 1</name>
 		<templates />
 		<primitive>True</primitive>
 		<format>var.</format>
-		<description>Contains the data objects (without tags and lengths)
-			returned by the ICC in response to a command
-		</description>
+		<description>Contains the data objects (without tags and lengths) returned by the ICC in response to a command</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1450,9 +1528,7 @@
 		<templates />
 		<primitive>False</primitive>
 		<format>var.</format>
-		<description>Contains the data objects (with tags and lengths)
-			returned by the ICC in response to a command
-		</description>
+		<description>Contains the data objects (with tags and lengths) returned by the ICC in response to a command</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1465,9 +1541,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>n 3</format>
-		<description>Service code as defined in ISO/IEC 7813 for track 1 and
-			track 2
-		</description>
+		<description>Service code as defined in ISO/IEC 7813 for track 1 and track 2</description>
 		<length>2</length>
 		<source>ICC</source>
 	</tag>
@@ -1479,10 +1553,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Identifies the SFI to be used in the commands related to
-			a given AEF or DDF. The SFI data object is a binary field with the
-			three high order bits set to zero.
-		</description>
+		<description>Identifies the SFI to be used in the commands related to a given AEF or DDF. The SFI data object is a binary field with the three high order bits set to zero.</description>
 		<length>1</length>
 		<source>ICC</source>
 	</tag>
@@ -1492,9 +1563,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Digital signature on critical application parameters for
-			DDA or CDA
-		</description>
+		<description>Digital signature on critical application parameters for DDA or CDA</description>
 		<length>NIC</length>
 		<source>ICC</source>
 	</tag>
@@ -1507,9 +1576,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Digital signature on critical application parameters for
-			SDA
-		</description>
+		<description>Digital signature on critical application parameters for SDA</description>
 		<length>NI</length>
 		<source>ICC</source>
 	</tag>
@@ -1522,29 +1589,10 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>&#8212;</format>
-		<description>List of tags of primitive data objects defined in this
-			specification whose value fields are to be included in the Signed
-			Static or Dynamic Application Data
-		</description>
+		<description>List of tags of primitive data objects defined in this specification whose value fields are to be included in the Signed Static or Dynamic Application Data</description>
 		<length>var.</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Target Percentage to be Used for 
-		Random Selection</name> <templates/> <primitive>&#8212;</primitive> <format>&#8212;</format> 
-		<description>Value used in terminal risk management for random transaction 
-		selection</description> <length></length> <source>Terminal</source> </tag> 
-		<tag> <id>&#8212;</id> <name>Terminal Action Code - Default</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>b</format> <description>Specifies 
-		the acquirer&#8217;s conditions that cause a transaction to be rejected if 
-		it might have been approved online, but the terminal is unable to process 
-		the transaction online</description> <length>5</length> <source>Terminal</source> 
-		</tag> <tag> <id>&#8212;</id> <name>Terminal Action Code - Denial</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>b</format> <description>Specifies 
-		the acquirer&#8217;s conditions that cause the denial of a transaction without 
-		attempt to go online</description> <length>5</length> <source>Terminal</source> 
-		</tag> <tag> <id>&#8212;</id> <name>Terminal Action Code - Online</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>b</format> <description>Specifies 
-		the acquirer&#8217;s conditions that cause a transaction to be transmitted 
-		online</description> <length>5</length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>9F33</id>
 		<name>Terminal Capabilities</name>
@@ -1556,6 +1604,86 @@
 		</description>
 		<length>3</length>
 		<source>Terminal</source>
+		<!-- EMV 4.3 Book 4 p.116 -->
+		<encoding>
+			<flag>
+				<bit>23</bit>
+				<name>Manual key entry</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>22</bit>
+				<name>Magnetic stripe</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>21</bit>
+				<name>IC with contacts</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<rfu><mask>0x1F0000</mask></rfu>
+			
+			<flag>
+				<bit>15</bit>
+				<name>Plaintext PIN for ICC verification</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>14</bit>
+				<name>Enciphered PIN for online verification</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>			
+			<flag>
+				<bit>13</bit>
+				<name>Signature (paper)</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>12</bit>
+				<name>Enciphered PIN for offline verification</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>11</bit>
+				<name>No CVM required</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			
+			<flag>
+				<bit>7</bit>
+				<name>SDA</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>6</bit>
+				<name>DDA</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<flag>
+				<bit>5</bit>
+				<name>Card capture</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<rfu><mask>0x000010</mask></rfu>
+			<flag>
+				<bit>3</bit>
+				<name>CDA</name>
+				<enabled>capable</enabled>
+				<disabled>incapable</disabled>
+			</flag>
+			<rfu><mask>0x000007</mask></rfu>
+		</encoding>
 	</tag>
 	<tag>
 		<id>9F1A</id>
@@ -1563,9 +1691,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 3</format>
-		<description>Indicates the country of the terminal, represented
-			according to ISO 3166
-		</description>
+		<description>Indicates the country of the terminal, represented according to ISO 3166</description>
 		<length>2</length>
 		<source>Terminal</source>
 	</tag>
@@ -1575,9 +1701,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Indicates the floor limit in the terminal in conjunction
-			with the AID
-		</description>
+		<description>Indicates the floor limit in the terminal in conjunction with the AID</description>
 		<length>4</length>
 		<source>Terminal</source>
 	</tag>
@@ -1587,9 +1711,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>an 8</format>
-		<description>Designates the unique location of a terminal at a
-			merchant
-		</description>
+		<description>Designates the unique location of a terminal at a merchant</description>
 		<length>8</length>
 		<source>Terminal</source>
 	</tag>
@@ -1599,9 +1721,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Application-specific value used by the card for risk
-			management purposes
-		</description>
+		<description>Application-specific value used by the card for risk management purposes</description>
 		<length>1-8</length>
 		<source>Terminal</source>
 	</tag>
@@ -1611,9 +1731,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 2</format>
-		<description>Indicates the environment of the terminal, its
-			communications capability, and its operational control
-		</description>
+		<description>Indicates the environment of the terminal, its communications capability, and its operational control</description>
 		<length>1</length>
 		<source>Terminal</source>
 	</tag>
@@ -1623,121 +1741,178 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Status of the different functions as seen from the
-			terminal
-		</description>
+		<description>Status of the different functions as seen from the terminal</description>
 		<length>5</length>
 		<source>Terminal</source>
+		<!-- EMV 4.3 Book 3 p.165 -->
 		<encoding>
-			<flag>
-				<position>39</position>
-				<meaning>Offline data authentication performed</meaning>
+			<flag concat="false">
+				<bit>39</bit>
+				<name>Offline data authentication was not performed error</name>
+				<enabled>Offline data authentication was not performed</enabled>
+				<disabled>No "Offline data authentication was not performed" error</disabled>
 			</flag>
-			<flag>
-				<position>38</position>
-				<meaning>SDA failed</meaning>
+			<flag concat="false">
+				<bit>38</bit>
+				<name>SDA failed error</name>
+				<enabled>SDA failed</enabled>
+				<disabled>No "SDA failed" error</disabled>
 			</flag>
-			<flag>
-				<position>37</position>
-				<meaning>ICC data missing</meaning>
+			<flag concat="false">
+				<bit>37</bit>
+				<name>ICC data missing error</name>
+				<enabled>ICC data missing</enabled>
+				<disabled>No "ICC data missing" error</disabled>
 			</flag>
-			<flag>
-				<position>36</position>
-				<meaning>Card appears on terminal exception file</meaning>
+			<flag concat="false">
+				<bit>36</bit>
+				<name>Card appears on terminal exception file error</name>
+				<enabled>Card appears on terminal exception file</enabled>
+				<disabled>No "Card appears on terminal exception file" error</disabled>
 			</flag>
-			<flag>
-				<position>35</position>
-				<meaning>DDA failed</meaning>
+			<flag concat="false">
+				<bit>35</bit>
+				<name>DDA failed error</name>
+				<enabled>DDA failed</enabled>
+				<disabled>No "DDA failed" error</disabled>
 			</flag>
-			<flag>
-				<position>34</position>
-				<meaning>CDA failed</meaning>
+			<flag concat="false">
+				<bit>34</bit>
+				<name>CDA failed error</name>
+				<enabled>CDA failed</enabled>
+				<disabled>No "CDA failed" error</disabled>
 			</flag>
-			<flag>
-				<position>31</position>
-				<meaning>ICC and terminal have different application versions</meaning>
+			<rfu><mask>0x0300000000</mask></rfu>
+			
+			<flag concat="false">
+				<bit>31</bit>
+				<name>ICC and terminal application versions differ error</name>
+				<enabled>ICC and terminal application versions differ</enabled>
+				<disabled>No "ICC and terminal application versions differ" error</disabled>
 			</flag>
-			<flag>
-				<position>30</position>
-				<meaning>Expired application</meaning>
+			<flag concat="false">
+				<bit>30</bit>
+				<name>Application expired error</name>
+				<enabled>Application expired</enabled>
+				<disabled>No "Application expired" error</disabled>
 			</flag>
-			<flag>
-				<position>29</position>
-				<meaning>Application not yet effective</meaning>
+			<flag concat="false">
+				<bit>29</bit>
+				<name>Application not yet effective error</name>
+				<enabled>Application not yet effective</enabled>
+				<disabled>No "Application not yet effective" error</disabled>
 			</flag>
-			<flag>
-				<position>28</position>
-				<meaning>Requested service not allowed for card product</meaning>
+			<flag concat="false">
+				<bit>28</bit>
+				<name>Requested service not allowed for card product error</name>
+				<enabled>Requested service not allowed for card product</enabled>
+				<disabled>No "Requested service not allowed for card product" error</disabled>
 			</flag>
-			<flag>
-				<position>27</position>
-				<meaning>New card</meaning>
+			<flag concat="false">
+				<bit>27</bit>
+				<name>New card</name>
+				<enabled>New card</enabled>
+				<disabled>No "New card" error</disabled>
 			</flag>
-			<flag>
-				<position>23</position>
-				<meaning>Cardholder verification was not successful</meaning>
+			<rfu><mask>0x0007000000</mask></rfu>
+			
+			<flag concat="false">
+				<bit>23</bit>
+				<name>Cardholder verification was not successful error</name>
+				<enabled>Cardholder verification was not successful</enabled>
+				<disabled>No "Cardholder verification was not successful" error</disabled>
 			</flag>
-			<flag>
-				<position>22</position>
-				<meaning>Unrecognized CVM</meaning>
+			<flag concat="false">
+				<bit>22</bit>
+				<name>Unrecognized CVM Error</name>
+				<enabled>Unrecognized CVM</enabled>
+				<disabled>No "Unrecognized CVM" error</disabled>
 			</flag>
-			<flag>
-				<position>21</position>
-				<meaning>PIN Try Limit exceeded</meaning>
+			<flag concat="false">
+				<bit>21</bit>
+				<name>PIN Try Limit exceeded Error</name>
+				<enabled>PIN Try Limit exceeded</enabled>
+				<disabled>No "PIN Try Limit exceeded" Error</disabled>
 			</flag>
-			<flag>
-				<position>20</position>
-				<meaning>PIN entry required and PIN pad not present or not working</meaning>
+			<flag concat="false">
+				<bit>20</bit>
+				<name>PIN entry required and PIN pad not present or not working Error</name>
+				<enabled>PIN entry required and PIN pad not present or not working</enabled>
+				<disabled>No "PIN entry required and PIN pad not present or not working" Error</disabled>
 			</flag>
-			<flag>
-				<position>19</position>
-				<meaning>PIN entry required, PIN pad present, but PIN was not entered</meaning>
+			<flag concat="false">
+				<bit>19</bit>
+				<name>PIN entry required, PIN pad present, but PIN was not entered Error</name>
+				<enabled>PIN entry required, PIN pad present, but PIN was not entered</enabled>
+				<disabled>No "PIN entry required, PIN pad present, but PIN was not entered" Error</disabled>
 			</flag>
-			<flag>
-				<position>18</position>
-				<meaning>Online PIN entered</meaning>
+			<flag concat="false">
+				<bit>18</bit>
+				<name>Online PIN entered</name>
+				<enabled>Online PIN entered</enabled>
+				<disabled>Online PIN not entered</disabled>
 			</flag>
-			<flag>
-				<position>15</position>
-				<meaning>Transaction exceeds floor limit</meaning>
+			<rfu><mask>0x0000030000</mask></rfu>
+			
+			<flag concat="false">
+				<bit>15</bit>
+				<name>Transaction exceeds floor limit error</name>
+				<enabled>Transaction exceeds floor limit</enabled>
+				<disabled>No "Transaction exceeds floor limit" error</disabled>
 			</flag>
-			<flag>
-				<position>14</position>
-				<meaning>Lower consecutive offline limit exceeded</meaning>
+			<flag concat="false">
+				<bit>14</bit>
+				<name>Lower consecutive offline limit exceeded error</name>
+				<enabled>Lower consecutive offline limit exceeded</enabled>
+				<disabled>No "Lower consecutive offline limit exceeded" error</disabled>
 			</flag>
-			<flag>
-				<position>13</position>
-				<meaning>Upper consecutive offline limit exceeded</meaning>
+			<flag concat="false">
+				<bit>13</bit>
+				<name>Upper consecutive offline limit exceeded error</name>
+				<enabled>Upper consecutive offline limit exceeded</enabled>
+				<disabled>No "Upper consecutive offline limit exceeded" error</disabled>
 			</flag>
-			<flag>
-				<position>12</position>
-				<meaning>Transaction selected randomly for online processing</meaning>
+			<flag concat="false">
+				<bit>12</bit>
+				<name>Transaction selected randomly for online processing</name>
+				<enabled>Transaction selected randomly for online processing</enabled>
+				<disabled>Transaction not selected randomly for online processing</disabled>
 			</flag>
-			<flag>
-				<position>11</position>
-				<meaning>Merchant forced online transaction</meaning>
+			<flag concat="false">
+				<bit>11</bit>
+				<name>Merchant forced online transaction</name>
+				<enabled>Merchant forced online transaction</enabled>
+				<disabled>Merchant didn't forced online transaction</disabled>
 			</flag>
-			<flag>
-				<position>7</position>
-				<meaning>Default TDOL used</meaning>
+			<rfu><mask>0x0000000700</mask></rfu>
+			
+			<flag concat="false">
+				<bit>7</bit>
+				<name>Default TDOL used</name>
+				<enabled>Default TDOL used</enabled>
+				<disabled>Default TDOL not used</disabled>
 			</flag>
-			<flag>
-				<position>6</position>
-				<meaning>Issuer authentication failed</meaning>
+			<flag concat="false">
+				<bit>6</bit>
+				<name>Issuer authentication failed error</name>
+				<enabled>Issuer authentication failed</enabled>
+				<disabled>No "Issuer authentication failed" error</disabled>
 			</flag>
-			<flag>
-				<position>5</position>
-				<meaning>Script processing failed before final GENERATE AC</meaning>
+			<flag concat="false">
+				<bit>5</bit>
+				<name>Script processing failed before final GENERATE AC error</name>
+				<enabled>Script processing failed before final GENERATE AC</enabled>
+				<disabled>No "Script processing failed before final GENERATE AC" error</disabled>
 			</flag>
-			<flag>
-				<position>4</position>
-				<meaning>Script processing failed after final GENERATE AC</meaning>
+			<flag concat="false">
+				<bit>4</bit>
+				<name>Script processing failed after final GENERATE AC error</name>
+				<enabled>Script processing failed after final GENERATE AC</enabled>
+				<disabled>No "Script processing failed after final GENERATE AC" error</disabled>
 			</flag>
+			<rfu><mask>0x000000000F</mask></rfu>
 		</encoding>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Threshold Value for Biased Random 
-		Selection</name> <templates/> <primitive>&#8212;</primitive> <format>&#8212;</format> 
-		<description>Value used in terminal risk management for random transaction 
-		selection</description> <length></length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>9F1F</id>
 		<name>Track 1 Discretionary Data</name>
@@ -1747,8 +1922,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>ans</format>
-		<description>Discretionary part of track 1 according to ISO/IEC 7813
-		</description>
+		<description>Discretionary part of track 1 according to ISO/IEC 7813</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1761,8 +1935,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>cn</format>
-		<description>Discretionary part of track 2 according to ISO/IEC 7813
-		</description>
+		<description>Discretionary part of track 2 according to ISO/IEC 7813</description>
 		<length>var.</length>
 		<source>ICC</source>
 	</tag>
@@ -1775,9 +1948,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Contains the data elements of track 2 according to
-			ISO/IEC 7813, excluding start sentinel, end sentinel, and
-			Longitudinal Redundancy Check (LRC), as follows:
+		<description>Contains the data elements of track 2 according to ISO/IEC 7813, excluding start sentinel, end sentinel, and Longitudinal Redundancy Check (LRC), as follows:
 
 			Primary Account
 			Number (n, var. up to 19)
@@ -1785,25 +1956,19 @@
 			Expiration Date
 			(YYMM) (n 4)
 			Service Code (n 3)
-			Discretionary Data (defined by
-			individual payment systems) (n, var.)
-			Pad with one Hex 'F' if needed
-			to ensure whole bytes (b)
+			Discretionary Data (defined by individual payment systems) (n, var.)
+			Pad with one Hex 'F' if needed to ensure whole bytes (b)
 		</description>
 		<length>0-19</length>
 		<source>ICC</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Transaction Amount</name> <templates/> 
-		<primitive>&#8212;</primitive> <format>n 12</format> <description>Clearing 
-		amount of the transaction, including tips and other adjustments</description> 
-		<length>6</length> <source>Terminal</source> </tag> -->
+	</tag>
 	<tag>
 		<id>98</id>
 		<name>Transaction Certificate (TC) Hash Value</name>
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Result of a hash function specified in Book 2, Annex B3.1
-		</description>
+		<description>Result of a hash function specified in Book 2, Annex B3.1</description>
 		<length>20</length>
 		<source>Terminal</source>
 	</tag>
@@ -1816,9 +1981,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>List of data objects (tag and length) to be used by the
-			terminal in generating the TC Hash Value
-		</description>
+		<description>List of data objects (tag and length) to be used by the terminal in generating the TC Hash Value</description>
 		<length>0-252</length>
 		<source>ICC</source>
 	</tag>
@@ -1828,9 +1991,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 3</format>
-		<description>Indicates the currency code of the transaction according
-			to ISO 4217
-		</description>
+		<description>Indicates the currency code of the transaction according to ISO 4217</description>
 		<length>2</length>
 		<source>Terminal</source>
 	</tag>
@@ -1840,9 +2001,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 1</format>
-		<description>Indicates the implied position of the decimal point from
-			the right of the transaction amount represented according to ISO 4217
-		</description>
+		<description>Indicates the implied position of the decimal point from the right of the transaction amount represented according to ISO 4217</description>
 		<length>1</length>
 		<source>Terminal</source>
 	</tag>
@@ -1852,8 +2011,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 6 YYMMDD</format>
-		<description>Local date that the transaction was authorised
-		</description>
+		<description>Local date that the transaction was authorised</description>
 		<length>3</length>
 		<source>Terminal</source>
 	</tag>
@@ -1863,9 +2021,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Data entered by the cardholder for the purpose of the PIN
-			verification
-		</description>
+		<description>Data entered by the cardholder for the purpose of the PIN verification</description>
 		<length>var.</length>
 		<source>Terminal</source>
 	</tag>
@@ -1875,27 +2031,17 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 3</format>
-		<description>Code defining the common currency used by the terminal in
-			case the Transaction Currency Code is different from the Application
-			Currency Code
-		</description>
+		<description>Code defining the common currency used by the terminal in case the Transaction Currency Code is different from the Application Currency Code</description>
 		<length>2</length>
 		<source>Terminal</source>
-	</tag><!-- <tag> <id>&#8212;</id> <name>Transaction Reference Currency Conversion</name> 
-		<templates/> <primitive>&#8212;</primitive> <format>n 8</format> <description>Factor 
-		used in the conversion from the Transaction Currency Code to the Transaction 
-		Reference Currency Code</description> <length>4</length> <source>Terminal</source> 
-		</tag> -->
+	</tag>
 	<tag>
 		<id>9F3D</id>
 		<name>Transaction Reference Currency Exponent</name>
 		<templates />
 		<primitive>True</primitive>
 		<format>n 1</format>
-		<description>Indicates the implied position of the decimal point from
-			the right of the transaction amount, with the Transaction Reference
-			Currency Code represented according to ISO 4217
-		</description>
+		<description>Indicates the implied position of the decimal point from the right of the transaction amount, with the Transaction Reference Currency Code represented according to ISO 4217</description>
 		<length>1</length>
 		<source>Terminal</source>
 	</tag>
@@ -1905,9 +2051,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 4-8</format>
-		<description>Counter maintained by the terminal that is incremented by
-			one for each transaction
-		</description>
+		<description>Counter maintained by the terminal that is incremented by one for each transaction</description>
 		<length>2-4</length>
 		<source>Terminal</source>
 	</tag>
@@ -1921,31 +2065,45 @@
 		</description>
 		<length>2</length>
 		<source>Terminal</source>
+		<!-- EMV 4.3 Book 3 p.168 -->
 		<encoding>
 			<flag>
-				<bit>15</bit>
-				<meaning>Offline data authentication was performed</meaning>
+				<mask>15</mask>
+				<name>Offline data authentication</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<bit>14</bit>
-				<meaning>Cardholder verification was performed</meaning>
+				<mask>14</mask>
+				<name>Cardholder verification</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<bit>13</bit>
-				<meaning>Card risk management was performed</meaning>
+				<mask>13</mask>
+				<name>Card risk management</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<bit>12</bit>
-				<meaning>Issuer authentication was performed</meaning>
+				<mask>12</mask>
+				<name>Issuer authentication</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<bit>11</bit>
-				<meaning>Terminal risk management was performed</meaning>
+				<mask>11</mask>
+				<name>Terminal risk management was performed</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<bit>10</bit>
-				<meaning>Script processing was performed</meaning>
+				<mask>10</mask>
+				<name>Script processing was performed</name>
+				<enabled>was performed</enabled>
+				<disabled>was not performed</disabled>
 			</flag>
+			<rfu><mask>0x03FF</mask></rfu>
 		</encoding>
 	</tag>
 	<tag>
@@ -1954,8 +2112,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 6 HHMMSS</format>
-		<description>Local time that the transaction was authorised
-		</description>
+		<description>Local time that the transaction was authorised</description>
 		<length>3</length>
 		<source>Terminal</source>
 	</tag>
@@ -1965,9 +2122,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>n 2</format>
-		<description>Indicates the type of financial transaction, represented
-			by the first two digits of ISO 8583:1987 Processing Code
-		</description>
+		<description>Indicates the type of financial transaction, represented by the first two digits of ISO 8583:1987 Processing Code</description>
 		<length>1</length>
 		<source>Terminal</source>
 	</tag>
@@ -1977,9 +2132,7 @@
 		<templates />
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Value to provide variability and uniqueness to the
-			generation of a cryptogram
-		</description>
+		<description>Value to provide variability and uniqueness to the generation of a cryptogram</description>
 		<length>4</length>
 		<source>Terminal</source>
 	</tag>
@@ -1992,10 +2145,7 @@
 		</templates>
 		<primitive>True</primitive>
 		<format>b</format>
-		<description>Issuer-specified preference for the maximum number of
-			consecutive offline transactions for this ICC application allowed in
-			a terminal without online capability
-		</description>
+		<description>Issuer-specified preference for the maximum number of consecutive offline transactions for this ICC application allowed in a terminal without online capability</description>
 		<length>1</length>
 		<source>ICC</source>
 	</tag>
