@@ -31,7 +31,6 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 	// TODO check where length check is done
 	@Override
 	public void process(byte[] data) {
-		System.out.println(BitfieldEncodingFactory.toString(fEncoding));
 		Long value = Utils.bytesToLong(data);
 		StringBuilder builder = new StringBuilder();
 		
@@ -48,7 +47,6 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		}
 		
 		fResult = builder.toString();
-		System.out.println(fResult);
 	}
 	
 	public String getResult() {
