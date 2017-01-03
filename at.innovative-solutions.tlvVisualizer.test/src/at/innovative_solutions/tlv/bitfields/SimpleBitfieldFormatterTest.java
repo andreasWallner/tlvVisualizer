@@ -12,10 +12,10 @@ public class SimpleBitfieldFormatterTest {
 	@Test
 	public void SimpleBitfieldFormatter_mixed() {
 		Collection<IBitfieldEncoding> encoding = new ArrayList<IBitfieldEncoding>();
-		encoding.add(new Flag(0x8000, "flag 1", "en", "dis", true));
-		encoding.add(new Flag(0x4000, "flag 2", "f2e", "f2d", false));
-		encoding.add(new Flag(0x2000, "flag 3", "en", "dis", true));
-		encoding.add(new Flag(0x1000, "flag 4", "f4e", "f4d", false));
+		encoding.add(new Flag(15, "flag 1", "en", "dis", true));
+		encoding.add(new Flag(14, "flag 2", "f2e", "f2d", false));
+		encoding.add(new Flag(13, "flag 3", "en", "dis", true));
+		encoding.add(new Flag(12, "flag 4", "f4e", "f4d", false));
 		Collection<SelectionOption> options = new ArrayList<SelectionOption>();
 		options.add(new SelectionOption(0x0, "not this"));
 		options.add(new SelectionOption(0x100, "this"));
@@ -40,8 +40,8 @@ public class SimpleBitfieldFormatterTest {
 	@Test
 	public void SimpleBitfieldFormatter_repeat() {
 		Collection<IBitfieldEncoding> subEnc = new ArrayList<IBitfieldEncoding>();
-		subEnc.add(new Flag(0x80, "flag 1", "en", "dis", true));
-		subEnc.add(new Flag(0x01, "flag 2", "en", "dis", true));
+		subEnc.add(new Flag(7, "flag 1", "en", "dis", true));
+		subEnc.add(new Flag(0, "flag 2", "en", "dis", true));
 		Collection<IBitfieldEncoding> enc = new ArrayList<IBitfieldEncoding>();
 		enc.add(new Repeat(1, "repeat", subEnc));
 		

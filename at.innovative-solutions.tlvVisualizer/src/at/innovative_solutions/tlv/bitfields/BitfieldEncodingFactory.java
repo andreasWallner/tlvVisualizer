@@ -49,7 +49,7 @@ public class BitfieldEncodingFactory {
 	}
 
 	public static Flag loadFlag(Node node) {
-		Long mask = null;
+		Integer bit = null;
 		String name = null;
 		String enabled = null;
 		String disabled = null;
@@ -62,7 +62,7 @@ public class BitfieldEncodingFactory {
 		for(Node c : iterate(node.getChildNodes())) {
 			switch(c.getNodeName()) {
 			case "bit":
-				mask = 1L << Long.decode(c.getTextContent());
+				bit = Integer.decode(c.getTextContent());
 				break;
 			case "name":
 				name = c.getTextContent();
@@ -76,10 +76,10 @@ public class BitfieldEncodingFactory {
 			}
 		}
 		
-		if(mask == null || name == null || enabled == null || disabled == null)
+		if(bit == null || name == null || enabled == null || disabled == null)
 			throw new RuntimeException("mask & description must be present for flag: " + node.toString());
 		
-		return new Flag(mask, name, enabled, disabled, concat);
+		return new Flag(bit, name, enabled, disabled, concat);
 	}
 	
 	public static Selection loadSelection(Node node) {

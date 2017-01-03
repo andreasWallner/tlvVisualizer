@@ -1,13 +1,13 @@
 package at.innovative_solutions.tlv.bitfields;
 
 public class Flag implements IBitfieldEncoding {
-	final long fMask;
+	final int fBit;
 	final String fName;
 	final String fEnabled;
 	final String fDisabled;
 	
-	public Flag(long mask, String name, String enabled, String disabled, boolean concat) {
-		fMask = mask;
+	public Flag(int bit, String name, String enabled, String disabled, boolean concat) {
+		fBit = bit;
 		fName = name;
 		if(concat) {
 			fEnabled = name + " " + enabled;
@@ -16,9 +16,6 @@ public class Flag implements IBitfieldEncoding {
 			fEnabled = enabled;
 			fDisabled = disabled;
 		}
-		
-		if(Long.bitCount(mask) != 1)
-			throw new RuntimeException("exactly on bit must be set for flag, but is not for " + name);
 	}
 
 	@Override
@@ -28,26 +25,32 @@ public class Flag implements IBitfieldEncoding {
 	}
 	
 	public boolean isSet(long value) {
-		return (value & fMask) != 0;
+		return (value & (1 << fBit)) != 0;
+	}
+	
+	public boolean isSet(byte[] value) {
+		int idx = fBit / 8;
+		int bit = fBit % 8;
+		return (value[idx] & (1 << bit)) != 0;
 	}
 
 	@Override
 	public Range getRange() {
-		int bit = Long.SIZE - 1 - Long.numberOfLeadingZeros(fMask);
-		return new Range(bit, bit);
+		return new Range(fBit, fBit);
 	}
 
 	@Override
 	public String getDescription(long value) {
-		if((value & fMask) != 0)
-			return fEnabled;
-		else
-			return fDisabled;
+		return isSet(value) ? fEnabled : fDisabled;
+	}
+	
+	public String getDescription(byte[] value) {
+		return isSet(value) ? fEnabled : fDisabled;
 	}
 	
 	@Override
 	public String toString() {
-		return "Flag(" + Long.toHexString(fMask) + ", " + fName + ", " + fEnabled + ", " + fDisabled + ", " + getRange().toString() + ")";
+		return "Flag(" + getRange().toString() + ", " + fName + ", " + fEnabled + ", " + fDisabled + ")";
 	}
 
 	@Override
