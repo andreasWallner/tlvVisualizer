@@ -43,13 +43,22 @@ public class Repeat implements IBitfieldEncoding {
 		return null;
 	}
 	
-	public Range getRange(byte[] value) {
+	public Range getRange(byte[] value) { // TODO incorrect < range is exclusive
 		return new Range(0, value.length * 8);
 	}
 
 	@Override
 	public String getDescription(long value) {
 		return fName;
+	}
+	
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		str.append("Repeat(").append(fSize).append(", ").append(fName);
+		for(IBitfieldEncoding e : fEncoding)
+			str.append(",\n  ").append(e.toString());
+		str.append(")");
+		return str.toString();
 	}
 
 	@Override

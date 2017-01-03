@@ -3,12 +3,15 @@ package at.innovative_solutions.tlv.bitfields;
 public class Range {
 	final public int fStart;
 	final public int fStop;
-	final public int fLength;
 	
 	public Range(int start, int stop) {
 		fStart = start;
 		fStop = stop;
-		fLength = fStart - fStop + 1;
+	}
+	
+	public Range(long mask) {
+		fStart = Long.SIZE - 1 - Long.numberOfLeadingZeros(mask);
+		fStop = (int) (Long.SIZE - Long.numberOfLeadingZeros(~(mask | (-1L << fStart))));
 	}
 	
 	public String toString() {

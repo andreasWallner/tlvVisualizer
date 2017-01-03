@@ -14,9 +14,7 @@ public class Rfu implements IBitfieldEncoding {
 
 	@Override
 	public Range getRange() {
-		int start = Long.SIZE - 1 - Long.numberOfLeadingZeros(fMask);
-		int stop = (int) (Long.SIZE - Long.numberOfLeadingZeros(~(fMask | (-1L << start))));
-		return new Range(start, stop);
+		return new Range(fMask);
 	}
 
 	@Override
