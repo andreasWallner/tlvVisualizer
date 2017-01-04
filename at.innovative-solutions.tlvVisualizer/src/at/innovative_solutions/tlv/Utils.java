@@ -73,9 +73,9 @@ public class Utils {
 	public static String repeat(String str, int count) {
 		if(count < 0)
 			throw new IllegalArgumentException("count must be positive");
-		
-		byte[] chars = str.getBytes();
-		byte[] result = new byte[chars.length * count];
+
+		char[] chars = str.toCharArray();
+		char[] result = new char[chars.length * count];
 		int resultIdx = 0;
 		for(int i = 0; i < count; i++, resultIdx += chars.length)
 			System.arraycopy(chars, 0, result, resultIdx, chars.length);

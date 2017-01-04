@@ -5,6 +5,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.nio.charset.Charset;
+
 import org.junit.Test;
 
 import at.innovative_solutions.tlv.Utils;
@@ -40,5 +42,6 @@ public class UtilsTest {
 	public void test_repeat_char() {
 		assertThat(Utils.repeat('c', 5), equalTo("ccccc"));
 		assertThat(Utils.repeat('c', 0), equalTo(""));
+		assertThat(Utils.repeat('♥', 2), equalTo("♥♥"));
 	}
 }
