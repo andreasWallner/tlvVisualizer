@@ -9,4 +9,16 @@
   	<version>0.0.1-SNAPSHOT</version>
   	<relativePath>../at.innovative-solutions.tlvVisualizer.releng</relativePath>
   </parent>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>${basedir}</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>resources/sparam.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

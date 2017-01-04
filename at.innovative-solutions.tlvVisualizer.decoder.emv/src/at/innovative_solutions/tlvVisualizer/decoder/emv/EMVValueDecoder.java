@@ -1,6 +1,7 @@
 package at.innovative_solutions.tlvVisualizer.decoder.emv;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -37,12 +38,12 @@ public class EMVValueDecoder implements ValueDecoder {
 				.getBundle("at.innovative-solutions.tlvVisualizer.decoder.emv");
 		URL fileURL = bundle.getEntry("resources/EMV.xml");
 		try {
-			File file = new File(FileLocator.resolve(fileURL).toURI());
-
+			InputStream input = fileURL.openStream();
+			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(file);
+			Document doc = dBuilder.parse(input);
 
 			fTagInfo = TagInfo.loadXML(doc);
 		} catch (Exception e) {

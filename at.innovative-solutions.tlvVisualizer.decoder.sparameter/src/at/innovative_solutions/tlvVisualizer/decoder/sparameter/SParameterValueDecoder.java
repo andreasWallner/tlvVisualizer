@@ -3,15 +3,13 @@ package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
-import java.io.File;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -25,23 +23,16 @@ public class SParameterValueDecoder implements ValueDecoder {
 	private ArrayList<ValueInfo> fTags;
 
 	public SParameterValueDecoder() {
-		/*Bundle bundle = Platform
+		Bundle bundle = Platform
 				.getBundle("at.innovative-solutions.tlvVisualizer.decoder.sparameter");
-		URL fileURL = bundle.getEntry("resources/sparam.xml");*/
-		URL fileURL = null;
+		URL fileURL = bundle.getEntry("resources/sparam.xml");
 		try {
-			fileURL = new URL("file:///C:/work/git/tlvVisualizer/at.innovative-solutions.tlvVisualizer.decoder.sparameter/resources/sparam.xml");
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			File file = new File(FileLocator.resolve(fileURL).toURI());
+			InputStream input = fileURL.openStream();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(file);
+			Document doc = dBuilder.parse(input);
 
 			fTags = ValueInfo.fromResource(doc);
 		} catch (Exception e) {
