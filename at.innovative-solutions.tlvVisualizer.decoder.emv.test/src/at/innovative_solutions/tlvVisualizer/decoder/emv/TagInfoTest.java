@@ -1,4 +1,4 @@
-package at.innovative_solutions.tlvvisualizer.views;
+package at.innovative_solutions.tlvVisualizer.decoder.emv;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import at.innovative_solutions.tlvvisualizer.views.TagInfo;
+import at.innovative_solutions.tlvVisualizer.decoder.emv.TagInfo;
 
 public class TagInfoTest {
 	@Test
@@ -34,7 +34,8 @@ public class TagInfoTest {
 				                       "n 6-11",
 				                       "Uniquely identifies the acquirer within each payment system",
 				                       "6",
-				                       "Terminal");
+				                       "Terminal",
+				                       null);
 		assertTrue("tag", expected.equals(result));
 	}
 	
@@ -52,14 +53,14 @@ public class TagInfoTest {
 		assertEquals("tag count", 1, result.size());
 		assertTrue("tag key", result.containsKey(0x9F01L));
 		TagInfo tag = result.get(0x9F01L);
-		assertEquals("tag id", 0x9F01L, tag._id);
-		assertEquals("tag name", "Acquirer Identifier", tag._name);
-		assertArrayEquals("tag templates", new int[0], tag._templates);
-		assertEquals("tag primitive", true, tag._isPrimitive);
-		assertEquals("tag format", "n 6-11", tag._format);
-		assertEquals("tag description", "Uniquely identifies the acquirer within each payment system", tag._description);
-		assertEquals("tag length", "6", tag._length);
-		assertEquals("tag source", "Terminal", tag._source);
+		assertEquals("tag id", 0x9F01L, tag.fId);
+		assertEquals("tag name", "Acquirer Identifier", tag.fName);
+		assertArrayEquals("tag templates", new int[0], tag.fTemplates);
+		assertEquals("tag primitive", true, tag.fIsPrimitive);
+		assertEquals("tag format", "n 6-11", tag.fFormat);
+		assertEquals("tag description", "Uniquely identifies the acquirer within each payment system", tag.fDescription);
+		assertEquals("tag length", "6", tag.fLength);
+		assertEquals("tag source", "Terminal", tag.fSource);
 	}
 	
 	// TODO test with templates

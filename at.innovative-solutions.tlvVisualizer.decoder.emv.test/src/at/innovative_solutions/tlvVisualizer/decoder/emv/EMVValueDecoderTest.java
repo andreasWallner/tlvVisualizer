@@ -5,8 +5,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 
+import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 import at.innovative_solutions.tlvVisualizer.decoder.emv.EMVValueDecoder;
 import at.innovative_solutions.tlvvisualizer.views.InvalidEncodedValueException;
@@ -60,5 +63,25 @@ public class EMVValueDecoderTest {
 		assertThat(EMVValueDecoder.asValue("123456", "n"), equalTo(Utils.hexStringToBytes("123456")));
 		assertThat(EMVValueDecoder.asValue("12345", "n"), equalTo(Utils.hexStringToBytes("012345")));
 		assertThat(() -> EMVValueDecoder.asValue("text", "n"), thrown(InvalidEncodedValueException.class));
+	}
+	
+	@Test
+	public void test_getSimpleDecoded() {
+		final TLV t = TLV.parseTLV(ByteBuffer.wrap(Utils.hexStringToBytes("8E051111222233")));
+		EMVValueDecoder d = new EMVValueDecoder();
+		String expected = 
+				  "0001000100010001001000100010001000110011\n"
+				+ "0001000100010001........................ Cardholder verification rule 0\n"
+				+ "0.......................................   RFU\n"
+				+ ".0......................................   Fail cardholder verification if this CVM is unsuccessful\n"
+				+ "..010001................................   - invalid\n"
+				+ "........00010001........................   - invalid\n"
+				+ "................0010001000100010........ Cardholder verification rule 1\n"
+				+ "................0.......................   RFU\n"
+				+ ".................0......................   Fail cardholder verification if this CVM is unsuccessful\n"
+				+ "..................100010................   - invalid\n"
+				+ "........................00100010........   - invalid\n"
+				+ "................................00100010 ERROR: Invalid length to fill another complete repetition\n";
+		assertThat(d.getSimpleDecoded(t), equalTo(expected));
 	}
 }

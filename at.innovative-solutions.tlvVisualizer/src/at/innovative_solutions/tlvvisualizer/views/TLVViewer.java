@@ -198,8 +198,15 @@ public class TLVViewer extends Composite {
 		public String getToolTipText(Object o) {
 			if (!(o instanceof TLV))
 				return null;
+			
+			String tt = null;
+			try {
+				tt = TLVViewer.this.fDecoder.getSimpleDecoded((TLV) o);
+			} catch(Exception e) {
+				tt = "Error occured while parsing:\n" + e.toString();
+			}
 
-			return TLVViewer.this.fDecoder.getSimpleDecoded((TLV) o).replaceAll("&", "&&");
+			return (tt != null) ? tt.replaceAll("&", "&&") : null;
 		}
 
 		@Override

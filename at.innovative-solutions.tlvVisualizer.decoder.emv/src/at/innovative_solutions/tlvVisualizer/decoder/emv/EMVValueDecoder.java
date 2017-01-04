@@ -25,8 +25,8 @@ import at.innovative_solutions.tlv.PrimitiveTLV;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 import at.innovative_solutions.tlv.ValueDecoder;
+import at.innovative_solutions.tlv.bitfields.SimpleBitfieldFormatter;
 import at.innovative_solutions.tlvvisualizer.views.InvalidEncodedValueException;
-import at.innovative_solutions.tlvvisualizer.views.TagInfo;
 
 // TODO character set checks
 // TODO trailing character check on cn
@@ -57,7 +57,7 @@ public class EMVValueDecoder implements ValueDecoder {
 			return null;
 		long tagNum = id.toLong();
 		if (fTagInfo.containsKey(tagNum))
-			return fTagInfo.get(tagNum)._name;
+			return fTagInfo.get(tagNum).fName;
 		return null;
 	}
 	
@@ -76,7 +76,7 @@ public class EMVValueDecoder implements ValueDecoder {
 		try {
 			return EMVValueDecoder.asString(
 					((PrimitiveTLV) tlv).getData(),
-					fTagInfo.get(tagNum)._format);
+					fTagInfo.get(tagNum).fFormat);
 		} catch(Exception e) {
 			throw new RuntimeException("could not convert bytes to string", e);
 		}
@@ -94,7 +94,7 @@ public class EMVValueDecoder implements ValueDecoder {
 		if(!fTagInfo.containsKey(tagNum))
 			return null;
 		
-		return EMVValueDecoder.asValue(str, fTagInfo.get(tagNum)._format);
+		return EMVValueDecoder.asValue(str, fTagInfo.get(tagNum).fFormat);
 	}
 	
 	public String getFormat(final TLV tlv) {
@@ -109,7 +109,7 @@ public class EMVValueDecoder implements ValueDecoder {
 		if(!fTagInfo.containsKey(tagNum))
 			return null;
 		
-		return fTagInfo.get(tagNum)._format;
+		return fTagInfo.get(tagNum).fFormat;
 	}
 	
 	public static String asString(final byte[] data, final String format) throws UnsupportedEncodingException {
@@ -270,8 +270,17 @@ public class EMVValueDecoder implements ValueDecoder {
 
 	@Override
 	public String getSimpleDecoded(TLV tlv) {
-		// TODO implement
-		return null;
+		if(!(tlv instanceof PrimitiveTLV) || tlv.getID() == null)
+			return null;
+		PrimitiveTLV ptlv = (PrimitiveTLV)tlv;
+		
+		TagInfo info = fTagInfo.get(ptlv.getID().toLong());
+		if(info == null || info.fEncoding == null)
+			return null;
+		
+		SimpleBitfieldFormatter formatter = new SimpleBitfieldFormatter(info.fEncoding);
+		formatter.process(ptlv.getData());
+		return formatter.getResult();
 	}
 
 	@Override

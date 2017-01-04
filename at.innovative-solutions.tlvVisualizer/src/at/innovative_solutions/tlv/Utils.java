@@ -3,6 +3,7 @@ package at.innovative_solutions.tlv;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -102,6 +103,21 @@ public class Utils {
 
 	    transformer.transform(new DOMSource(doc),
 	         new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+	}
+	
+	public static String nodeToString(Node node) {
+		StringWriter s = new StringWriter();
+		try {
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.INDENT, "no");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.transform(new DOMSource(node), new StreamResult(s));
+		} catch(Exception e) {
+			return null;
+		}
+		return s.toString();
 	}
 	
 	public static Iterable<Node> iterate(NodeList nl) {

@@ -2,38 +2,48 @@ package at.innovative_solutions.tlv.bitfields;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.w3c.dom.Node;
+
+import at.innovative_solutions.tlv.Utils;
 
 import static at.innovative_solutions.tlv.Utils.iterate;
 
 public class BitfieldEncodingFactory {
-	public static Collection<IBitfieldEncoding> loadEncoding(Node node) {
-		Collection<IBitfieldEncoding> result = new ArrayList<IBitfieldEncoding>();
+	public static List<IBitfieldEncoding> loadEncoding(Node node) {
+		List<IBitfieldEncoding> result = new ArrayList<IBitfieldEncoding>();
 		
-		for(Node child : iterate(node.getChildNodes())) {
-			IBitfieldEncoding e = null;
-			switch(child.getNodeName()) {
-			case "flag":
-				e = loadFlag(child);
-				break;
-			case "selection":
-				e = loadSelection(child);
-				break;
-			case "rfu":
-				e = loadRfu(child);
-				break;
+		try {
+			for(Node child : iterate(node.getChildNodes())) {
+				IBitfieldEncoding e = null;
+				switch(child.getNodeName()) {
+				case "flag":
+					e = loadFlag(child);
+					break;
+				case "selection":
+					e = loadSelection(child);
+					break;
+				case "rfu":
+					e = loadRfu(child);
+					break;
+				case "repeat":
+					e = loadRepeat(child);
+					break;
+				}
+				if(e != null)
+					result.add(e);
 			}
-			if(e != null)
-				result.add(e);
+		} catch(Exception e) {
+			throw new RuntimeException("Error while processing encoding node '" + Utils.nodeToString(node) + "'", e);
 		}
-		
+
 		return result;
 	}
-	
+
 	public static Rfu loadRfu(Node node) {
 		Long mask = null;
-		
+
 		for(Node c : iterate(node.getChildNodes())) {
 			switch(c.getNodeName()) {
 			case "mask":
@@ -41,10 +51,10 @@ public class BitfieldEncodingFactory {
 				break;
 			}
 		}
-		
+
 		if(mask == null)
 			throw new RuntimeException("mask must be present for RFU: " + node.toString());
-		
+
 		return new Rfu(mask);
 	}
 
@@ -54,7 +64,7 @@ public class BitfieldEncodingFactory {
 		String enabled = null;
 		String disabled = null;
 		boolean concat = true;
-		
+
 		Node concatAttrib = node.getAttributes().getNamedItem("concat");
 		if(concatAttrib != null)
 			concat = Boolean.parseBoolean(concatAttrib.getNodeValue());
@@ -77,14 +87,14 @@ public class BitfieldEncodingFactory {
 		}
 		
 		if(bit == null || name == null || enabled == null || disabled == null)
-			throw new RuntimeException("mask & description must be present for flag: " + node.toString());
+			throw new RuntimeException("bit, name and enabled/disabled texts must be present for flag: " + node.toString());
 		
 		return new Flag(bit, name, enabled, disabled, concat);
 	}
 	
 	public static Selection loadSelection(Node node) {
 		Long mask = null;
-		Collection<SelectionOption> options = new ArrayList<SelectionOption>();
+		List<SelectionOption> options = new ArrayList<SelectionOption>();
 		
 		for(Node c : iterate(node.getChildNodes())) {
 			switch(c.getNodeName()) {
@@ -124,7 +134,32 @@ public class BitfieldEncodingFactory {
 		return new SelectionOption(value, name);
 	}
 	
-	public static String toString(Collection<IBitfieldEncoding> encoding) {
+	public static Repeat loadRepeat(Node node) {
+		Integer size = Integer.parseInt(node.getAttributes().getNamedItem("size").getNodeValue());
+		String name = null;
+		Collection<IBitfieldEncoding> encoding = null;
+		
+		try {
+			for(Node child : iterate(node.getChildNodes())) {
+				switch(child.getNodeName()) {
+				case "name":
+					name = child.getTextContent();
+					break;
+				}
+			}
+			
+			encoding = loadEncoding(node);
+		} catch(Exception e) {
+			throw new RuntimeException("Error while processing encoding node '" + Utils.nodeToString(node) + "'", e);
+		}
+		
+		if(size == null || name == null || encoding == null)
+			throw new RuntimeException("size, name and encoding are mandatory for repeats");
+		
+		return new Repeat(size, name, encoding);
+	}
+	
+	public static String toString(List<IBitfieldEncoding> encoding) {
 		StringBuffer str = new StringBuffer();
 		for(IBitfieldEncoding e : encoding) {
 			str.append(e.toString() + "\n");

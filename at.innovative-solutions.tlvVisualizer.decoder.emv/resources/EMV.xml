@@ -363,7 +363,7 @@
 		<source>ICC</source>
 		<!-- EMV 4.3 Book 3 p.160 -->
 		<encoding>
-			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x8000</mask></rfu>
 			<flag>
 				<bit>14</bit>
 				<name>SDA</name>
@@ -401,6 +401,7 @@
 				<enabled>supported</enabled>
 				<disabled>not supported</disabled>
 			</flag>
+			<rfu><mask>0x007F</mask></rfu>
 		</encoding>
 	</tag>
 	<tag>
@@ -758,9 +759,9 @@
 			<repeat size="2">
 				<name>Cardholder verification rule</name>
 				<rfu><mask>0x8000</mask></rfu>
-				<flag>
+				<flag concat="false">
 					<bit>14</bit>
-					<name></name>
+					<name>Rule application</name>
 					<enabled>Apply succeeding CV Rule if this CVM is unsuccessful</enabled>
 					<disabled>Fail cardholder verification if this CVM is unsuccessful</disabled>
 				</flag>
@@ -2068,37 +2069,37 @@
 		<!-- EMV 4.3 Book 3 p.168 -->
 		<encoding>
 			<flag>
-				<mask>15</mask>
+				<bit>15</bit>
 				<name>Offline data authentication</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<mask>14</mask>
+				<bit>14</bit>
 				<name>Cardholder verification</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<mask>13</mask>
+				<bit>13</bit>
 				<name>Card risk management</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<mask>12</mask>
+				<bit>12</bit>
 				<name>Issuer authentication</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<mask>11</mask>
+				<bit>11</bit>
 				<name>Terminal risk management was performed</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>
 			</flag>
 			<flag>
-				<mask>10</mask>
+				<bit>10</bit>
 				<name>Script processing was performed</name>
 				<enabled>was performed</enabled>
 				<disabled>was not performed</disabled>

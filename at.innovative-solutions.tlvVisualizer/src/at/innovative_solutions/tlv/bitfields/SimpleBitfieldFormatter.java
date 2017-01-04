@@ -10,6 +10,9 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 	private String fResult;
 	
 	class Context {
+		public Context(StringBuilder builder, String bitString) {
+			this(builder, bitString, "", "", "");
+		}
 		public Context(StringBuilder builder, String bitString, String indentString, String prefixString, String postfixString) {
 			fBuilder = builder;
 			fBitString = bitString;
@@ -31,17 +34,12 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 	// TODO check where length check is done
 	@Override
 	public void process(byte[] data) {
-		Long value = Utils.bytesToLong(data);
 		StringBuilder builder = new StringBuilder();
-		
-		final int bitLength = data.length * 8;
-		String valueString = Long.toBinaryString(value);
-		String valuePadding = Utils.repeat("0", bitLength - valueString.length());
-		builder.append(valuePadding + valueString + "\n");
-		
 		String bitString = Utils.bytesToBinString(data);
-		Context context = new Context(builder, bitString, "", "", "");
 		
+		Context context = new Context(builder, bitString);
+		
+		builder.append(bitString).append("\n");
 		for(IBitfieldEncoding e : fEncoding) {
 			e.accept(this, data, context);
 		}
@@ -60,6 +58,7 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		
 		Long value = Utils.bytesToLong(data);
 		Range range = e.getRange();
+		String desc = e.getDescription(value);
 		
 		builder.append(context.fPrefixString);
 		builder.append(Utils.repeat(".", bitLen - 1 - range.fStart));
@@ -68,7 +67,7 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		builder.append(context.fPostfixString);
 		builder.append(" ");
 		builder.append(context.fIndentString);
-		builder.append(e.getDescription(value));
+		builder.append(desc != null ? desc : "- invalid");
 		builder.append("\n");
 	}
 	
@@ -88,15 +87,15 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 		for(; offset < data.length + 1 - encoding.fSize; offset += encoding.fSize, idx++) {
 			byte[] dataPiece = Arrays.copyOfRange(data, offset, offset + encoding.fSize);
 			String bitString = Utils.bytesToBinString(dataPiece);
-			String prefixString = Utils.repeat(".", offset * 8);
-			String postfixString = Utils.repeat(".", (data.length - offset - encoding.fSize) * 8);
+			String prefixString = Utils.repeat('.', offset * 8);
+			String postfixString = Utils.repeat('.', (data.length - offset - encoding.fSize) * 8);
 			
 			builder.append(prefixString);
 			builder.append(bitString);
 			builder.append(postfixString);
 			builder.append(" ");
 			builder.append(context.fIndentString);
-			builder.append(encoding.getDescription(0) + " " + Integer.toString(idx));
+			builder.append(encoding.getDescription(0)).append(" ").append(idx);
 			builder.append("\n");
 			
 			Context subContext = new Context(builder, bitString, "  ", prefixString, postfixString);
@@ -105,7 +104,12 @@ public class SimpleBitfieldFormatter implements IBitfieldProcessor {
 			}
 		}
 		
-		if(offset + encoding.fSize - 1 != data.length) {
+		if(offset != data.length) {
+			byte[] rest = Arrays.copyOfRange(data, offset - 1, data.length - 1);
+			String bitString = Utils.bytesToBinString(rest);
+			builder.append(Utils.repeat('.', offset * 8));
+			builder.append(bitString);
+			builder.append(" ");
 			builder.append("ERROR: Invalid length to fill another complete repetition\n");			
 		}
 	}
