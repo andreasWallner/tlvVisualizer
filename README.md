@@ -19,8 +19,9 @@ The binary version is currently most likely outdated because of ongoing developm
 * Parse arbitrary BER-TLVs
 * Usable as library
 * Decodes TLVs used in EMVco systems
+** Decodes down to bitlevel for tags with bitfields
 * Decodes S(Parameter) TLVs as specified in ISO 14443-4:2016
-** Decoder down to bitlevel using tooltips
+** Decodes down to bitlevel using tooltips
 
 # Example TLVs to try
 ## EMV
@@ -28,24 +29,22 @@ The binary version is currently most likely outdated because of ongoing developm
     8407A0000000041010A50F500A4D617374657243617264870101
 ## S(PARAMETER)
 (Try hovering over bitfields)
+
     A002 A100
     A00A A208 80021900 80024900
     A00A A308 83021000 84024000
     A00E A60C 800103 810103 820107 830107    
 
 # Todo (...Ideas)
- - EMV format 'b' decoders
  - fix TODOs in code...
  - TLVViewer: combobox to select ID by name
  - TLVViewer: verify and show incorrect tree (subelements not allowed in hierarchy)
  - TLVViewer: don't change tree visibility on e.g. setTlvString if not necessary
  - is the tlvvisualizer.views sub-package really needed?
- - DecodingFormatter is at the wrong place, should be passed a decoder
  - cleanup what is in which package (emv decoder to subnamespace, valuedecoder to tlv, ...) 
- - decode e.g. bitfields
- - ...
  - context specific add menu (show tags allowed under current tag, depending on decoder)
  - colorize fields on invalid length, etc.
+ - bring back copy of formatted text back
 
 # Eclipse setup
 - make sure you have `m2e - Maven Integration for Eclipse` installed
