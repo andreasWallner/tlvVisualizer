@@ -22,7 +22,7 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
-			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x8000</mask></rfu>
 			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -43,7 +43,7 @@
 		<length>2</length>
 		<parent>A2</parent>
 		<encoding>
-			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x8000</mask></rfu>
 			<flag><bit>14</bit><name>6M8</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>13</bit><name>3M4</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
 			<flag><bit>12</bit><name>1M7</name><enabled>supported</enabled><disabled>not supported</disabled></flag>
@@ -81,7 +81,7 @@
 		<length>2</length>
 		<parent>A3</parent>
 		<encoding>
-			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x8000</mask></rfu>
 			<selection>
 				<mask>0x7ff0</mask>
 				<option><value>0x4000</value><name>6M8</name></option>
@@ -105,7 +105,7 @@
 		<length>2</length>
 		<parent>A3</parent>
 		<encoding>
-			<rfu><mask>0x80</mask></rfu>
+			<rfu><mask>0x8000</mask></rfu>
 			<selection>
 				<mask>0x7ff0</mask>
 				<option><value>0x4000</value><name>6M8</name></option>
