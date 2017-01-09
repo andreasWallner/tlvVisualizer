@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -92,7 +93,7 @@ public class MainView extends ViewPart {
 		tlvViewerLayout.grabExcessVerticalSpace = true;
 		tlvViewerLayout.grabExcessHorizontalSpace = true;
 		
-		setDecoder(fPreferences.get(PREFERENCE_DECODER, null));
+		setTlvDecoder(fPreferences.get(PREFERENCE_DECODER, null));
 		makeActions();
 		contributeToActionBars();
 
@@ -148,7 +149,8 @@ public class MainView extends ViewPart {
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if(!PREFERENCE_DECODER.equals(event.getKey()))
 					return;
-				setDecoder((String)event.getNewValue());
+
+				setTlvDecoder((String)event.getNewValue());
 			}
 		});
 		
@@ -173,19 +175,28 @@ public class MainView extends ViewPart {
 		}
 		decoderMenu.add(new SelectionPreferenceAction("None", fPreferences, PREFERENCE_DECODER, "null"));
 	}
-	
-	private void setDecoder(String name) {
-		if(fDecoders.containsKey(name)) {
+
+	/**
+	 * Set decoder used in view
+	 * 
+	 * @param name fully qualified class name of decoder, e.g. at.innovative_solutions.tlvVisualizer.decoder.sparameter.SParameterValueDecoder
+	 * @return true if set successfully
+	 * @return false if decoder could not be found or initialized
+	 */
+	public boolean setTlvDecoder(String name) {
+		if(name != null && fDecoders.containsKey(name)) {
 			try {
 				IConfigurationElement e = fDecoders.get(name);
 				fTlvViewer.setDecoder((ValueDecoder)e.createExecutableExtension("class"));
-				return;
-			} catch (CoreException e) {
-				e.printStackTrace();
+				return true;
+			} catch(CoreException e) {
+				Activator.getInstance().getLog().log(
+						new Status(Status.ERROR, Activator.PLUGIN_ID, "Error when switching decoder plugin", e));
 			}
 		}
 		
 		fTlvViewer.setDecoder(null);
+		return name == null;
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -211,6 +222,11 @@ public class MainView extends ViewPart {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 	}
 	
+	/**
+	 * Set TLV to be shown
+	 * 
+	 * @param s hex encoded TLV
+	 */
 	public void setTlvString(String s) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
