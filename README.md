@@ -2,7 +2,7 @@
 
 # tlvVisualizer
 
-[![Build Status](https://travis-ci.org/andreasWallner/tlvVisualizer.svg)](https://travis-ci.org/andreasWallner/tlvVisualizer)
+[![Build Status](https://travis-ci.org/andreasWallner/tlvVisualizer.svg)](https://travis-ci.org/andreasWallner/tlvVisualizer) [![Download](https://api.bintray.com/packages/andreaswallner/TLVVisualizer/Releases/images/download.svg)](https://bintray.com/andreaswallner/TLVVisualizer/Releases/_latestVersion)
 
 A simple simple Eclipse plugin developed more to get into Eclipse stuff than anything
 else.
@@ -11,8 +11,9 @@ Currently allows one to parse TLV (tag-length-value) data, and displays some add
 information based on the tag types defined by EMVco.
 
 # Binary versions
-Binary versions of TLVVisualizer can be found at https://bintray.com/andreaswallner/TLVVisualizer/releases
-as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in Eclipse to install.
+Binary versions of TLVVisualizer can be found at https://bintray.com/andreaswallner/TLVVisualizer/Releases
+as P2 update sites. Use https://dl.bintray.com/andreaswallner/TLVVisualizer in Eclipse to install or get zip-Archive
+from bintray.
 The binary version is currently most likely outdated because of ongoing development.
 
 # Features
