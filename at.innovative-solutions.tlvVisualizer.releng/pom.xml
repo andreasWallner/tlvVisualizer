@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>at.innovative-solutions.tlvVisualizer</groupId>
 	<artifactId>at.innovative-solutions.tlvVisualizer.releng</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -52,7 +52,7 @@
 						<artifact>
 							<groupId>at.innovative-solutions.tlvVisualizer</groupId>
 							<artifactId>at.innovative-solutions.tlvVisualizer.releng.target</artifactId>
-							<version>0.0.1-SNAPSHOT</version>
+							<version>0.1.0-SNAPSHOT</version>
 						</artifact>
 					</target>
 					<dependency-resolution>

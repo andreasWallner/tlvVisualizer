@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TLVVisualizer EMV Decoder
 Bundle-SymbolicName: at.innovative-solutions.tlvVisualizer.decoder.emv;singleton:=true
-Bundle-Version: 0.0.1.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Andreas Wallner
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: at.innovative-solutions.tlvVisualizer;bundle-version="0.0.1",

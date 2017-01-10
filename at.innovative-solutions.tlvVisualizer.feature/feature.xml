@@ -2,7 +2,7 @@
 <feature
       id="at.innovative_solutions.tlvVisualizer.feature"
       label="TLV"
-      version="0.0.1.qualifier"
+      version="0.1.0.qualifier"
       provider-name="Andreas Wallner">
 
    <description url="http://github.com/andreasWallner/tlvVisualizer">
@@ -47,7 +47,7 @@ SOFTWARE.
          id="at.innovative-solutions.tlvVisualizer"
          download-size="0"
          install-size="0"
-         version="0.0.1.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
