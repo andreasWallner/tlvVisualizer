@@ -36,7 +36,7 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import at.innovative_solutions.tlv.ValueDecoder;
 
-public class MainView extends ViewPart {
+public class TLVVisualizerView extends ViewPart {
 	public static final String ID = "at.innovativesolutions.tlvvisualizer.views.MainView";
 
 	public static final String PREFERENCE_NODE = "at.innovative-solutions.preferences.tlvVisualizer";
@@ -58,7 +58,7 @@ public class MainView extends ViewPart {
 	final IEclipsePreferences fPreferences;
 	Clipboard fClipboard;
 	
-	public MainView() {
+	public TLVVisualizerView() {
 		// TODO correctly dispose of this using event?
 		fPreferences = InstanceScope.INSTANCE.getNode(PREFERENCE_NODE);
 	}

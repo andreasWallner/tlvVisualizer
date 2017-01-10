@@ -13,7 +13,7 @@
             name="TLV Visualizer View"
             icon="icons/binary-data-search-symbol.png"
             category="at.innovative_solutions.tlvVisualizer"
-            class="at.innovative_solutions.tlvvisualizer.views.MainView"
+            class="at.innovative_solutions.tlvvisualizer.views.TLVVisualizerView"
             id="at.innovative_solutions.tlvvisualizer.views.MainView">
       </view>
    </extension>
