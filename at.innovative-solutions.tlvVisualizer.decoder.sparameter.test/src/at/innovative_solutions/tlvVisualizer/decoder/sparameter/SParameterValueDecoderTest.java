@@ -4,10 +4,12 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
 import at.innovative_solutions.tlv.ConstructedTLV;
+import at.innovative_solutions.tlv.ID;
 import at.innovative_solutions.tlv.TLV;
 import at.innovative_solutions.tlv.Utils;
 
@@ -18,5 +20,17 @@ public class SParameterValueDecoderTest {
 		final TLV decTlv = t.getTLVs().get(0);
 		SParameterValueDecoder d = new SParameterValueDecoder();
 		assertThat(d.getSimpleDecoded(decTlv), not(nullValue()));
+	}
+	
+	// bug in v1.0
+	@Test
+	public void checkingLookupWithNullParent() {
+		ID id = new ID(2, false, 0);
+		
+		ValueInfo vi = new ValueInfo(id, null, "asdf", 0, null);
+		ArrayList<ValueInfo> list = new ArrayList<>();
+		list.add(vi);
+		
+		assertThat(ValueInfo.findByIds(id, id, list), is(nullValue()));
 	}
 }

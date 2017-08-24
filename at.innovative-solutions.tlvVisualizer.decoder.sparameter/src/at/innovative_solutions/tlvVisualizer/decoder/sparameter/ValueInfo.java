@@ -3,6 +3,7 @@ package at.innovative_solutions.tlvVisualizer.decoder.sparameter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -93,7 +94,7 @@ class ValueInfo {
 	
 	public static ValueInfo findByIds(ID id, ID parentId, ArrayList<ValueInfo> list) {
 		for(ValueInfo v : list) {
-			if(id.equals(v.fId) && (parentId == null || parentId.equals(v.fParent.fId)))
+			if(id.equals(v.fId) && Objects.equals(parentId, v.fParent != null ? v.fParent.fId : null))
 				return v;
 		}
 		return null;
