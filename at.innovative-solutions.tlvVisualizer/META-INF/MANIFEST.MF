@@ -12,3 +12,4 @@ Export-Package: at.innovative_solutions.tlv,
  at.innovative_solutions.tlv.bitfields,
  at.innovative_solutions.tlvvisualizer.views
 Bundle-Activator: at.innovative_solutions.tlvvisualizer.views.Activator
+Bundle-ActivationPolicy: lazy
