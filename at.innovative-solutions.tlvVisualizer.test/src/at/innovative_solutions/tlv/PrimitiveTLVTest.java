@@ -98,8 +98,8 @@ public class PrimitiveTLVTest {
 	public void test_toString_simple() {
 		ID id = mock(ID.class);
 		when(id.toString()).thenReturn("{id}");
-		PrimitiveTLV ref = new PrimitiveTLV(id, new byte[] {0x11, 0x22}, false);
-		assertEquals("PrimitiveTLV({id}, [0x11,0x22,], false)", ref.toString());
+		PrimitiveTLV ref = new PrimitiveTLV(id, new byte[] {0x11, 0x22, (byte)0xff}, false);
+		assertEquals("PrimitiveTLV({id}, [0x11,0x22,0xff,], false)", ref.toString());
 	}
 	
 	@Test

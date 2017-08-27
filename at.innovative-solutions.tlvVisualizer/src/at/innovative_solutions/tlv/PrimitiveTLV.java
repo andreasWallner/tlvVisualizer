@@ -65,7 +65,7 @@ public class PrimitiveTLV extends TLV {
 		sb.append(_id).append(", ");
 		sb.append("[");
 		for(int i = 0; i < _data.length; i++)
-			sb.append("0x").append(Integer.toHexString(_data[i])).append(",");
+			sb.append("0x").append(Integer.toHexString(_data[i] & 0xff)).append(",");
 		sb.append("], ");
 		sb.append(_lengthIndefinite).append(")");
 		return sb.toString();
