@@ -2,6 +2,7 @@ package at.innovative_solutions.tlv;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 public class ID {
 	public static final int CLASS_UNIVERSAL = 0;
@@ -110,6 +111,11 @@ public class ID {
 				&& this._isPrimitive == ((ID)other)._isPrimitive
 				&& this._tagNumber == ((ID)other)._tagNumber
 				&& this._longFormBytes == ((ID)other)._longFormBytes;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(_tagClass, _isPrimitive, _tagNumber, _longFormBytes);		
 	}
 
 	//TODO wouldn't it be better to provide a normalized form and compare these?
